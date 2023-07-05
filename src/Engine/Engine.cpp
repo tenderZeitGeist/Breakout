@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-Engine::Engine(std::size_t width, std::size_t height)
+Engine::Engine(int width, int height)
     : m_width(width)
     , m_height(height) {
 
@@ -17,8 +17,8 @@ Engine::Engine(std::size_t width, std::size_t height)
         "Breakout",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        static_cast<int>(m_width),
-        static_cast<int>(m_height),
+        m_width,
+        m_height,
         0
     );
 

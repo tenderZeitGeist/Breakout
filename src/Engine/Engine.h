@@ -7,14 +7,14 @@ class SDL_Surface;
 
 class Engine {
 public:
-    explicit Engine(std::size_t width, std::size_t height);
+    explicit Engine(int width, int height);
     ~Engine();
 
     void update();
 
 private:
-    std::size_t m_width;
-    std::size_t m_height;
+    int m_width;
+    int m_height;
     SDL_Window* m_window{nullptr};
     SDL_Surface* m_surface{nullptr};
 };

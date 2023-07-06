@@ -10,11 +10,23 @@ public:
     explicit Engine(int width, int height);
     ~Engine();
 
-    void update();
+    void run();
 
 private:
+    void update();
+    void draw();
+    void shutdown();
+    void pollEvents();
+
+private:
+    SDL_Surface* m_surface{nullptr};
+    SDL_Window* m_window{nullptr};
+    SDL_Event m_windowEvents{};
+
+    SDL_Rect m_testRect{};
+
     int m_width;
     int m_height;
-    SDL_Window* m_window{nullptr};
-    SDL_Surface* m_surface{nullptr};
+
+    bool m_keepRunning{true};
 };

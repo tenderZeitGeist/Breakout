@@ -19,8 +19,8 @@ private:
     void pollEvents();
 
 private:
-    SDL_Surface* m_surface{nullptr};
     SDL_Window* m_window{nullptr};
+    SDL_Renderer* m_renderer{nullptr};
     SDL_Event m_windowEvents{};
 
     SDL_Rect m_testRect{};

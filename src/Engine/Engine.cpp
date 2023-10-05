@@ -20,6 +20,10 @@ Engine::Engine(int width, int height)
         abortProgram("SDL Framework");
     }
 
+    if (TTF_Init() < 0) {
+        abortProgram("SDL_ttf");
+    }
+
     m_window = SDL_CreateWindow(
         "Breakout",
         SDL_WINDOWPOS_CENTERED,
@@ -37,9 +41,9 @@ Engine::Engine(int width, int height)
     constexpr auto renderingFlags = SDL_RENDERER_ACCELERATED;
     m_renderer = SDL_CreateRenderer(m_window, driver, renderingFlags);
 
-   if (!m_renderer) {
-       abortProgram("Renderer");
-   }
+    if (!m_renderer) {
+        abortProgram("Renderer");
+    }
 
     constexpr auto dimension = 40;
     constexpr auto halfDimension = dimension / 2;

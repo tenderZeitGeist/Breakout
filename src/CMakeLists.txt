@@ -11,4 +11,5 @@ target_link_libraries(
         Breakout
         Engine
         SDL2
+        SDL2_ttf
         )

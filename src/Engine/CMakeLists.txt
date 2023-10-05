@@ -5,6 +5,8 @@ project(Engine C CXX)
 set(SOURCE_FILES
         Engine.h
         Engine.cpp
+        EventManager.h
+        EventManager.cpp
         Game.h
         Game.cpp
         )

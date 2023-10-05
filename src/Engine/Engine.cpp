@@ -1,4 +1,6 @@
 #include "Engine.h"
+#include "Event.h"
+#include "EventManager.h"
 
 #include <SDL2/SDL.h>
 
@@ -14,7 +16,8 @@ namespace {
 
 Engine::Engine(int width, int height)
     : m_width(width)
-    , m_height(height) {
+    , m_height(height)
+    , m_eventManager(std::make_shared<events::EventManager>()){
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         abortProgram("SDL Framework");
@@ -51,6 +54,8 @@ Engine::Engine(int width, int height)
     m_testRect.w = dimension;
     m_testRect.x = width / 2 - halfDimension;
     m_testRect.y = height / 2 - halfDimension;
+
+    m_eventManager->subscribe<Engine, events::Shutdown, &Engine::onShutdown>(this);
 }
 
 Engine::~Engine() {
@@ -91,10 +96,14 @@ void Engine::shutdown() {
 
 void Engine::pollEvents() {
     while (SDL_PollEvent(&m_windowEvents)) {
-        switch(m_windowEvents.type) {
+        switch (m_windowEvents.type) {
             case SDL_QUIT:
-                m_keepRunning = false;
+                m_eventManager->notify(events::Shutdown());
                 break;
         }
     }
+}
+
+void Engine::onShutdown(events::Shutdown*) {
+    shutdown();
 }

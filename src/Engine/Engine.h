@@ -15,7 +15,7 @@ public:
     explicit Engine(int width, int height);
     ~Engine();
 
-    void run();
+    int run();
 
 private:
     void update();
@@ -33,6 +33,9 @@ private:
     SDL_Rect m_testRect{};
 
     std::shared_ptr<events::EventManager> m_eventManager;
+
+    std::size_t m_deltaAccumulator{0};
+    std::size_t m_previousTick{0};
 
     int m_width;
     int m_height;

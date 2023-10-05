@@ -2,8 +2,7 @@
 #include "Event.h"
 #include "EventManager.h"
 
-#include <SDL2/SDL.h>
-
+#include <chrono>
 #include <iostream>
 
 namespace {
@@ -11,6 +10,13 @@ namespace {
         std::cerr << reason + " couldn't be established. Aborting program." << '\n'
                   << "Error reason: " << SDL_GetError() << '\n';
         std::abort();
+    }
+
+    using Clock = std::chrono::high_resolution_clock;
+    using TimeUnit = std::chrono::milliseconds;
+
+    std::size_t currentTickInMilliseconds() {
+        return static_cast<std::size_t>(std::chrono::duration_cast<TimeUnit>(Clock::now().time_since_epoch()).count());
     }
 }
 
@@ -62,12 +68,23 @@ Engine::~Engine() {
     shutdown();
 }
 
-void Engine::run() {
-    while(m_keepRunning) {
+int Engine::run() {
+    m_previousTick = currentTickInMilliseconds();
+    while (m_keepRunning) {
+        const auto currentTick = currentTickInMilliseconds();
+        auto timeDelta = currentTick - m_previousTick;
+        m_previousTick = currentTick;
         pollEvents();
-        update();
-        draw();
+
+        static constexpr std::size_t kFrameRate = 1000 / 60;
+        m_deltaAccumulator += timeDelta;
+        if (kFrameRate < m_deltaAccumulator) {
+            update();
+            draw();
+            m_deltaAccumulator -= kFrameRate;
+        }
     }
+    return 0;
 }
 
 void Engine::update() {
@@ -85,13 +102,18 @@ void Engine::draw() {
 }
 
 void Engine::shutdown() {
-   if (m_renderer) {
-       SDL_DestroyRenderer(m_renderer);
-   }
+    m_keepRunning = false;
+
+    if (m_renderer) {
+        SDL_DestroyRenderer(m_renderer);
+    }
 
     if (m_window) {
         SDL_DestroyWindow(m_window);
     }
+
+    TTF_Quit();
+    SDL_Quit();
 }
 
 void Engine::pollEvents() {

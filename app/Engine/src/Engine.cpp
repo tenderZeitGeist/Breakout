@@ -1,9 +1,14 @@
-#include "Engine.h"
-#include "Event.h"
-#include "EventManager.h"
+#include "../Configuration.h"
+#include "../Engine.h"
+#include "../Event.h"
+#include "../EventManager.h"
+
+#include <Game/Game.h>
+#include <Game/GameScene.h>
 
 #include <chrono>
 #include <iostream>
+#include <thread>
 
 namespace {
     void abortProgram(std::string&& reason) {
@@ -23,7 +28,8 @@ namespace {
 Engine::Engine(int width, int height)
     : m_width(width)
     , m_height(height)
-    , m_eventManager(std::make_shared<events::EventManager>()){
+    , m_eventManager(std::make_shared<events::EventManager>())
+    , m_game(Game(m_eventManager)) {
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         abortProgram("SDL Framework");
@@ -54,13 +60,6 @@ Engine::Engine(int width, int height)
         abortProgram("Renderer");
     }
 
-    constexpr auto dimension = 40;
-    constexpr auto halfDimension = dimension / 2;
-    m_testRect.h = dimension;
-    m_testRect.w = dimension;
-    m_testRect.x = width / 2 - halfDimension;
-    m_testRect.y = height / 2 - halfDimension;
-
     m_eventManager->subscribe<Engine, events::Shutdown, &Engine::onShutdown>(this);
 }
 
@@ -70,39 +69,47 @@ Engine::~Engine() {
 
 int Engine::run() {
     m_previousTick = currentTickInMilliseconds();
+    m_game.setScene(std::make_unique<GameScene>(m_game));
+
+    m_pollThread = std::thread([this](){
+        while (m_keepRunning) {
+            pollEvents();
+        }
+    });
+
     while (m_keepRunning) {
         const auto currentTick = currentTickInMilliseconds();
         auto timeDelta = currentTick - m_previousTick;
         m_previousTick = currentTick;
-        pollEvents();
 
-        static constexpr std::size_t kFrameRate = 1000 / 60;
         m_deltaAccumulator += timeDelta;
-        if (kFrameRate < m_deltaAccumulator) {
+        if (config::frameTimes < m_deltaAccumulator) {
             update();
             draw();
-            m_deltaAccumulator -= kFrameRate;
+            m_deltaAccumulator -= config::frameTimes;
         }
     }
+
     return 0;
 }
 
 void Engine::update() {
-    // This should be used to update all the objects of the game.
+    m_game.update(config::frameTimesInFloat);
 }
 
 void Engine::draw() {
-    // Background color & render.
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(m_renderer, 0x00, 0x00, 0x00, 0xff);
     SDL_RenderClear(m_renderer);
-    // Draw rectangle onto window.
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(m_renderer, &m_testRect);
+
+    m_game.render(*m_renderer);
+
     SDL_RenderPresent(m_renderer);
 }
 
 void Engine::shutdown() {
-    m_keepRunning = false;
+    if (m_pollThread.joinable()) {
+        m_pollThread.join();
+    }
 
     if (m_renderer) {
         SDL_DestroyRenderer(m_renderer);
@@ -117,15 +124,23 @@ void Engine::shutdown() {
 }
 
 void Engine::pollEvents() {
-    while (SDL_PollEvent(&m_windowEvents)) {
-        switch (m_windowEvents.type) {
+    static SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
             case SDL_QUIT:
                 m_eventManager->notify(events::Shutdown());
+                break;
+            case SDL_KEYDOWN:
+            case SDL_KEYUP:
+                m_eventManager->notify(events::KeyPress(
+                    event.type,
+                    event.key.keysym.sym
+                ));
                 break;
         }
     }
 }
 
 void Engine::onShutdown(events::Shutdown*) {
-    shutdown();
+    m_keepRunning = false;
 }

@@ -9,6 +9,6 @@ find_package(SDL_ttf REQUIRED)
 include_directories(${SDL2_LIBRARIES})
 
 set(HEADER_DIR ${PROJECT_SOURCE_DIR}/include)
-set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+set(SRC_DIR ${PROJECT_SOURCE_DIR}/app)
 
-add_subdirectory(src)
+add_subdirectory(app)

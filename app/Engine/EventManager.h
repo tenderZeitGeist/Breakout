@@ -7,12 +7,11 @@
 #include <cassert>
 #include <functional>
 #include <unordered_map>
-#include <ranges>
 #include <vector>
 
 #include <iostream>
 
-#include <Event.h>
+#include "Event.h"
 
 namespace {
     using Handler = std::function<void(events::Event*)>;
@@ -45,8 +44,7 @@ namespace events {
             auto entry = m_listeners.try_emplace(typeid(EventType), Listeners{});
 
             auto handler = [instance](Event* e) {
-                static T* p = static_cast<T*>(instance);
-                (p->*Method)(static_cast<EventType*>(e));
+                (instance->*Method)(static_cast<EventType*>(e));
             };
 
             entry.first->second.emplace_back(std::move(handler));

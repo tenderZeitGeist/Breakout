@@ -28,7 +28,7 @@ public:
     enum Compose : ComposeMask {
         DRAWABLE = 1 << 0,
         MOVEABLE = 1 << 1,
-        COLLIDEABLE = 1 << 1,
+        COLLIDEABLE = 1 << 2,
     };
 
     virtual ~Entity() = default;

@@ -1,14 +1,14 @@
-#include "../Configuration.h"
-#include "../Engine.h"
-#include "../Event.h"
-#include "../EventManager.h"
-
-#include <Game/Game.h>
-#include <Game/GameScene.h>
+#include "Engine/Configuration.h"
+#include "Engine/Engine.h"
+#include "Engine/Event.h"
+#include "Engine/EventManager.h"
 
 #include <chrono>
 #include <iostream>
 #include <thread>
+
+#include <Game/Game.h>
+#include <Game/GameScene.h>
 
 namespace {
     void abortProgram(std::string&& reason) {

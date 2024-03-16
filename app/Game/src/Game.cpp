@@ -2,7 +2,7 @@
 // Created by zeitgeist on 13.06.23.
 //
 
-#include "../Game.h"
+#include "Game/Game.h"
 
 #include <SDL2/SDL_render.h>
 

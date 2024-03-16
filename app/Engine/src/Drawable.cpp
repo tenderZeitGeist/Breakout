@@ -2,8 +2,8 @@
 // Created by zeitgeist on 12.10.23.
 //
 
-#include "../Drawable.h"
-#include "../Entity.h"
+#include "Engine/Drawable.h"
+#include "Engine/Entity.h"
 
 #include <SDL2/SDL_render.h>
 

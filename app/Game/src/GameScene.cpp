@@ -4,17 +4,24 @@
 
 #include <SDL2/SDL.h>
 
-#include "Game.h"
-#include "GameScene.h"
+#include "Game/Game.h"
+#include "Game/GameScene.h"
 
 #include <Engine/Configuration.h>
-#include <Engine/Drawable.h>
-#include <Engine/Moveable.h>
 #include <iostream>
+
+namespace {
+    std::reference_wrapper<Entity> toReference(Entity& e) {
+        return e;
+    }
+}
 
 GameScene::GameScene(Game& game)
     : m_game(game)
-    , m_paddle() {
+    , m_paddle()
+    , m_topWall()
+    , m_leftWall()
+    , m_rightWall(){
     initializePaddle();
 }
 
@@ -79,4 +86,33 @@ void GameScene::initializePaddle() {
                   });
 
     m_entities.emplace_back(static_cast<Entity&>(m_paddle));
+}
+
+void GameScene::initializeWalls() {
+    m_topWall.init({
+        .x = 0,
+        .y = 0,
+        .width = config::windowWidth,
+        .height = config::slotHeight
+    });
+
+    m_entities.emplace_back(static_cast<Entity&>(m_topWall));
+
+    m_leftWall.init({
+        .x = 0,
+        .y = 0,
+        .width = config::slotWidth,
+        .height = config::windowHeight
+    });
+
+    m_entities.emplace_back(static_cast<Entity&>(m_leftWall));
+
+    m_rightWall.init({
+        .x = config::windowWidth - config::slotHeight,
+        .y = 0,
+        .width = config::slotWidth,
+        .height = config::windowHeight
+    });
+
+    m_entities.emplace_back(static_cast<Entity&>(m_rightWall));
 }

@@ -32,7 +32,7 @@ public:
     };
 
     virtual ~Entity() = default;
-    virtual void update(float delta) = 0;
+    virtual void update(float delta);
 
     virtual void render(SDL_Renderer& renderer);
     virtual void init(Values v);

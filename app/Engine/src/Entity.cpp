@@ -18,6 +18,10 @@ Entity::Entity(ComposeMask composeMask)
     }
 }
 
+void Entity::update(float delta) {
+
+}
+
 void Entity::init(Entity::Values v) {
     setX(v.x);
     setY(v.y);

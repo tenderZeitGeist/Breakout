@@ -6,6 +6,7 @@
 
 #include "Scene.h"
 #include "Paddle.h"
+#include "Wall.h"
 
 #include <vector>
 
@@ -26,8 +27,12 @@ public:
 
 private:
     void initializePaddle();
+    void initializeWalls();
 
     Game& m_game;
     Paddle m_paddle;
+    Wall m_topWall;
+    Wall m_leftWall;
+    Wall m_rightWall;
     std::vector<std::reference_wrapper<Entity>> m_entities;
 };

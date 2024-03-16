@@ -2,7 +2,7 @@
 // Created by zeitgeist on 12.10.23.
 //
 
-#include "../Paddle.h"
+#include "Game/Paddle.h"
 
 #include <Engine/Configuration.h>
 

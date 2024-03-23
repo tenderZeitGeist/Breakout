@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <Engine/KeyHandler.h>
+
 class Scene;
 class SDL_Renderer;
 
@@ -32,5 +34,7 @@ private:
 
     std::shared_ptr<events::EventManager> m_eventManager;
     std::shared_ptr<Scene> m_scene;
+    KeyHandler m_keyHandler;
     State m_state{State::UNINTIALIZED};
+
 };

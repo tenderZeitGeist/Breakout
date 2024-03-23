@@ -71,15 +71,10 @@ int Engine::run() {
     m_previousTick = currentTickInMilliseconds();
     m_game.setScene(std::make_unique<GameScene>(m_game));
 
-    m_pollThread = std::thread([this](){
-        while (m_keepRunning) {
-            pollEvents();
-        }
-    });
-
     while (m_keepRunning) {
+        pollEvents();
         const auto currentTick = currentTickInMilliseconds();
-        auto timeDelta = currentTick - m_previousTick;
+        const auto timeDelta = currentTick - m_previousTick;
         m_previousTick = currentTick;
 
         m_deltaAccumulator += timeDelta;

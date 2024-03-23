@@ -13,6 +13,7 @@ set(ENGINE_HEADER_FILES
         "${DIR_INCLUDE}/Engine/Entity.h"
         "${DIR_INCLUDE}/Engine/Event.h"
         "${DIR_INCLUDE}/Engine/EventManager.h"
+        "${DIR_INCLUDE}/Engine/KeyHandler.h"
         "${DIR_INCLUDE}/Engine/Moveable.h"
 )
 
@@ -21,6 +22,7 @@ set(ENGINE_SOURCE_FILES
         "${DIR_SOURCE}/Drawable.cpp"
         "${DIR_SOURCE}/Engine.cpp"
         "${DIR_SOURCE}/Entity.cpp"
+        "${DIR_SOURCE}/KeyHandler.cpp"
         "${DIR_SOURCE}/Moveable.cpp"
 )
 

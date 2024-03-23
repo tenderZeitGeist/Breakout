@@ -36,14 +36,14 @@ public:
 
     virtual void render(SDL_Renderer& renderer);
     virtual void init(Values v);
-    [[nodiscard]] int getX() const;
 
+    [[nodiscard]] int getX() const;
     [[nodiscard]] int getY() const;
     [[nodiscard]] int getWidth() const;
     [[nodiscard]] int getHeight() const;
     [[nodiscard]] const SDL_Rect& getRect() const;
-    virtual void setX(int x);
 
+    virtual void setX(int x);
     virtual void setY(int y);
     virtual void setWidth(int width);
     virtual void setHeight(int height);

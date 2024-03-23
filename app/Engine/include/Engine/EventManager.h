@@ -53,7 +53,7 @@ namespace events {
 
         template<typename EventType>
         void notify(EventType&& e) const {
-            notify<EventType>(std::forward<EventType>(e));
+            notify<EventType>(std::forward<EventType&>(e));
         }
 
         template<typename EventType>

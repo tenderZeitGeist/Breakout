@@ -30,9 +30,9 @@ private:
     void initializeWalls();
 
     Game& m_game;
-    Paddle m_paddle;
     Wall m_topWall;
     Wall m_leftWall;
     Wall m_rightWall;
+    Paddle m_paddle;
     std::vector<std::reference_wrapper<Entity>> m_entities;
 };

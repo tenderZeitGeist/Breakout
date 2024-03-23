@@ -8,13 +8,26 @@
 
 Paddle::Paddle()
     : Entity(DRAWABLE | MOVEABLE | COLLIDEABLE)
-    , m_currentWidth(0)
-    , m_originalWidth(0) {
+      , m_currentWidth(0)
+      , m_originalWidth(0) {
 }
 
 void Paddle::update(float dt) {
+    const int currentX = getX();
     if (m_moveable) {
         m_moveable->move(dt);
+    }
+
+    if (!m_collideable) {
+        return;
+    }
+
+    for (const auto wallRef: m_walls) {
+        const auto& wall = wallRef.get();
+        if (wall.getCollideable() && *wall.getCollideable() == *m_collideable) {
+            setX(currentX);
+            return;
+        }
     }
 }
 
@@ -24,7 +37,7 @@ void Paddle::shrink() {
         m_originalWidth = width;
     }
 
-    if(m_originalWidth == width) {
+    if (m_originalWidth == width) {
         const auto halfWidth = width / 2;
         setWidth(halfWidth);
         setX(getX() + halfWidth / 2);
@@ -36,4 +49,8 @@ void Paddle::reset() {
         setWidth(m_originalWidth);
         setX(config::windowWidth / 2 - m_originalWidth / 2);
     }
+}
+
+void Paddle::setWalls(std::initializer_list<std::reference_wrapper<Wall> > walls) {
+    m_walls = walls;
 }

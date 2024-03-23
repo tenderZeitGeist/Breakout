@@ -7,7 +7,7 @@ class SDL_Renderer;
 
 namespace events {
     class EventManager;
-    class KeyPress;
+    struct KeyPress;
 }
 
 class Game {
@@ -28,7 +28,7 @@ public:
     [[nodiscard]]const Scene* getScene() const;
 
 private:
-    void onKeyEvent(events::KeyPress* e);
+    void onKeyEvent(events::KeyPress& e);
 
     std::shared_ptr<events::EventManager> m_eventManager;
     std::shared_ptr<Scene> m_scene;

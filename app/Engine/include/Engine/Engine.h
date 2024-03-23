@@ -27,7 +27,7 @@ private:
     void shutdown();
     void pollEvents();
 
-    void onShutdown(events::Shutdown*);
+    void onShutdown(events::Shutdown&);
 
 private:
     SDL_Window* m_window{nullptr};

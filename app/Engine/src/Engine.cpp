@@ -141,6 +141,6 @@ void Engine::pollEvents() {
     }
 }
 
-void Engine::onShutdown(events::Shutdown*) {
+void Engine::onShutdown(events::Shutdown&) {
     m_keepRunning = false;
 }

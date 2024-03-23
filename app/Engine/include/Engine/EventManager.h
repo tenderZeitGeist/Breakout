@@ -14,7 +14,7 @@
 #include "Event.h"
 
 namespace {
-    using Handler = std::function<void(events::Event*)>;
+    using Handler = std::function<void(events::Event&)>;
     using TypeInfoRef = std::reference_wrapper<const std::type_info>;
 
     struct Hasher {
@@ -39,12 +39,12 @@ namespace events {
     public:
         explicit EventManager() = default;
 
-        template<typename T, typename EventType, void(T::*Method)(EventType*)>
+        template<typename T, typename EventType, void(T::*Method)(EventType&)>
         bool subscribe(T* instance) {
             auto entry = m_listeners.try_emplace(typeid(EventType), Listeners{});
 
-            auto handler = [instance](Event* e) {
-                (instance->*Method)(static_cast<EventType*>(e));
+            auto handler = [instance](Event& e) {
+                (instance->*Method)(static_cast<EventType&>(e));
             };
 
             entry.first->second.emplace_back(std::move(handler));
@@ -53,11 +53,11 @@ namespace events {
 
         template<typename EventType>
         void notify(EventType&& e) const {
-            notify<EventType>(&e);
+            notify<EventType>(std::forward<EventType>(e));
         }
 
         template<typename EventType>
-        void notify(Event* e) const {
+        void notify(Event& e) const {
             const auto entry = m_listeners.find(typeid(EventType));
             if (entry == m_listeners.end()) {
                 return;

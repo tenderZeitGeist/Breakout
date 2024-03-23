@@ -18,10 +18,11 @@ public:
     [[nodiscard]] int getCenterX() const;
     [[nodiscard]] int getCenterY() const;
 
-   void setExtentX(int extentX);
-   void setExtentY(int extentY);
-   void setCenterX(int centerX);
-   void setCenterY(int centerY);
+    void setEnabled(bool enabled);
+    void setExtentX(int extentX);
+    void setExtentY(int extentY);
+    void setCenterX(int centerX);
+    void setCenterY(int centerY);
 
 private:
      friend bool collides(const Collideable& lhs, const Collideable& rhs);

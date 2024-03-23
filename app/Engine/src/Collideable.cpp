@@ -45,6 +45,10 @@ int Collideable::getCenterY() const {
     return m_centerY;
 }
 
+void Collideable::setEnabled(bool enabled) {
+    m_enabled = enabled;
+}
+
 void Collideable::setExtentX(int extentX) {
     m_extentX = extentX;
 }

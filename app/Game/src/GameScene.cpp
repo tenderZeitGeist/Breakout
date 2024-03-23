@@ -10,12 +10,6 @@
 #include <Engine/Configuration.h>
 #include <iostream>
 
-namespace {
-    std::reference_wrapper<Entity> toReference(Entity& e) {
-        return e;
-    }
-}
-
 GameScene::GameScene(Game& game)
     : m_game(game) {
     initializeWalls();
@@ -53,7 +47,7 @@ void GameScene::initializePaddle() {
 
     );
     m_paddle.setWalls({m_leftWall, m_rightWall});
-    m_entities.emplace_back(static_cast<Entity&>(m_paddle));
+    m_entities.emplace_back(m_paddle);
 }
 
 void GameScene::initializeWalls() {
@@ -64,7 +58,7 @@ void GameScene::initializeWalls() {
         .height = config::slotHeight
     });
 
-    m_entities.emplace_back(static_cast<Entity&>(m_topWall));
+    m_entities.emplace_back(m_topWall);
 
     m_leftWall.init({
         .x = 0,
@@ -73,7 +67,7 @@ void GameScene::initializeWalls() {
         .height = config::windowHeight
     });
 
-    m_entities.emplace_back(static_cast<Entity&>(m_leftWall));
+    m_entities.emplace_back(m_leftWall);
 
     m_rightWall.init({
         .x = config::windowWidth - config::slotHeight,
@@ -82,7 +76,7 @@ void GameScene::initializeWalls() {
         .height = config::windowHeight
     });
 
-    m_entities.emplace_back(static_cast<Entity&>(m_rightWall));
+    m_entities.emplace_back(m_rightWall);
 }
 
 void GameScene::setPaddleDirection() const {

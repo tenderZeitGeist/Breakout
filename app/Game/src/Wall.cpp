@@ -7,5 +7,5 @@
 
 Wall::Wall()
 : Entity(Entity::COLLIDEABLE) {
-
+    Entity::getCollideable()->setEnabled(true);
 }

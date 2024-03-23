@@ -15,6 +15,7 @@ class Paddle
 public:
     Paddle();
     void update(float dt) override;
+    void init(Entity::Values v) override;
     void shrink();
     void reset();
 

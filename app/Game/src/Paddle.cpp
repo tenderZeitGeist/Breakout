@@ -18,11 +18,16 @@ void Paddle::update(float dt) {
 
     for (const auto wallRef: m_walls) {
         const auto& wall = wallRef.get();
-        if (wall.getCollideable() && *wall.getCollideable() == *m_collideable) {
+        if (*wall.getCollideable() == *m_collideable) {
             setX(currentX);
             return;
         }
     }
+}
+
+void Paddle::init(Entity::Values v) {
+    Entity::init(v);
+    Entity::getCollideable()->setEnabled(true);
 }
 
 void Paddle::shrink() {

@@ -63,14 +63,18 @@ const SDL_Rect& Entity::getRect() const {
 
 void Entity::setX(int x) {
     if (m_collideable) {
-        m_collideable->setCenterX(getX() - x);
+        const auto centerX = m_collideable->getCenterX();
+        const auto deltaX = getX() - x;
+        m_collideable->setCenterX(centerX - deltaX);
     }
     m_rect.x = static_cast<Sint16>(x);
 }
 
 void Entity::setY(int y) {
     if (m_collideable) {
-        m_collideable->setCenterY(getY() - y);
+        const auto centerY = m_collideable->getCenterY();
+        const auto deltaY = getY() - y;
+        m_collideable->setCenterY(centerY - deltaY);
     }
     m_rect.y = static_cast<Sint16>(y);
 }

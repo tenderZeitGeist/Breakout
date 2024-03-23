@@ -3,12 +3,12 @@
 //
 
 #include "Game/Game.h"
+#include "Game/Scene.h"
 
 #include <SDL2/SDL_render.h>
 
 #include <Engine/EventManager.h>
 #include <Engine/Event.h>
-#include <Game/Scene.h>
 
 Game::Game(std::shared_ptr<events::EventManager> eventManager)
     : m_eventManager(std::move(eventManager)) {
@@ -28,10 +28,6 @@ void Game::render(SDL_Renderer& renderer) {
 }
 
 void Game::onKeyEvent(events::KeyPress& e) {
-    if (!m_scene) {
-        return;
-    }
-
     switch (e.m_keyEvent) {
         case SDL_KEYDOWN:
             m_keyHandler.setKeyState(e.m_code, true);
@@ -42,9 +38,6 @@ void Game::onKeyEvent(events::KeyPress& e) {
         default:
             break;
     }
-
-    // std::cerr << "Key Event Type: " << e.m_keyEvent << '\n'
-    // << "Key Code: " << e.m_code << '\n';
 }
 
 void Game::setScene(std::unique_ptr<Scene> scene) {

@@ -22,8 +22,6 @@ public:
     void render(SDL_Renderer& renderer) override;
     void enter() override;
     void exit() override;
-    void keyDown(SDL_Keycode code) override;
-    void keyUp(SDL_Keycode code) override;
 
 private:
     void initializePaddle();

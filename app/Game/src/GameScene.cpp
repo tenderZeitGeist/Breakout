@@ -41,36 +41,6 @@ void GameScene::enter() {
 void GameScene::exit() {
 }
 
-void GameScene::keyDown(SDL_Keycode code) {
-    auto paddleMoveComponent = m_paddle.getMoveable();
-    switch (code) {
-        case SDLK_LEFT:
-            paddleMoveComponent->setDirectionX(-1.f);
-            break;
-        case SDLK_RIGHT:
-            paddleMoveComponent->setDirectionX(1.f);
-            break;
-        default:
-            break;
-    }
-}
-
-void GameScene::keyUp(SDL_Keycode code) {
-    auto paddleMoveComponent = m_paddle.getMoveable();
-    switch (code) {
-        case SDLK_LEFT:
-            // if (std::fabs(paddleMoveComponent->getDirectionX() + 1.f) < 0.00001f)
-            paddleMoveComponent->setDirectionX(0.f);
-            break;
-        case SDLK_RIGHT:
-            // if (std::fabs(paddleMoveComponent->getDirectionX() - 1.f) < 0.00001f)
-            paddleMoveComponent->setDirectionX(0.f);
-            break;
-        default:
-            break;
-    }
-}
-
 void GameScene::initializePaddle() {
     m_paddle.init({
             .x = config::windowHalfWidth - config::slotHalfWidth,

@@ -14,6 +14,4 @@ public:
     virtual void render(SDL_Renderer& renderer) = 0;
     virtual void enter() = 0;
     virtual void exit() = 0;
-    virtual void keyDown(SDL_Keycode code) = 0;
-    virtual void keyUp(SDL_Keycode code) = 0;
 };

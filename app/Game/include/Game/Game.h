@@ -29,6 +29,8 @@ public:
     void setScene(std::unique_ptr<Scene> scene);
     [[nodiscard]]const Scene* getScene() const;
 
+    [[nodiscard]] const KeyHandler& getKeyHandler() const;
+
 private:
     void onKeyEvent(events::KeyPress& e);
 

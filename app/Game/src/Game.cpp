@@ -54,3 +54,7 @@ void Game::setScene(std::unique_ptr<Scene> scene) {
 const Scene* Game::getScene() const {
     return m_scene.get();
 }
+
+const KeyHandler& Game::getKeyHandler() const {
+    return m_keyHandler;
+}

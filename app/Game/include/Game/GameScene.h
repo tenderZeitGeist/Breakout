@@ -28,6 +28,7 @@ public:
 private:
     void initializePaddle();
     void initializeWalls();
+    void setPaddleDirection() const;
 
     Game& m_game;
     Wall m_topWall;

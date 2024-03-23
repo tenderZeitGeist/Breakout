@@ -14,13 +14,7 @@ Paddle::Paddle()
 
 void Paddle::update(float dt) {
     const int currentX = getX();
-    if (m_moveable) {
-        m_moveable->move(dt);
-    }
-
-    if (!m_collideable) {
-        return;
-    }
+    m_moveable->move(dt);
 
     for (const auto wallRef: m_walls) {
         const auto& wall = wallRef.get();

@@ -18,10 +18,12 @@ namespace {
 
 GameScene::GameScene(Game& game)
     : m_game(game) {
+    initializeWalls();
     initializePaddle();
 }
 
 void GameScene::update(float delta) {
+    setPaddleDirection();
     for (auto& entity: m_entities) {
         entity.get().update(delta);
     }
@@ -111,4 +113,11 @@ void GameScene::initializeWalls() {
     });
 
     m_entities.emplace_back(static_cast<Entity&>(m_rightWall));
+}
+
+void GameScene::setPaddleDirection() const {
+    const auto keyStates = m_game.getKeyHandler().getKeyStates();
+    const float leftDirection = static_cast<float>(keyStates[KeyHandler::kLeft]) * -1.f;
+    const float rightDirection = static_cast<float>(keyStates[KeyHandler::kRight]) * 1.f;
+    m_paddle.getMoveable()->setDirectionX(leftDirection + rightDirection);
 }

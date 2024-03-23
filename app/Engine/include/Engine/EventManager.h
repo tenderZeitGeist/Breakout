@@ -9,8 +9,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <iostream>
-
 #include "Event.h"
 
 namespace {

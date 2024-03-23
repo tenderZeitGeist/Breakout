@@ -8,7 +8,7 @@
 
 class Entity;
 class Game;
-class SDL_Renderer;
+struct SDL_Renderer;
 
 class Drawable {
 public:

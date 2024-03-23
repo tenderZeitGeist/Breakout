@@ -8,7 +8,7 @@ class Entity;
 
 class Collideable {
 public:
-    Collideable(Entity& entity);
+    explicit Collideable(Entity& entity);
 
     friend bool operator==(const Collideable& lhs, const Collideable& rhs);
 

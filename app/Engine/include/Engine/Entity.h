@@ -11,7 +11,7 @@
 
 #include <memory>
 
-class SDL_Renderer;
+struct SDL_Renderer;
 
 class Entity {
 public:
@@ -54,6 +54,8 @@ public:
 
 protected:
     explicit Entity(ComposeMask composeMask);
+    Entity(Entity&&) = default;
+    Entity& operator=(Entity&&) = default;
 
     SDL_Rect m_rect;
 

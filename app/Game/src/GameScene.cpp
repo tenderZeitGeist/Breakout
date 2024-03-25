@@ -83,18 +83,18 @@ void GameScene::initializeWalls() {
 void GameScene::initializeBricks() {
     constexpr auto amountX = 14;
     constexpr auto amountY = 8;
-    constexpr auto halfSlotWidth = config::slotWidth / 2;
     m_bricks.reserve(amountX * amountY);
     for (int y = 0; y < amountY; ++y) {
+        const auto colorIndex = y / 2;
         for (int x = 0; x < amountX; ++x) {
             m_bricks.emplace_back();
             auto& brickRef = m_bricks.back();
             brickRef.init({
-                .x = halfSlotWidth + x * (config::slotWidth + config::slotSpacing),
-                .y = halfSlotWidth + y * (config::slotHeight + config::slotSpacing),
+                .x = config::slotHalfWidth + x * (config::slotWidth + config::slotSpacing),
+                .y = config::slotHalfWidth + y * (config::slotHeight + config::slotSpacing),
                 .width = config::slotWidth,
                 .height = config::slotHeight,
-                .color = {0x00, 0xff, 0xff, 0xff}
+                .color = config::kBricksFillStyles[colorIndex]
             });
             m_entities.emplace_back(brickRef);
         }

@@ -10,4 +10,5 @@ class Wall
     : public Entity {
 public:
     explicit Wall();
+    void onDebug(bool debug) override;
 };

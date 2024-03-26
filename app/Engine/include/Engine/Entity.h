@@ -52,6 +52,8 @@ public:
     [[nodiscard]] virtual Drawable* getDrawable() const;
     [[nodiscard]] virtual Moveable* getMoveable() const;
 
+    virtual void onDebug(bool debug);
+
 protected:
     explicit Entity(ComposeMask composeMask);
     Entity(Entity&&) = default;

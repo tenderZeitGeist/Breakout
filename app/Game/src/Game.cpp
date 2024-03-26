@@ -11,8 +11,10 @@
 #include <Engine/Event.h>
 
 Game::Game(std::shared_ptr<events::EventManager> eventManager)
-    : m_eventManager(std::move(eventManager)) {
+    : m_eventManager(std::move(eventManager))
+      , m_keyHandler(m_eventManager) {
     m_eventManager->subscribe<Game, events::KeyPress, &Game::onKeyEvent>(this);
+    m_eventManager->subscribe<Game, events::Debug, &Game::onDebug>(this);
 }
 
 void Game::update(float delta) {
@@ -27,19 +29,6 @@ void Game::render(SDL_Renderer& renderer) {
     }
 }
 
-void Game::onKeyEvent(events::KeyPress& e) {
-    switch (e.m_keyEvent) {
-        case SDL_KEYDOWN:
-            m_keyHandler.setKeyState(e.m_code, true);
-            break;
-        case SDL_KEYUP:
-            m_keyHandler.setKeyState(e.m_code, false);
-            break;
-        default:
-            break;
-    }
-}
-
 void Game::setScene(std::unique_ptr<Scene> scene) {
     m_scene = std::move(scene);
 }
@@ -50,4 +39,15 @@ const Scene* Game::getScene() const {
 
 const KeyHandler& Game::getKeyHandler() const {
     return m_keyHandler;
+}
+
+void Game::onKeyEvent(events::KeyPress& e) {
+    m_keyHandler.onKeyEvent(e);
+}
+
+void Game::onDebug(events::Debug&) {
+    m_debug = !m_debug;
+    if (m_scene) {
+        m_scene->onDebug(m_debug);
+    }
 }

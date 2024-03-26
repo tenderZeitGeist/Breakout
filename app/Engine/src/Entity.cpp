@@ -108,3 +108,7 @@ Drawable* Entity::getDrawable() const {
 Moveable* Entity::getMoveable() const {
     return m_moveable.get();
 }
+
+void Entity::onDebug(bool debug) {
+    // Base case may be ignored.
+}

@@ -3,6 +3,7 @@
 //
 
 #include "Engine/KeyHandler.h"
+#include "Engine/EventManager.h"
 
 #include <cassert>
 
@@ -10,9 +11,11 @@ namespace {
     std::size_t keyCodeToIndex(SDL_Keycode code) {
         switch (code) {
             case SDLK_LEFT:
-                return 0;
+                return KeyHandler::LEFT;
             case SDLK_RIGHT:
-                return 1;
+                return KeyHandler::RIGHT;
+            case SDLK_d:
+                return KeyHandler::D;
             default:
                 break;
         }
@@ -20,6 +23,17 @@ namespace {
     }
 }
 
+
+KeyHandler::KeyHandler(std::shared_ptr<events::EventManager> eventManager) noexcept
+    : m_eventManager(std::move(eventManager)) {
+}
+
+void KeyHandler::onKeyEvent(events::KeyPress& e) {
+    setKeyState(e.m_code, e.m_keyEvent == SDL_KEYDOWN);
+    if(m_keyStates[D]) {
+        m_eventManager->notify(events::Debug());
+    }
+}
 
 const KeyHandler::KeyStateArray& KeyHandler::getKeyStates() const {
     return m_keyStates;

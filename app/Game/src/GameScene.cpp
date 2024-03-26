@@ -36,6 +36,12 @@ void GameScene::enter() {
 void GameScene::exit() {
 }
 
+void GameScene::onDebug(bool debug) {
+    for(auto entityRef : m_entities) {
+       entityRef.get().onDebug(debug);
+    }
+}
+
 void GameScene::initializePaddle() {
     m_paddle.init({
             .x = config::windowHalfWidth - config::slotHalfWidth,
@@ -64,16 +70,16 @@ void GameScene::initializeWalls() {
     m_leftWall.init({
         .x = 0,
         .y = 0,
-        .width = config::slotWidth,
+        .width = config::slotHalfWidth,
         .height = config::windowHeight
     });
 
     m_entities.emplace_back(m_leftWall);
 
     m_rightWall.init({
-        .x = config::windowWidth - config::slotHeight,
+        .x = config::windowWidth - config::slotHalfWidth,
         .y = 0,
-        .width = config::slotWidth,
+        .width = config::slotHalfWidth,
         .height = config::windowHeight
     });
 
@@ -103,7 +109,7 @@ void GameScene::initializeBricks() {
 
 void GameScene::setPaddleDirection() const {
     const auto& keyStates = m_game.getKeyHandler().getKeyStates();
-    const float leftDirection = static_cast<float>(keyStates[KeyHandler::kLeft]) * -1.f;
-    const float rightDirection = static_cast<float>(keyStates[KeyHandler::kRight]) * 1.f;
+    const float leftDirection = static_cast<float>(keyStates[KeyHandler::LEFT]) * -1.f;
+    const float rightDirection = static_cast<float>(keyStates[KeyHandler::RIGHT]) * 1.f;
     m_paddle.getMoveable()->setDirectionX(leftDirection + rightDirection);
 }

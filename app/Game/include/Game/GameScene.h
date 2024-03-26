@@ -23,6 +23,7 @@ public:
     void render(SDL_Renderer& renderer) override;
     void enter() override;
     void exit() override;
+    void onDebug(bool debug) override;
 
 private:
     void initializePaddle();

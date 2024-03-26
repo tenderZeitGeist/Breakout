@@ -10,6 +10,7 @@ class SDL_Renderer;
 namespace events {
     class EventManager;
     struct KeyPress;
+    struct Debug;
 }
 
 class Game {
@@ -32,10 +33,11 @@ public:
 
 private:
     void onKeyEvent(events::KeyPress& e);
+    void onDebug(events::Debug&);
 
     std::shared_ptr<events::EventManager> m_eventManager;
     std::shared_ptr<Scene> m_scene;
     KeyHandler m_keyHandler;
     State m_state{State::UNINTIALIZED};
-
+    bool m_debug{false};
 };

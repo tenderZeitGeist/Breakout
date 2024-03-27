@@ -6,6 +6,7 @@ set(DIR_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/include)
 set(DIR_SOURCE ${CMAKE_CURRENT_LIST_DIR}/src)
 
 set(GAME_HEADER_FILES
+        "${DIR_INCLUDE}/Game/Ball.h"
         "${DIR_INCLUDE}/Game/Brick.h"
         "${DIR_INCLUDE}/Game/Game.h"
         "${DIR_INCLUDE}/Game/GameScene.h"
@@ -15,6 +16,7 @@ set(GAME_HEADER_FILES
 )
 
 set(GAME_SOURCE_FILES
+        "${DIR_SOURCE}/Ball.cpp"
         "${DIR_SOURCE}/Brick.cpp"
         "${DIR_SOURCE}/Game.cpp"
         "${DIR_SOURCE}/GameScene.cpp"

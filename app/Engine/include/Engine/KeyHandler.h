@@ -7,6 +7,7 @@
 #include <SDL2/SDL_keycode.h>
 
 #include <array>
+#include <cstdint>
 #include <memory>
 
 namespace events {
@@ -16,10 +17,12 @@ namespace events {
 
 class KeyHandler {
 public:
-    enum Keys : std::size_t {
+    enum Keys : std::int_fast8_t {
         LEFT,
         RIGHT,
         D,
+        SPACE,
+        INVALID,
         NUM_OF_KEYS
     };
 

@@ -16,10 +16,10 @@ namespace {
                 return KeyHandler::RIGHT;
             case SDLK_d:
                 return KeyHandler::D;
-            default:
-                break;
+            case SDLK_SPACE:
+                return KeyHandler::SPACE;
         }
-        assert("Invalid keycode");
+        return KeyHandler::INVALID;
     }
 }
 

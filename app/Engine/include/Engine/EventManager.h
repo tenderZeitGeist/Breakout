@@ -11,33 +11,30 @@
 
 #include "Event.h"
 
-namespace {
-    using Handler = std::function<void(events::Event&)>;
-    using TypeInfoRef = std::reference_wrapper<const std::type_info>;
-
-    struct Hasher {
-        std::size_t operator()(TypeInfoRef code) const {
-            return code.get().hash_code();
-        }
-    };
-
-    struct EqualTo {
-        bool operator()(TypeInfoRef lhs, TypeInfoRef rhs) const {
-            return lhs.get() == rhs.get();
-        }
-    };
-}
-
 namespace events {
-
     class EventManager {
+        using Handler = std::function<void(events::Event&)>;
+        using TypeInfoRef = std::reference_wrapper<const std::type_info>;
+
+        struct Hasher {
+            std::size_t operator()(TypeInfoRef code) const {
+                return code.get().hash_code();
+            }
+        };
+
+        struct EqualTo {
+            bool operator()(TypeInfoRef lhs, TypeInfoRef rhs) const {
+                return lhs.get() == rhs.get();
+            }
+        };
+
         using Listeners = std::vector<Handler>;
         using ListenerMap = std::unordered_map<TypeInfoRef, Listeners, Hasher, EqualTo>;
 
     public:
         explicit EventManager() = default;
 
-        template<typename T, typename EventType, void(T::*Method)(EventType&)>
+        template<typename T, typename EventType, void(T::* Method)(EventType&)>
         bool subscribe(T* instance) {
             auto entry = m_listeners.try_emplace(typeid(EventType), Listeners{});
 

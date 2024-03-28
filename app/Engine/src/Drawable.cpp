@@ -7,6 +7,8 @@
 
 #include <SDL2/SDL_render.h>
 
+#include <array>
+
 Drawable::Drawable(Entity& entity, Shape shape)
 : m_entity(entity)
 , m_shape(shape) {
@@ -65,19 +67,20 @@ void Drawable::drawCircle(SDL_Renderer& renderer) const {
     int dy = 1;
     int error = dx - diameter;
 
+    static std::array<SDL_Point, 8> points;
+
     while (x >= y) {
-        for(auto [tx, ty] : std::initializer_list<std::pair<int,int>>{
-            {centerX + x, centerY - y},
-            {centerX + x, centerY + y},
-            {centerX - x, centerY - y},
-            {centerX - x, centerY + y},
-            {centerX + y, centerY - x},
-            {centerX + y, centerY + x},
-            {centerX - y, centerY - x},
-            {centerX - y, centerY + x}
-        }) {
-            SDL_RenderDrawPoint(&renderer, tx, ty);
-        }
+        points = {
+            centerX + x, centerY - y,
+            centerX + x, centerY + y,
+            centerX - x, centerY - y,
+            centerX - x, centerY + y,
+            centerX + y, centerY - x,
+            centerX + y, centerY + x,
+            centerX - y, centerY - x,
+            centerX - y, centerY + x
+        };
+            SDL_RenderDrawLines(&renderer, points.data(), points.size());
 
         if(error <= 0) {
             ++y;

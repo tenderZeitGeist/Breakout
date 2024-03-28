@@ -9,6 +9,10 @@
 class Wall
     : public Entity {
 public:
-    explicit Wall();
+    explicit Wall(float x, float y);
     void onDebug(bool debug) override;
+    [[nodiscard]] std::pair<float, float> getNormals() const;
+private:
+    float m_normalX;
+    float m_normalY;
 };

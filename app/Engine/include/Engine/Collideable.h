@@ -27,7 +27,7 @@ public:
 private:
      friend bool collides(const Collideable& lhs, const Collideable& rhs);
 
-    bool m_enabled{false};
+    bool m_enabled{true};
     int m_extentX{0};
     int m_extentY{0};
     int m_centerX{0};

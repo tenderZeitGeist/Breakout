@@ -7,8 +7,10 @@
 
 #include "Engine/Configuration.h"
 
-Wall::Wall()
-: Entity(Entity::COLLIDEABLE) {
+Wall::Wall(float x, float y)
+: Entity(Entity::COLLIDEABLE)
+, m_normalX(x)
+, m_normalY(y) {
     Entity::getCollideable()->setEnabled(true);
 }
 
@@ -19,4 +21,8 @@ void Wall::onDebug(bool debug) {
     } else {
         m_drawable.reset();
     }
+}
+
+std::pair<float, float> Wall::getNormals() const {
+    return std::make_pair(m_normalX, m_normalY);
 }

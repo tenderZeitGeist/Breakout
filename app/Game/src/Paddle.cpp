@@ -15,7 +15,7 @@ Paddle::Paddle()
 void Paddle::update(float dt) {
     const int currentX = getX();
     m_moveable->move(dt);
-
+    return;
     for (const auto wallRef: m_walls) {
         const auto& wall = wallRef.get();
         if (*wall.getCollideable() == *m_collideable) {
@@ -27,7 +27,6 @@ void Paddle::update(float dt) {
 
 void Paddle::init(Entity::Values v) {
     Entity::init(v);
-    Entity::getCollideable()->setEnabled(true);
 }
 
 void Paddle::shrink() {

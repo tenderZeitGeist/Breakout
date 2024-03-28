@@ -11,7 +11,11 @@
 #include <iostream>
 
 GameScene::GameScene(Game& game)
-: m_game(game) {
+: m_game(game)
+, m_topWall(0.f, -1.f)
+, m_leftWall(1.0, 0.f)
+, m_rightWall(-1.f, 0.f)
+, m_ball(m_paddle) {
     initializeWalls();
     initializeBricks();
     initializePaddle();
@@ -117,6 +121,7 @@ void GameScene::initializeBall() {
         .color = config::kPaddleColor
     });
 
+    m_ball.setWalls({m_topWall, m_leftWall, m_rightWall});
     m_entities.emplace_back(m_ball);
 }
 

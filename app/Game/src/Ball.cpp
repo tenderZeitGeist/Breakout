@@ -46,15 +46,21 @@ namespace {
 }
 
 Ball::Ball()
-: Entity(COLLIDEABLE | DRAWABLE | MOVEABLE) {
+: Entity(COLLIDEABLE | DRAWABLE | MOVEABLE, Drawable::Shape::CIRCLE) {
 }
 
 void Ball::update(float delta) {
-    Entity::update(delta);
+    m_moveable->move(delta);
 }
 
 void Ball::init(Values v) {
     Entity::init(v);
+    assert(getWidth() == getHeight());
+    m_drawable->setVisible(true);
+    const auto [dx, dy] = generateRandomDirection();
+    m_moveable->setDirectionX(dx);
+    m_moveable->setDirectionY(dy);
+    //m_moveable->setVelocity(0.06f);
 }
 
 void Ball::onDebug(bool debug) {

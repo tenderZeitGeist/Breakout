@@ -55,7 +55,7 @@ public:
     virtual void onDebug(bool debug);
 
 protected:
-    explicit Entity(ComposeMask composeMask);
+    explicit Entity(ComposeMask composeMask, Drawable::Shape shape = Drawable::Shape::RECT);
     Entity(Entity&&) = default;
     Entity& operator=(Entity&&) = default;
 

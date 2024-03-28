@@ -11,10 +11,11 @@
 #include <iostream>
 
 GameScene::GameScene(Game& game)
-    : m_game(game) {
+: m_game(game) {
     initializeWalls();
     initializeBricks();
     initializePaddle();
+    initializeBall();
 }
 
 void GameScene::update(float delta) {
@@ -37,8 +38,8 @@ void GameScene::exit() {
 }
 
 void GameScene::onDebug(bool debug) {
-    for(auto entityRef : m_entities) {
-       entityRef.get().onDebug(debug);
+    for (auto entityRef: m_entities) {
+        entityRef.get().onDebug(debug);
     }
 }
 
@@ -49,7 +50,7 @@ void GameScene::initializePaddle() {
             .width = config::slotWidth,
             .height = config::slotHeight,
             .velocity = static_cast<float>(config::windowHeight) / 1350.f,
-            .color = {0x00, 0xff, 0xff, 0xff}
+            .color = config::kPaddleColor
         }
 
     );
@@ -105,6 +106,18 @@ void GameScene::initializeBricks() {
             m_entities.emplace_back(brickRef);
         }
     }
+}
+
+void GameScene::initializeBall() {
+    m_ball.init({
+        .x = config::windowHalfWidth - config::slotHalfHeight,
+        .y = config::windowHalfHeight - config::slotHalfHeight,
+        .width = config::slotHeight,
+        .height = config::slotHeight,
+        .color = config::kPaddleColor
+    });
+
+    m_entities.emplace_back(m_ball);
 }
 
 void GameScene::setPaddleDirection() const {

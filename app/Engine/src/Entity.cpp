@@ -4,11 +4,11 @@
 
 #include "Engine/Entity.h"
 
-Entity::Entity(ComposeMask composeMask)
+Entity::Entity(ComposeMask composeMask, Drawable::Shape shape)
     : m_rect({0, 0, 0, 0}) {
     auto& self = *this;
     if (composeMask & DRAWABLE) {
-        m_drawable = std::make_unique<Drawable>(self);
+        m_drawable = std::make_unique<Drawable>(self, shape);
     }
     if (composeMask & MOVEABLE) {
         m_moveable = std::make_unique<Moveable>(self);

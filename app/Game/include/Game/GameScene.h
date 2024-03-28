@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Ball.h"
 #include "Brick.h"
 #include "Scene.h"
 #include "Paddle.h"
@@ -29,6 +30,7 @@ private:
     void initializePaddle();
     void initializeWalls();
     void initializeBricks();
+    void initializeBall();
     void setPaddleDirection() const;
 
     Game& m_game;
@@ -36,6 +38,7 @@ private:
     Wall m_leftWall;
     Wall m_rightWall;
     Paddle m_paddle;
+    Ball m_ball;
     std::vector<Brick> m_bricks;
     std::vector<std::reference_wrapper<Entity>> m_entities;
 };

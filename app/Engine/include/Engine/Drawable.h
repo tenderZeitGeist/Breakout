@@ -12,19 +12,30 @@ struct SDL_Renderer;
 
 class Drawable {
 public:
-    explicit Drawable(Entity& entity);
+    enum class Shape {
+        RECT,
+        CIRCLE
+    };
+
+    explicit Drawable(Entity& entity, Shape shape = Shape::RECT);
 
     ~Drawable() = default;
-    void render(SDL_Renderer& renderer);
+    void render(SDL_Renderer& renderer) const;
 
     [[nodiscard]] bool isVisible() const;
     [[nodiscard]] const SDL_Color& getColor() const;
+    [[nodiscard]] Shape getShape() const;
 
     void setVisible(bool visible);
     void setColor(const SDL_Color& color);
+    void setShape(Shape shape);
 
-protected:
+private:
+    void drawRect(SDL_Renderer& renderer) const;
+    void drawCircle(SDL_Renderer& renderer) const;
+
     Entity& m_entity;
-    SDL_Color m_color;
+    Shape m_shape;
+    SDL_Color m_color{};
     bool m_visible{false};
 };

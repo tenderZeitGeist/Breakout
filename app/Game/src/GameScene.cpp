@@ -9,6 +9,8 @@
 
 #include <Engine/Configuration.h>
 #include <iostream>
+#include <algorithm>
+#include <ranges>
 
 GameScene::GameScene(Game& game)
 : m_game(game)
@@ -122,6 +124,12 @@ void GameScene::initializeBall() {
     });
 
     m_ball.setWalls({m_topWall, m_leftWall, m_rightWall});
+    std::vector<std::reference_wrapper<Brick>> brickRefs;
+    brickRefs.reserve(m_bricks.size());
+    for (std::reference_wrapper<Brick> brick : m_bricks) {
+        brickRefs.push_back(brick);
+    }
+    m_ball.setBricks(std::move(brickRefs));
     m_entities.emplace_back(m_ball);
 }
 

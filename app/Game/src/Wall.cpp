@@ -7,6 +7,13 @@
 
 #include "Engine/Configuration.h"
 
+namespace {
+    bool almostEqual(float a, float b) {
+        static constexpr auto epsilon = 0.00001f;
+        return std::abs(a - b) < epsilon;
+    }
+}
+
 Wall::Wall(float x, float y)
 : Entity(Entity::COLLIDEABLE)
 , m_normalX(x)

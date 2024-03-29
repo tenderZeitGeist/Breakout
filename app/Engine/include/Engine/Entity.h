@@ -13,6 +13,11 @@
 
 struct SDL_Renderer;
 
+struct Vector2D {
+    float x;
+    float y;
+};
+
 class Entity {
 public:
     struct Values {

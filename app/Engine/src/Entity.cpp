@@ -36,7 +36,7 @@ void Entity::init(Entity::Values v) {
 }
 
 void Entity::render(SDL_Renderer& renderer) {
-    if (m_drawable) {
+    if (m_drawable && m_drawable->isVisible()) {
         m_drawable->render(renderer);
     }
 }

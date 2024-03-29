@@ -24,11 +24,10 @@ public:
 
     [[nodiscard]] bool isVisible() const;
     [[nodiscard]] const SDL_Color& getColor() const;
-    [[nodiscard]] Shape getShape() const;
 
     void setVisible(bool visible);
     void setColor(const SDL_Color& color);
-    void setShape(Shape shape);
+    void showVector(bool debug);
 
 private:
     void drawRect(SDL_Renderer& renderer) const;
@@ -37,5 +36,6 @@ private:
     Entity& m_entity;
     Shape m_shape;
     SDL_Color m_color{};
-    bool m_visible{false};
+    bool m_visible{true};
+    bool m_debug{false};
 };

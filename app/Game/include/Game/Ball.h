@@ -7,9 +7,9 @@
 
 #include <vector>
 
+class Brick;
 class Paddle;
 class Wall;
-class Vector2D;
 
 class Ball
     : public Entity {
@@ -20,12 +20,13 @@ public:
     void onDebug(bool debug) override;
     void reset();
 
-    void setWalls(std::initializer_list<std::reference_wrapper<Wall>> walls);
-    [[nodiscard]] static constexpr float initialVelocity() ;
+    void setWalls(std::vector<std::reference_wrapper<Wall>> walls);
+    void setBricks(std::vector<std::reference_wrapper<Brick>> bricks);
+    [[nodiscard]] static constexpr float initialVelocity();
 
 private:
-    void calculateNewDirection();
     std::vector<std::reference_wrapper<Wall>> m_walls;
+    std::vector<std::reference_wrapper<Brick>> m_bricks;
     Paddle& m_paddle;
     std::size_t m_hitCount{0};
     bool m_orangeBrickHit{false};

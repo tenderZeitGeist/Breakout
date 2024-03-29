@@ -3,24 +3,19 @@
 //
 
 #include "Game/Ball.h"
-
-#include <algorithm>
-
+#include "Game/Brick.h"
 #include "Game/Wall.h"
+#include "Game/Paddle.h"
 
 #include <Engine/Configuration.h>
 
+#include <algorithm>
 #include <cassert>
 #include <random>
 #include <cmath>
 #include <iostream>
 
 #include "Game/Paddle.h"
-
-struct Vector2D {
-    float x;
-    float y;
-};
 
 namespace {
     float magnitude(float x, float y) {
@@ -46,7 +41,7 @@ namespace {
         const Vector2D direction = [value = distribution(rng)]() -> Vector2D {
             switch (value) {
                 case 1:
-                // return {0.f, 1.f};
+                    return {0.f, 1.f};
                 case 2:
                     return {0.5f, 0.5f};
                 case 3:
@@ -57,7 +52,7 @@ namespace {
             assert("Invalid number generated");
             return {};
         }();
-        return direction;
+        return normalize(direction);
     }
 
     Vector2D rotate(Vector2D velocity, float theta) {
@@ -83,8 +78,8 @@ namespace {
 }
 
 Ball::Ball(Paddle& paddle)
-: Entity(COLLIDEABLE | DRAWABLE | MOVEABLE, Drawable::Shape::CIRCLE)
-, m_paddle(paddle) {
+    : Entity(COLLIDEABLE | DRAWABLE | MOVEABLE, Drawable::Shape::CIRCLE)
+    , m_paddle(paddle) {
 }
 
 void Ball::update(float delta) {
@@ -103,9 +98,9 @@ void Ball::update(float delta) {
             const auto wallNormals = wall.getNormals();
             const auto xDir = wallNormals.first != 0.f;
             if (xDir) {
-                m_moveable->setDirectionX(m_moveable->getDirectionX() * -1.f);
+                m_moveable->setDirectionX(-m_moveable->getDirectionX());
             } else {
-                m_moveable->setDirectionY(m_moveable->getDirectionY() * -1.f);
+                m_moveable->setDirectionY(-m_moveable->getDirectionY());
             }
             return;
         }
@@ -114,11 +109,22 @@ void Ball::update(float delta) {
     const auto& paddle = *m_paddle.getCollideable();
     if (*m_collideable == *m_paddle.getCollideable()) {
         resetPosition(x, y);
-        const auto distance = static_cast<float>(m_collideable->getCenterX() - paddle.getCenterX());
-        const auto dx = distance / (static_cast<float>(m_paddle.getWidth()) / 2.f);
+        const auto distanceX = static_cast<float>(m_collideable->getCenterX() - paddle.getCenterX());
+        const auto dx = distanceX / (static_cast<float>(m_paddle.getWidth()) / 2.f);
         Vector2D direction = normalize({dx, -m_moveable->getDirectionY()});
         m_moveable->setDirectionX(direction.x);
         m_moveable->setDirectionY(direction.y);
+        return;
+    }
+
+    for (auto brickRef: m_bricks) {
+        const auto& brick = brickRef.get();
+        if (*m_collideable == *brick.getCollideable()) {
+            resetPosition(x, y);
+            brick.getDrawable()->setVisible(false);
+            brick.getCollideable()->setEnabled(false);
+            m_moveable->setDirectionY(-m_moveable->getDirectionY());
+        }
     }
 }
 
@@ -133,7 +139,7 @@ void Ball::init(Values v) {
 }
 
 void Ball::onDebug(bool debug) {
-    Entity::onDebug(debug);
+    m_drawable->showVector(debug);
 }
 
 void Ball::reset() {
@@ -151,8 +157,12 @@ void Ball::reset() {
     m_redBrickHit = false;
 }
 
-void Ball::setWalls(std::initializer_list<std::reference_wrapper<Wall> > walls) {
-    m_walls = walls;
+void Ball::setWalls(std::vector<std::reference_wrapper<Wall>> walls) {
+    m_walls = std::move(walls);
+}
+
+void Ball::setBricks(std::vector<std::reference_wrapper<Brick>> bricks) {
+    m_bricks = std::move(bricks);
 }
 
 constexpr float Ball::initialVelocity() {

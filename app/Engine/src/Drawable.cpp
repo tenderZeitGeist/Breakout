@@ -9,6 +9,8 @@
 
 #include <array>
 
+#include "Engine/Configuration.h"
+
 Drawable::Drawable(Entity& entity, Shape shape)
 : m_entity(entity)
 , m_shape(shape) {
@@ -25,6 +27,17 @@ void Drawable::render(SDL_Renderer& renderer) const {
             drawCircle(renderer);
             break;
     }
+
+    if(m_debug) {
+        const auto direction = m_entity.getMoveable()->currentDirection();
+        constexpr auto debugColor = config::kDebugColor;
+        const auto centerX = m_entity.getX() + m_entity.getWidth() / 2;
+        const auto centerY = m_entity.getY() + m_entity.getHeight() / 2;
+        const auto directionX = centerX + static_cast<int>(static_cast<float>(m_entity.getWidth()) * std::cos(direction));
+        const auto directionY = centerY + static_cast<int>(static_cast<float>(m_entity.getHeight()) * std::sin(direction));
+        SDL_SetRenderDrawColor(&renderer, debugColor.r, debugColor.g, debugColor.b, debugColor.a);
+        SDL_RenderDrawLine(&renderer, centerX, centerY, directionX, directionY);
+    }
 }
 
 bool Drawable::isVisible() const {
@@ -35,10 +48,6 @@ const SDL_Color& Drawable::getColor() const {
     return m_color;
 }
 
-Drawable::Shape Drawable::getShape() const {
-    return m_shape;
-}
-
 void Drawable::setVisible(bool visible) {
     m_visible = visible;
 }
@@ -47,8 +56,8 @@ void Drawable::setColor(const SDL_Color& color) {
     m_color = color;
 }
 
-void Drawable::setShape(Shape shape) {
-    m_shape = shape;
+void Drawable::showVector(bool debug) {
+    m_debug = true;
 }
 
 void Drawable::drawRect(SDL_Renderer& renderer) const {

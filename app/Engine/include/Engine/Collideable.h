@@ -11,6 +11,7 @@ public:
     explicit Collideable(Entity& entity);
 
     friend bool operator==(const Collideable& lhs, const Collideable& rhs);
+    friend bool operator!=(const Collideable& lhs, const Collideable& rhs);
 
     [[nodiscard]] bool isEnabled() const;
     [[nodiscard]] int getExtentX() const;

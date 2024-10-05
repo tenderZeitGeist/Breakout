@@ -11,13 +11,16 @@
 #include <Engine/Event.h>
 
 Game::Game(std::shared_ptr<events::EventManager> eventManager)
-    : m_eventManager(std::move(eventManager))
-      , m_keyHandler(m_eventManager) {
-    m_eventManager->subscribe<Game, events::KeyPress, &Game::onKeyEvent>(this);
+    : m_eventManager(std::move(eventManager)) {
     m_eventManager->subscribe<Game, events::Debug, &Game::onDebug>(this);
+    m_eventManager->subscribe<Game, events::StartStop, &Game::onStartStop>(this);
 }
 
 void Game::update(float delta) {
+    if(!m_playing) {
+        return;
+    }
+
     if (m_scene) {
         m_scene->update(delta);
     }
@@ -37,17 +40,13 @@ const Scene* Game::getScene() const {
     return m_scene.get();
 }
 
-const KeyHandler& Game::getKeyHandler() const {
-    return m_keyHandler;
-}
-
-void Game::onKeyEvent(events::KeyPress& e) {
-    m_keyHandler.onKeyEvent(e);
-}
-
 void Game::onDebug(events::Debug&) {
     m_debug = !m_debug;
     if (m_scene) {
         m_scene->onDebug(m_debug);
     }
+}
+
+void Game::onStartStop(events::StartStop&) {
+    m_playing = !m_playing;
 }

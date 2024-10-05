@@ -34,6 +34,10 @@ namespace events {
         KeyEventType m_keyEvent{};
     };
 
+    struct StartStop
+        : Event {
+    };
+
     struct Debug
         : Event {
     };

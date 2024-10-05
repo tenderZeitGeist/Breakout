@@ -14,11 +14,16 @@
 
 class Entity;
 class Game;
+class KeyHandler;
+
+namespace events {
+    class EventManager;
+}
 
 class GameScene
     : public Scene {
 public:
-    explicit GameScene(Game& game);
+    explicit GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::shared_ptr<events::EventManager> eventManager);
 
     void update(float delta) override;
     void render(SDL_Renderer& renderer) override;
@@ -33,7 +38,6 @@ private:
     void initializeBall();
     void setPaddleDirection() const;
 
-    Game& m_game;
     Wall m_topWall;
     Wall m_leftWall;
     Wall m_rightWall;
@@ -41,4 +45,6 @@ private:
     Ball m_ball;
     std::vector<Brick> m_bricks;
     std::vector<std::reference_wrapper<Entity>> m_entities;
+    std::reference_wrapper<const KeyHandler> m_keyHandler;
+    std::shared_ptr<events::EventManager> m_eventManager;
 };

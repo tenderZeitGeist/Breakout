@@ -33,8 +33,8 @@ void Drawable::render(SDL_Renderer& renderer) const {
         constexpr auto debugColor = config::kDebugColor;
         const auto centerX = m_entity.getX() + m_entity.getWidth() / 2;
         const auto centerY = m_entity.getY() + m_entity.getHeight() / 2;
-        const auto directionX = centerX + static_cast<int>(static_cast<float>(m_entity.getWidth()) * std::cos(direction));
-        const auto directionY = centerY + static_cast<int>(static_cast<float>(m_entity.getHeight()) * std::sin(direction));
+        const auto directionX = centerX + static_cast<int>(static_cast<float>(m_entity.getWidth()) * std::cos(direction) * 2);
+        const auto directionY = centerY + static_cast<int>(static_cast<float>(m_entity.getHeight()) * std::sin(direction) * 2);
         SDL_SetRenderDrawColor(&renderer, debugColor.r, debugColor.g, debugColor.b, debugColor.a);
         SDL_RenderDrawLine(&renderer, centerX, centerY, directionX, directionY);
     }
@@ -57,7 +57,7 @@ void Drawable::setColor(const SDL_Color& color) {
 }
 
 void Drawable::showVector(bool debug) {
-    m_debug = true;
+    m_debug = debug;
 }
 
 void Drawable::drawRect(SDL_Renderer& renderer) const {

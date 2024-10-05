@@ -15,13 +15,13 @@ Paddle::Paddle()
 void Paddle::update(float dt) {
     const int currentX = getX();
     m_moveable->move(dt);
-    return;
     for (const auto wallRef: m_walls) {
         const auto& wall = wallRef.get();
-        if (*wall.getCollideable() == *m_collideable) {
-            setX(currentX);
-            return;
+        if (*wall.getCollideable() != *m_collideable) {
+           continue;
         }
+        setX(currentX);
+        return;
     }
 }
 

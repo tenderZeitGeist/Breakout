@@ -11,7 +11,11 @@ Collideable::Collideable(Entity& entity){
 }
 
 bool operator==(const Collideable& lhs, const Collideable& rhs) {
-    return collides(rhs, lhs);
+    return collides(lhs, rhs);
+}
+
+bool operator !=(const Collideable& lhs, const Collideable& rhs) {
+    return !(lhs == rhs);
 }
 
 bool collides(const Collideable& lhs, const Collideable& rhs) {

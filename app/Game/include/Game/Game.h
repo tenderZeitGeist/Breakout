@@ -11,6 +11,7 @@ namespace events {
     class EventManager;
     struct KeyPress;
     struct Debug;
+    struct StartStop;
 }
 
 class Game {
@@ -29,15 +30,14 @@ public:
 
     void setScene(std::unique_ptr<Scene> scene);
     [[nodiscard]] const Scene* getScene() const;
-    [[nodiscard]] const KeyHandler& getKeyHandler() const;
 
 private:
-    void onKeyEvent(events::KeyPress& e);
     void onDebug(events::Debug&);
+    void onStartStop(events::StartStop&);
 
     std::shared_ptr<events::EventManager> m_eventManager;
     std::shared_ptr<Scene> m_scene;
-    KeyHandler m_keyHandler;
     State m_state{State::UNINTIALIZED};
+    bool m_playing{false};
     bool m_debug{false};
 };

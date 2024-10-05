@@ -26,12 +26,18 @@ namespace {
 
 KeyHandler::KeyHandler(std::shared_ptr<events::EventManager> eventManager) noexcept
     : m_eventManager(std::move(eventManager)) {
+    m_eventManager->subscribe<KeyHandler, events::KeyPress, &KeyHandler::onKeyEvent>(this);
 }
 
 void KeyHandler::onKeyEvent(events::KeyPress& e) {
     setKeyState(e.m_code, e.m_keyEvent == SDL_KEYDOWN);
-    if(m_keyStates[D]) {
+
+    if (m_keyStates[D]) {
         m_eventManager->notify(events::Debug());
+    }
+
+    if (m_keyStates[SPACE]) {
+        m_eventManager->notify(events::StartStop());
     }
 }
 

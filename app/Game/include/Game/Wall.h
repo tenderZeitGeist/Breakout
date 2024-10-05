@@ -11,7 +11,7 @@ class Wall
 public:
     explicit Wall(float x, float y);
     void onDebug(bool debug) override;
-    [[nodiscard]] std::pair<float, float> getNormals() const;
+    [[nodiscard]] Vector2D getNormals() const;
 private:
     float m_normalX;
     float m_normalY;

@@ -8,16 +8,19 @@
 #include "Game/GameScene.h"
 
 #include <Engine/Configuration.h>
+#include <Engine/EventManager.h>
+
 #include <iostream>
 #include <algorithm>
 #include <ranges>
 
-GameScene::GameScene(Game& game)
-: m_game(game)
-, m_topWall(0.f, -1.f)
+GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::shared_ptr<events::EventManager> eventManager)
+: m_topWall(0.f, -1.f)
 , m_leftWall(1.0, 0.f)
 , m_rightWall(-1.f, 0.f)
-, m_ball(m_paddle) {
+, m_ball(m_paddle)
+, m_keyHandler(keyHandler)
+, m_eventManager(std::move(eventManager)){
     initializeWalls();
     initializeBricks();
     initializePaddle();
@@ -38,6 +41,7 @@ void GameScene::render(SDL_Renderer& renderer) {
 }
 
 void GameScene::enter() {
+
 }
 
 void GameScene::exit() {
@@ -69,7 +73,8 @@ void GameScene::initializeWalls() {
         .x = 0,
         .y = 0,
         .width = config::windowWidth,
-        .height = config::slotHeight
+        .height = config::slotHeight,
+        .color = config::kDebugColor
     });
 
     m_entities.emplace_back(m_topWall);
@@ -78,7 +83,8 @@ void GameScene::initializeWalls() {
         .x = 0,
         .y = 0,
         .width = config::slotHalfWidth,
-        .height = config::windowHeight
+        .height = config::windowHeight,
+        .color = config::kDebugColor
     });
 
     m_entities.emplace_back(m_leftWall);
@@ -87,7 +93,8 @@ void GameScene::initializeWalls() {
         .x = config::windowWidth - config::slotHalfWidth,
         .y = 0,
         .width = config::slotHalfWidth,
-        .height = config::windowHeight
+        .height = config::windowHeight,
+        .color = config::kDebugColor
     });
 
     m_entities.emplace_back(m_rightWall);
@@ -134,7 +141,7 @@ void GameScene::initializeBall() {
 }
 
 void GameScene::setPaddleDirection() const {
-    const auto& keyStates = m_game.getKeyHandler().getKeyStates();
+    const auto& keyStates = m_keyHandler.get().getKeyStates();
     const float leftDirection = static_cast<float>(keyStates[KeyHandler::LEFT]) * -1.f;
     const float rightDirection = static_cast<float>(keyStates[KeyHandler::RIGHT]) * 1.f;
     m_paddle.getMoveable()->setDirectionX(leftDirection + rightDirection);

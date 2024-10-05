@@ -77,27 +77,27 @@ namespace {
     }
 }
 
-Ball::Ball(Paddle& paddle)
+Ball::Ball(std::reference_wrapper<Paddle> paddle)
     : Entity(COLLIDEABLE | DRAWABLE | MOVEABLE, Drawable::Shape::CIRCLE)
     , m_paddle(paddle) {
 }
 
 void Ball::update(float delta) {
-    const auto x = getX();
-    const auto y = getY();
-    m_moveable->move(delta);
     const auto resetPosition = [this](int x, int y) {
         setX(x);
         setY(y);
     };
+    const auto x = getX();
+    const auto y = getY();
+    m_moveable->move(delta);
 
     for (auto wallRef: m_walls) {
         const auto& wall = wallRef.get();
         if (*wall.getCollideable() == *m_collideable) {
             resetPosition(x, y);
             const auto wallNormals = wall.getNormals();
-            const auto xDir = wallNormals.first != 0.f;
-            if (xDir) {
+            const auto isSideWall = wallNormals.x != 0.f;
+            if (isSideWall) {
                 m_moveable->setDirectionX(-m_moveable->getDirectionX());
             } else {
                 m_moveable->setDirectionY(-m_moveable->getDirectionY());
@@ -106,11 +106,11 @@ void Ball::update(float delta) {
         }
     }
 
-    const auto& paddle = *m_paddle.getCollideable();
-    if (*m_collideable == *m_paddle.getCollideable()) {
+    const auto& paddle = *m_paddle.get().getCollideable();
+    if (*m_collideable == *m_paddle.get().getCollideable()) {
         resetPosition(x, y);
         const auto distanceX = static_cast<float>(m_collideable->getCenterX() - paddle.getCenterX());
-        const auto dx = distanceX / (static_cast<float>(m_paddle.getWidth()) / 2.f);
+        const auto dx = distanceX / (static_cast<float>(m_paddle.get().getWidth()) / 2.f);
         Vector2D direction = normalize({dx, -m_moveable->getDirectionY()});
         m_moveable->setDirectionX(direction.x);
         m_moveable->setDirectionY(direction.y);
@@ -150,11 +150,6 @@ void Ball::reset() {
     m_moveable->setVelocity(0.f);
     m_moveable->setDirectionX(x);
     m_moveable->setDirectionY(y);
-
-    m_drawable->setVisible(false);
-    m_hitCount = 0;
-    m_orangeBrickHit = false;
-    m_redBrickHit = false;
 }
 
 void Ball::setWalls(std::vector<std::reference_wrapper<Wall>> walls) {

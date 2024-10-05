@@ -35,6 +35,7 @@ private:
 
     std::thread m_pollThread;
     std::shared_ptr<events::EventManager> m_eventManager;
+    KeyHandler m_keyHandler;
     Game m_game;
 
     std::size_t m_deltaAccumulator{0};

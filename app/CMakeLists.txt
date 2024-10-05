@@ -5,7 +5,7 @@ project(${PROJECT_NAME})
 add_subdirectory(Engine)
 add_subdirectory(Game)
 
-set(SOURCE_FILES ${ENGINE_SOURCE_FILES} ${GAME_SOURCE_FILES} main.cpp)
+set(SOURCE_FILES main.cpp)
 
 add_executable(Breakout ${SOURCE_FILES})
 

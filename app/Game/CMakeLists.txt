@@ -10,6 +10,7 @@ set(GAME_HEADER_FILES
         "${DIR_INCLUDE}/Game/Brick.h"
         "${DIR_INCLUDE}/Game/Game.h"
         "${DIR_INCLUDE}/Game/GameScene.h"
+        "${DIR_INCLUDE}/Game/GameEvent.h"
         "${DIR_INCLUDE}/Game/Paddle.h"
         "${DIR_INCLUDE}/Game/Scene.h"
         "${DIR_INCLUDE}/Game/Wall.h"

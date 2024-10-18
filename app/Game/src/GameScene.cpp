@@ -6,6 +6,7 @@
 
 #include "Game/Game.h"
 #include "Game/GameScene.h"
+#include "Game/GameEvent.h"
 
 #include <Engine/Configuration.h>
 #include <Engine/EventManager.h>
@@ -18,13 +19,14 @@ GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::s
 : m_topWall(0.f, -1.f)
 , m_leftWall(1.0, 0.f)
 , m_rightWall(-1.f, 0.f)
-, m_ball(m_paddle)
+, m_ball(m_paddle, eventManager)
 , m_keyHandler(keyHandler)
 , m_eventManager(std::move(eventManager)){
     initializeWalls();
     initializeBricks();
     initializePaddle();
     initializeBall();
+    m_eventManager->subscribe<GameScene, events::BrickDestroyedEvent, &GameScene::onBrickDestroyed>(this);
 }
 
 void GameScene::update(float delta) {
@@ -145,4 +147,11 @@ void GameScene::setPaddleDirection() const {
     const float leftDirection = static_cast<float>(keyStates[KeyHandler::LEFT]) * -1.f;
     const float rightDirection = static_cast<float>(keyStates[KeyHandler::RIGHT]) * 1.f;
     m_paddle.getMoveable()->setDirectionX(leftDirection + rightDirection);
+}
+
+void GameScene::onBrickDestroyed(events::BrickDestroyedEvent& e) {
+    auto& brick = e.brick;
+    brick.getDrawable()->setVisible(false);
+    brick.getCollideable()->setEnabled(false);
+    _pointerCounter += brick.getValue();
 }

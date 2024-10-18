@@ -18,6 +18,7 @@ class KeyHandler;
 
 namespace events {
     class EventManager;
+    struct BrickDestroyedEvent;
 }
 
 class GameScene
@@ -29,7 +30,10 @@ public:
     void render(SDL_Renderer& renderer) override;
     void enter() override;
     void exit() override;
+
     void onDebug(bool debug) override;
+
+    void onBrickDestroyed(events::BrickDestroyedEvent& Events);
 
 private:
     void initializePaddle();
@@ -37,6 +41,8 @@ private:
     void initializeBricks();
     void initializeBall();
     void setPaddleDirection() const;
+
+    std::size_t _pointerCounter{0};
 
     Wall m_topWall;
     Wall m_leftWall;

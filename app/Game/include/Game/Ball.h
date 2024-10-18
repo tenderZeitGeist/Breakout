@@ -11,10 +11,14 @@
 class Brick;
 class Paddle;
 
+namespace events {
+    class EventManager;
+}
+
 class Ball
     : public Entity {
 public:
-    explicit Ball(std::reference_wrapper<Paddle> paddle);
+    explicit Ball(std::reference_wrapper<Paddle> paddle, std::shared_ptr<events::EventManager> eventManager);
     void update(float delta) override;
     void init(Values v) override;
     void onDebug(bool debug) override;
@@ -28,6 +32,7 @@ private:
     std::vector<std::reference_wrapper<Wall>> m_walls;
     std::vector<std::reference_wrapper<Brick>> m_bricks;
     std::reference_wrapper<Paddle> m_paddle;
+    std::shared_ptr<events::EventManager> m_eventManager;
     std::size_t m_hitCount{0};
     bool m_orangeBrickHit{false};
     bool m_redBrickHit{false};

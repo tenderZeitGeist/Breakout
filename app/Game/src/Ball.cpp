@@ -2,20 +2,20 @@
 // Created by zeitgeist on 27.03.24.
 //
 
-#include "Game/Ball.h"
-#include "Game/Brick.h"
-#include "Game/Wall.h"
-#include "Game/Paddle.h"
+#include <Game/Ball.h>
+#include <Game/Brick.h>
+#include <Game/Wall.h>
+#include <Game/Paddle.h>
+#include <Game/GameEvent.h>
 
 #include <Engine/Configuration.h>
+#include <Engine/EventManager.h>
 
 #include <algorithm>
 #include <cassert>
 #include <random>
 #include <cmath>
 #include <iostream>
-
-#include "Game/Paddle.h"
 
 namespace {
     float magnitude(float x, float y) {
@@ -77,9 +77,11 @@ namespace {
     }
 }
 
-Ball::Ball(std::reference_wrapper<Paddle> paddle)
+Ball::Ball(std::reference_wrapper<Paddle> paddle, std::shared_ptr<events::EventManager> eventManager)
     : Entity(COLLIDEABLE | DRAWABLE | MOVEABLE, Drawable::Shape::CIRCLE)
-    , m_paddle(paddle) {
+    , m_paddle(paddle)
+    , m_eventManager(eventManager) {
+    assert(eventManager);
 }
 
 void Ball::update(float delta) {
@@ -121,9 +123,8 @@ void Ball::update(float delta) {
         const auto& brick = brickRef.get();
         if (*m_collideable == *brick.getCollideable()) {
             resetPosition(x, y);
-            brick.getDrawable()->setVisible(false);
-            brick.getCollideable()->setEnabled(false);
             m_moveable->setDirectionY(-m_moveable->getDirectionY());
+            m_eventManager->notify(events::BrickDestroyedEvent{brick});
         }
     }
 }

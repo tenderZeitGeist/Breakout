@@ -12,5 +12,8 @@ namespace events {
         const Brick& brick;
     };
 
+    struct BallOutOfBoundsEvent : Event {
+    };
+
 }
 

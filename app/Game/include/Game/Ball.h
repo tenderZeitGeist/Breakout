@@ -29,6 +29,8 @@ public:
     [[nodiscard]] static constexpr float initialVelocity();
 
 private:
+    [[nodiscard]] bool outOfBounds() const;
+
     std::vector<std::reference_wrapper<Wall>> m_walls;
     std::vector<std::reference_wrapper<Brick>> m_bricks;
     std::reference_wrapper<Paddle> m_paddle;

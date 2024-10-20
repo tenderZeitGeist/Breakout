@@ -93,6 +93,11 @@ void Ball::update(float delta) {
     const auto y = getY();
     m_moveable->move(delta);
 
+    if (outOfBounds()) {
+        m_eventManager->notify(events::BallOutOfBoundsEvent());
+        return;
+    }
+
     for (auto wallRef: m_walls) {
         const auto& wall = wallRef.get();
         if (*wall.getCollideable() == *m_collideable) {
@@ -148,7 +153,6 @@ void Ball::reset() {
     setY(config::windowHalfHeight - m_collideable->getExtentY());
 
     const auto [x, y] = generateRandomDirection();
-    m_moveable->setVelocity(0.f);
     m_moveable->setDirectionX(x);
     m_moveable->setDirectionY(y);
 }
@@ -163,4 +167,13 @@ void Ball::setBricks(std::vector<std::reference_wrapper<Brick>> bricks) {
 
 constexpr float Ball::initialVelocity() {
     return static_cast<float>(config::windowHeight) / (config::windowHeight * 4.f);
+}
+
+bool Ball::outOfBounds() const {
+    const auto collideable = getCollideable();
+    const auto centerX = collideable->getCenterX();
+    const auto centerY = collideable->getCenterY();
+    const auto x = centerX < 0 || centerX > config::windowWidth;
+    const auto y = centerY < 0 || centerY > config::windowHeight;
+    return x || y;
 }

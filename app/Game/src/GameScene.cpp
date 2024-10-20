@@ -27,6 +27,7 @@ GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::s
     initializePaddle();
     initializeBall();
     m_eventManager->subscribe<GameScene, events::BrickDestroyedEvent, &GameScene::onBrickDestroyed>(this);
+    m_eventManager->subscribe<GameScene, events::BallOutOfBoundsEvent, &GameScene::onBallOutOfBounds>(this);
 }
 
 void GameScene::update(float delta) {
@@ -153,5 +154,11 @@ void GameScene::onBrickDestroyed(events::BrickDestroyedEvent& e) {
     auto& brick = e.brick;
     brick.getDrawable()->setVisible(false);
     brick.getCollideable()->setEnabled(false);
-    _pointerCounter += brick.getValue();
+    m_pointerCounter += brick.getValue();
+}
+
+void GameScene::onBallOutOfBounds(events::BallOutOfBoundsEvent& e) {
+    m_ball.reset();
+    --m_lifeCounter;
+    m_eventManager->notify(events::StartStop());
 }

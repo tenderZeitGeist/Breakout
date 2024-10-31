@@ -22,7 +22,9 @@ public:
     void setWalls(std::initializer_list<std::reference_wrapper<Wall>> walls);
 
 private:
-    int m_originalWidth;
-    int m_currentWidth;
+    int m_defaultX{0};
+    int m_defaultY{0};
+    int m_originalWidth{0};
+    int m_currentWidth{0};
     std::vector<std::reference_wrapper<Wall>> m_walls;
 };

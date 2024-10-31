@@ -4,7 +4,17 @@
 
 #pragma once
 
+#include <cstdint>
+
 class Entity;
+
+enum Collision : std::uint8_t {
+    NONE = 0,
+    LEFT = 1 << 0,
+    RIGHT = 1 << 1,
+    TOP = 1 << 2,
+    BOTTOM = 1 << 3,
+};
 
 class Collideable {
 public:
@@ -12,6 +22,7 @@ public:
 
     friend bool operator==(const Collideable& lhs, const Collideable& rhs);
     friend bool operator!=(const Collideable& lhs, const Collideable& rhs);
+    friend Collision collides(const Collideable& lhs, const Collideable& rhs);
 
     [[nodiscard]] bool isEnabled() const;
     [[nodiscard]] int getExtentX() const;
@@ -26,8 +37,6 @@ public:
     void setCenterY(int centerY);
 
 private:
-     friend bool collides(const Collideable& lhs, const Collideable& rhs);
-
     bool m_enabled{true};
     int m_extentX{0};
     int m_extentY{0};

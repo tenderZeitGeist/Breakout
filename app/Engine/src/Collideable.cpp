@@ -2,7 +2,7 @@
 // Created by zeitgeist on 13.10.23.
 //
 
-#include "../Collideable.h"
+#include "Engine/Collideable.h"
 
 #include <cmath>
 
@@ -11,18 +11,37 @@ Collideable::Collideable(Entity& entity){
 }
 
 bool operator==(const Collideable& lhs, const Collideable& rhs) {
-    return collides(rhs, lhs);
+    return static_cast<bool>(collides(lhs, rhs));
 }
 
-bool collides(const Collideable& lhs, const Collideable& rhs) {
+bool operator !=(const Collideable& lhs, const Collideable& rhs) {
+    return !(lhs == rhs);
+}
+
+Collision collides(const Collideable& lhs, const Collideable& rhs) {
     if(!lhs.isEnabled() || !rhs.isEnabled()) {
-        return false;
+        return Collision::NONE;
     }
 
-    // Axis-Aligned Bounding Box intersection test.
-    const auto x = std::abs(lhs.getCenterX() - rhs.getCenterX()) < (lhs.getExtentX() + rhs.getExtentX());
-    const auto y = std::abs(lhs.getCenterY() - rhs.getCenterY()) < (lhs.getExtentY() + rhs.getExtentY());
-    return x && y;
+    const auto deltaX = lhs.getCenterX() - rhs.getCenterX();
+    const auto deltaY = lhs.getCenterY() - rhs.getCenterY();
+    const auto sumOfExtentX = lhs.getExtentX() + rhs.getExtentX();
+    const auto sumOfExtentY = lhs.getExtentY() + rhs.getExtentY();
+    const auto overlapX = sumOfExtentX - std::abs(deltaX);
+    const auto overlapY = sumOfExtentY - std::abs(deltaY);
+
+    if (overlapX <= 0 || overlapY <= 0) {
+        return Collision::NONE;
+    }
+
+    int collisions = Collision::NONE;
+    if (overlapX < overlapY) {
+        collisions |= deltaX > 0 ? Collision::RIGHT : Collision::LEFT;
+    } else {
+        collisions |= deltaY > 0 ? Collision::BOTTOM : Collision::TOP;
+    }
+
+    return static_cast<Collision>(collisions);
 }
 
 bool Collideable::isEnabled() const {
@@ -45,6 +64,10 @@ int Collideable::getCenterY() const {
     return m_centerY;
 }
 
+void Collideable::setEnabled(bool enabled) {
+    m_enabled = enabled;
+}
+
 void Collideable::setExtentX(int extentX) {
     m_extentX = extentX;
 }
@@ -60,5 +83,4 @@ void Collideable::setCenterX(int centerX) {
 void Collideable::setCenterY(int centerY) {
      m_centerY = centerY;
 }
-
 

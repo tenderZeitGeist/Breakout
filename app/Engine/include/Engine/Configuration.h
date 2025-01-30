@@ -6,6 +6,8 @@
 
 #include <SDL2/SDL.h>
 
+#include <array>
+
 namespace config {
     static constexpr int windowWidth = 800;
     static constexpr int windowHeight = 950;
@@ -24,8 +26,16 @@ namespace config {
     static constexpr int frameTimes = 1000 / frameRate;
     static constexpr float frameTimesInFloat = static_cast<float>(frameTimes);
 
-   static const SDL_Color kBricksFillStyle1 = {0xff, 0xf0, 0x00, 0xff };
-   static const SDL_Color kBricksFillStyle2 = {0xff, 0x80, 0x00, 0xff };
-   static const SDL_Color kBricksFillStyle3 = {0xff, 0xf0, 0x00, 0xff };
-   static const SDL_Color kBricksFillStyle4 = {0xff, 0xf0, 0x00, 0xff };
+    static constexpr SDL_Color kBricksFillStyle1 = {0xff, 0xf0, 0x00, 0xff };
+    static constexpr SDL_Color kBricksFillStyle2 = {0x00, 0x80, 0x00, 0xff };
+    static constexpr SDL_Color kBricksFillStyle3 = {0xff, 0xa5, 0x00, 0xff };
+    static constexpr SDL_Color kBricksFillStyle4 = {0xff, 0x00, 0x00, 0xff };
+    static constexpr SDL_Color kDebugColor = {0xff, 0x00, 0x00, 0xff };
+    static constexpr SDL_Color kPaddleColor = {0x00, 0xff, 0xff, 0xff };
+    static constexpr std::array kBricksFillStyles{
+        kBricksFillStyle1,
+        kBricksFillStyle2,
+        kBricksFillStyle3,
+        kBricksFillStyle4,
+    };
 }

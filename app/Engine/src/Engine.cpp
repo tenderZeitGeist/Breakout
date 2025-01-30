@@ -1,14 +1,14 @@
-#include "../Configuration.h"
-#include "../Engine.h"
-#include "../Event.h"
-#include "../EventManager.h"
-
-#include <Game/Game.h>
-#include <Game/GameScene.h>
+#include "Engine/Configuration.h"
+#include "Engine/Engine.h"
+#include "Engine/Event.h"
+#include "Engine/EventManager.h"
 
 #include <chrono>
 #include <iostream>
 #include <thread>
+
+#include <Game/Game.h>
+#include <Game/GameScene.h>
 
 namespace {
     void abortProgram(std::string&& reason) {
@@ -29,7 +29,8 @@ Engine::Engine(int width, int height)
     : m_width(width)
     , m_height(height)
     , m_eventManager(std::make_shared<events::EventManager>())
-    , m_game(Game(m_eventManager)) {
+    , m_keyHandler(m_eventManager)
+    , m_game(m_eventManager) {
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         abortProgram("SDL Framework");
@@ -69,17 +70,12 @@ Engine::~Engine() {
 
 int Engine::run() {
     m_previousTick = currentTickInMilliseconds();
-    m_game.setScene(std::make_unique<GameScene>(m_game));
-
-    m_pollThread = std::thread([this](){
-        while (m_keepRunning) {
-            pollEvents();
-        }
-    });
+    m_game.setScene(std::make_unique<GameScene>(std::cref(m_keyHandler), m_eventManager));
 
     while (m_keepRunning) {
+        pollEvents();
         const auto currentTick = currentTickInMilliseconds();
-        auto timeDelta = currentTick - m_previousTick;
+        const auto timeDelta = currentTick - m_previousTick;
         m_previousTick = currentTick;
 
         m_deltaAccumulator += timeDelta;
@@ -141,6 +137,6 @@ void Engine::pollEvents() {
     }
 }
 
-void Engine::onShutdown(events::Shutdown*) {
+void Engine::onShutdown(events::Shutdown&) {
     m_keepRunning = false;
 }

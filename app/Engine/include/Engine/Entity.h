@@ -11,7 +11,12 @@
 
 #include <memory>
 
-class SDL_Renderer;
+struct SDL_Renderer;
+
+struct Vector2D {
+    float x;
+    float y;
+};
 
 class Entity {
 public:
@@ -32,18 +37,18 @@ public:
     };
 
     virtual ~Entity() = default;
-    virtual void update(float delta) = 0;
+    virtual void update(float delta);
 
     virtual void render(SDL_Renderer& renderer);
     virtual void init(Values v);
-    [[nodiscard]] int getX() const;
 
+    [[nodiscard]] int getX() const;
     [[nodiscard]] int getY() const;
     [[nodiscard]] int getWidth() const;
     [[nodiscard]] int getHeight() const;
     [[nodiscard]] const SDL_Rect& getRect() const;
-    virtual void setX(int x);
 
+    virtual void setX(int x);
     virtual void setY(int y);
     virtual void setWidth(int width);
     virtual void setHeight(int height);
@@ -52,8 +57,12 @@ public:
     [[nodiscard]] virtual Drawable* getDrawable() const;
     [[nodiscard]] virtual Moveable* getMoveable() const;
 
+    virtual void onDebug(bool debug);
+
 protected:
-    explicit Entity(ComposeMask composeMask);
+    explicit Entity(ComposeMask composeMask, Drawable::Shape shape = Drawable::Shape::RECT);
+    Entity(Entity&&) = default;
+    Entity& operator=(Entity&&) = default;
 
     SDL_Rect m_rect;
 

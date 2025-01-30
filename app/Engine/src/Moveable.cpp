@@ -16,16 +16,10 @@ Moveable::Moveable(Entity& entity)
 }
 
 void Moveable::move(float delta) {
-    static constexpr float epsilon = 0.00001f;
-
-    if (std::fabs(m_directionX) > epsilon) {
-        const auto diff = static_cast<int>(delta * m_directionX * m_velocity);
-        m_entity.setX(m_entity.getX() + diff);
-    }
-    if (std::fabs(m_directionY) > epsilon) {
-        const auto diff = static_cast<int>(delta * m_directionY * m_velocity);
-        m_entity.setY(m_entity.getY() + diff);
-    }
+    const auto diffX = static_cast<int>(delta * m_directionX * m_velocity);
+    m_entity.setX(m_entity.getX() + diffX);
+    const auto diffY = static_cast<int>(delta * m_directionY * m_velocity);
+    m_entity.setY(m_entity.getY() + diffY);
 }
 
 float Moveable::getDirectionX() const {
@@ -50,4 +44,8 @@ void Moveable::setDirectionY(float y) {
 
 void Moveable::setVelocity(float velocity) {
     m_velocity = velocity;
+}
+
+float Moveable::currentDirection() const {
+   return std::atan2(m_directionY, m_directionX);
 }

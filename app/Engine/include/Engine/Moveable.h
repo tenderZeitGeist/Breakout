@@ -19,9 +19,12 @@ public:
     void setDirectionY(float y);
     void setVelocity(float velocity);
 
+    [[nodiscard]] float currentDirection() const;
+
 private:
     Entity& m_entity;
     float m_directionX;
     float m_directionY;
+    float m_direction;
     float m_velocity;
 };

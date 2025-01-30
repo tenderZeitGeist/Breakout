@@ -4,11 +4,11 @@
 
 #include "Engine/Entity.h"
 
-Entity::Entity(ComposeMask composeMask)
+Entity::Entity(ComposeMask composeMask, Drawable::Shape shape)
     : m_rect({0, 0, 0, 0}) {
     auto& self = *this;
     if (composeMask & DRAWABLE) {
-        m_drawable = std::make_unique<Drawable>(self);
+        m_drawable = std::make_unique<Drawable>(self, shape);
     }
     if (composeMask & MOVEABLE) {
         m_moveable = std::make_unique<Moveable>(self);
@@ -16,6 +16,10 @@ Entity::Entity(ComposeMask composeMask)
     if (composeMask & COLLIDEABLE) {
         m_collideable = std::make_unique<Collideable>(self);
     }
+}
+
+void Entity::update(float delta) {
+
 }
 
 void Entity::init(Entity::Values v) {
@@ -32,7 +36,7 @@ void Entity::init(Entity::Values v) {
 }
 
 void Entity::render(SDL_Renderer& renderer) {
-    if (m_drawable) {
+    if (m_drawable && m_drawable->isVisible()) {
         m_drawable->render(renderer);
     }
 }
@@ -59,14 +63,18 @@ const SDL_Rect& Entity::getRect() const {
 
 void Entity::setX(int x) {
     if (m_collideable) {
-        m_collideable->setCenterX(getX() - x);
+        const auto centerX = m_collideable->getCenterX();
+        const auto deltaX = getX() - x;
+        m_collideable->setCenterX(centerX - deltaX);
     }
     m_rect.x = static_cast<Sint16>(x);
 }
 
 void Entity::setY(int y) {
     if (m_collideable) {
-        m_collideable->setCenterY(getY() - y);
+        const auto centerY = m_collideable->getCenterY();
+        const auto deltaY = getY() - y;
+        m_collideable->setCenterY(centerY - deltaY);
     }
     m_rect.y = static_cast<Sint16>(y);
 }
@@ -99,4 +107,8 @@ Drawable* Entity::getDrawable() const {
 
 Moveable* Entity::getMoveable() const {
     return m_moveable.get();
+}
+
+void Entity::onDebug(bool debug) {
+    // Base case may be ignored.
 }

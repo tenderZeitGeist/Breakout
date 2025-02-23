@@ -22,6 +22,8 @@ public:
     void setWalls(std::initializer_list<std::reference_wrapper<Wall>> walls);
 
 private:
+    void setDefaultPosition(int x, int y);
+
     int m_defaultX{0};
     int m_defaultY{0};
     int m_originalWidth{0};

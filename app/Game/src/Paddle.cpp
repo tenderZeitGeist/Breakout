@@ -21,10 +21,10 @@ void Paddle::update(float dt) {
             continue;
         }
 
-        if (collision & Collision::LEFT) {
+        if (collision & Side::LEFT) {
             setX(wall.getX() + wall.getWidth());
         }
-        if (collision & Collision::RIGHT) {
+        if (collision & Side::RIGHT) {
             setX(wall.getX() - getWidth());
         }
     }
@@ -32,35 +32,34 @@ void Paddle::update(float dt) {
 
 void Paddle::init(Entity::Values v) {
     Entity::init(v);
-    m_defaultX = v.x;
-    m_defaultY = v.y;
-    m_originalWidth =  v.width;
+    setDefaultPosition(v.x, v.y);
+    m_originalWidth = getWidth();
 }
 
 void Paddle::shrink() {
     const auto width = getWidth();
-    if (m_originalWidth == 0) {
-        m_originalWidth = width;
+    if (m_originalWidth != width) {
+        return;
     }
 
-    if (m_originalWidth == width) {
-        const auto halfWidth = width / 2;
-        setWidth(halfWidth);
-        setX(getX() + halfWidth / 2);
-    }
+    const auto halfWidth = width / 2;
+    setWidth(halfWidth);
+    setX(getX() + halfWidth / 2);
 }
 
 void Paddle::reset() {
     setX(m_defaultX);
     setY(m_defaultY);
-
-    if (m_originalWidth == getWidth()) {
-        return;
+    if (m_originalWidth != getWidth()) {
+        setWidth(m_originalWidth);
     }
-
-    setWidth(m_originalWidth);
 }
 
 void Paddle::setWalls(std::initializer_list<std::reference_wrapper<Wall> > walls) {
     m_walls = walls;
+}
+
+void Paddle::setDefaultPosition(int x, int y) {
+    m_defaultX = x;
+    m_defaultY = y;
 }

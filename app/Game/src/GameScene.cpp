@@ -159,6 +159,7 @@ void GameScene::onBrickDestroyed(events::BrickDestroyedEvent& e) {
 
 void GameScene::onBallOutOfBounds(events::BallOutOfBoundsEvent& e) {
     m_ball.reset();
+    m_paddle.reset();
     --m_lifeCounter;
     m_eventManager->notify(events::StartStop());
 }

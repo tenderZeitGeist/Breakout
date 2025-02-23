@@ -8,7 +8,7 @@
 
 class Entity;
 
-enum Collision : std::uint8_t {
+enum Side : std::uint8_t {
     NONE = 0,
     LEFT = 1 << 0,
     RIGHT = 1 << 1,
@@ -22,7 +22,7 @@ public:
 
     friend bool operator==(const Collideable& lhs, const Collideable& rhs);
     friend bool operator!=(const Collideable& lhs, const Collideable& rhs);
-    friend Collision collides(const Collideable& lhs, const Collideable& rhs);
+    friend Side collides(const Collideable& lhs, const Collideable& rhs);
 
     [[nodiscard]] bool isEnabled() const;
     [[nodiscard]] int getExtentX() const;

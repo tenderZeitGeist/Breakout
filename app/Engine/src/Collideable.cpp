@@ -6,6 +6,22 @@
 
 #include <cmath>
 
+namespace {
+
+    int determineSide(int overlapX, int overlapY, bool fromRight, bool fromBottom) {
+        if (overlapX <= 0 || overlapY <= 0) {
+            return Side::NONE;
+        }
+
+        if (overlapX < overlapY) {
+            return fromRight ? Side::RIGHT : LEFT;
+        }
+
+        return fromBottom ? Side::BOTTOM : Side::TOP;
+    }
+
+}
+
 Collideable::Collideable(Entity& entity){
 
 }
@@ -18,9 +34,9 @@ bool operator !=(const Collideable& lhs, const Collideable& rhs) {
     return !(lhs == rhs);
 }
 
-Collision collides(const Collideable& lhs, const Collideable& rhs) {
+Side collides(const Collideable& lhs, const Collideable& rhs) {
     if(!lhs.isEnabled() || !rhs.isEnabled()) {
-        return Collision::NONE;
+        return Side::NONE;
     }
 
     const auto deltaX = lhs.getCenterX() - rhs.getCenterX();
@@ -30,18 +46,9 @@ Collision collides(const Collideable& lhs, const Collideable& rhs) {
     const auto overlapX = sumOfExtentX - std::abs(deltaX);
     const auto overlapY = sumOfExtentY - std::abs(deltaY);
 
-    if (overlapX <= 0 || overlapY <= 0) {
-        return Collision::NONE;
-    }
-
-    int collisions = Collision::NONE;
-    if (overlapX < overlapY) {
-        collisions |= deltaX > 0 ? Collision::RIGHT : Collision::LEFT;
-    } else {
-        collisions |= deltaY > 0 ? Collision::BOTTOM : Collision::TOP;
-    }
-
-    return static_cast<Collision>(collisions);
+    return static_cast<Side>(determineSide(
+        overlapX, overlapY, deltaX > 0, deltaY > 0
+    ));
 }
 
 bool Collideable::isEnabled() const {

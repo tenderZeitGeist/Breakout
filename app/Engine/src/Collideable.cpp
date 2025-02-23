@@ -6,27 +6,49 @@
 
 #include <cmath>
 
+namespace {
+
+    int determineSide(int overlapX, int overlapY, bool fromRight, bool fromBottom) {
+        if (overlapX <= 0 || overlapY <= 0) {
+            return Side::NONE;
+        }
+
+        if (overlapX < overlapY) {
+            return fromRight ? Side::RIGHT : LEFT;
+        }
+
+        return fromBottom ? Side::BOTTOM : Side::TOP;
+    }
+
+}
+
 Collideable::Collideable(Entity& entity){
 
 }
 
 bool operator==(const Collideable& lhs, const Collideable& rhs) {
-    return collides(lhs, rhs);
+    return static_cast<bool>(collides(lhs, rhs));
 }
 
 bool operator !=(const Collideable& lhs, const Collideable& rhs) {
     return !(lhs == rhs);
 }
 
-bool collides(const Collideable& lhs, const Collideable& rhs) {
+Side collides(const Collideable& lhs, const Collideable& rhs) {
     if(!lhs.isEnabled() || !rhs.isEnabled()) {
-        return false;
+        return Side::NONE;
     }
 
-    // Axis-Aligned Bounding Box intersection test.
-    const auto x = std::abs(lhs.getCenterX() - rhs.getCenterX()) < (lhs.getExtentX() + rhs.getExtentX());
-    const auto y = std::abs(lhs.getCenterY() - rhs.getCenterY()) < (lhs.getExtentY() + rhs.getExtentY());
-    return x && y;
+    const auto deltaX = lhs.getCenterX() - rhs.getCenterX();
+    const auto deltaY = lhs.getCenterY() - rhs.getCenterY();
+    const auto sumOfExtentX = lhs.getExtentX() + rhs.getExtentX();
+    const auto sumOfExtentY = lhs.getExtentY() + rhs.getExtentY();
+    const auto overlapX = sumOfExtentX - std::abs(deltaX);
+    const auto overlapY = sumOfExtentY - std::abs(deltaY);
+
+    return static_cast<Side>(determineSide(
+        overlapX, overlapY, deltaX > 0, deltaY > 0
+    ));
 }
 
 bool Collideable::isEnabled() const {
@@ -68,5 +90,4 @@ void Collideable::setCenterX(int centerX) {
 void Collideable::setCenterY(int centerY) {
      m_centerY = centerY;
 }
-
 

@@ -15,7 +15,6 @@
 #include <cassert>
 #include <random>
 #include <cmath>
-#include <iostream>
 
 namespace {
     float magnitude(float x, float y) {
@@ -75,12 +74,8 @@ Ball::Ball(std::reference_wrapper<Paddle> paddle, std::shared_ptr<events::EventM
 }
 
 void Ball::update(float delta) {
-    const auto resetPosition = [this](int x, int y) {
-        setX(x);
-        setY(y);
-    };
-    const auto x = getX();
-    const auto y = getY();
+    m_previousX = getX();
+    m_previousY = getY();
     m_moveable->move(delta);
 
     if (outOfBounds()) {
@@ -88,41 +83,8 @@ void Ball::update(float delta) {
         return;
     }
 
-    for (auto wallRef: m_walls) {
-        const auto& wall = wallRef.get();
-        if (*wall.getCollideable() == *m_collideable) {
-            resetPosition(x, y);
-            const auto wallNormals = wall.getNormals();
-            const auto isSideWall = wallNormals.x != 0.f;
-            if (isSideWall) {
-                m_moveable->setDirectionX(-m_moveable->getDirectionX());
-            } else {
-                m_moveable->setDirectionY(-m_moveable->getDirectionY());
-            }
-            return;
-        }
-    }
-
-    const auto& paddle = m_paddle.get();
-    if (*m_collideable == *paddle.getCollideable()) {
-        setY(paddle.getY() - getHeight());
-
-        const auto distanceX = static_cast<float>(m_collideable->getCenterX() - paddle.getCollideable()->getCenterX());
-        const auto dx = distanceX / static_cast<float>(paddle.getCollideable()->getExtentX());
-        const auto paddleNormal = normalize({dx, -1.0f});
-        const auto oldDirection = m_moveable->getDirection();
-        const auto newDirection = calculateDirection(oldDirection, paddleNormal);
-        m_moveable->setDirection(newDirection);
+    if (collidedWithWall() || collidedWithPaddle() || collidedWithBrick()) {
         return;
-    }
-
-    for (auto brickRef: m_bricks) {
-        const auto& brick = brickRef.get();
-        if (*m_collideable == *brick.getCollideable()) {
-            resetPosition(x, y);
-            m_moveable->setDirectionY(-m_moveable->getDirectionY());
-            m_eventManager->notify(events::BrickDestroyedEvent{brick});
-        }
     }
 }
 
@@ -145,8 +107,7 @@ void Ball::reset() {
     setY(config::windowHalfHeight - m_collideable->getExtentY());
 
     const auto [x, y] = generateRandomDirection();
-    m_moveable->setDirectionX(x);
-    m_moveable->setDirectionY(y);
+    m_moveable->setDirection({x, y});
 }
 
 void Ball::setWalls(std::vector<std::reference_wrapper<Wall>> walls) {
@@ -168,4 +129,60 @@ bool Ball::outOfBounds() const {
     const auto x = centerX < 0 || centerX > config::windowWidth;
     const auto y = centerY < 0 || centerY > config::windowHeight;
     return x || y;
+}
+
+bool Ball::collidedWithWall() {
+    // TODO: Refactor logic to use ranges.
+    for (auto wallRef: m_walls) {
+        const auto& wall = wallRef.get();
+        if (*wall.getCollideable() == *m_collideable) {
+            resetToPreviousPosition();
+            const auto wallNormals = wall.getNormals();
+            const auto isSideWall = wallNormals.x != 0.f;
+            if (isSideWall) {
+                m_moveable->setDirectionX(-m_moveable->getDirectionX());
+            } else {
+                m_moveable->setDirectionY(-m_moveable->getDirectionY());
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Ball::collidedWithPaddle() {
+    const auto& paddle = m_paddle.get();
+    if (*m_collideable != *paddle.getCollideable()) {
+        return false;
+    }
+    setY(paddle.getY() - getHeight());
+
+    const auto distanceX = static_cast<float>(m_collideable->getCenterX() - paddle.getCollideable()->getCenterX());
+    const auto dx = distanceX / static_cast<float>(paddle.getCollideable()->getExtentX());
+    const auto paddleNormal = normalize({dx, -1.0f});
+    const auto oldDirection = m_moveable->getDirection();
+    const auto newDirection = calculateDirection(oldDirection, paddleNormal);
+    m_moveable->setDirection(newDirection);
+
+    return true;
+}
+
+
+bool Ball::collidedWithBrick() {
+    // TODO: Refactor logic to use ranges.
+    for (auto brickRef: m_bricks) {
+        const auto& brick = brickRef.get();
+        if (*m_collideable == *brick.getCollideable()) {
+            resetToPreviousPosition();
+            m_moveable->setDirectionY(-m_moveable->getDirectionY());
+            m_eventManager->notify(events::BrickDestroyedEvent{brick});
+            return true;
+        }
+    }
+    return false;
+}
+
+void Ball::resetToPreviousPosition() {
+    setX(m_previousX);
+    setY(m_previousY);
 }

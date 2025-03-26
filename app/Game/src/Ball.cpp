@@ -27,10 +27,8 @@ namespace {
     }
 
     Vector2D normalize(const Vector2D vector) {
-        const auto x = vector.x;
-        const auto y = vector.y;
-        const auto length = magnitude(x, y);
-        return {x / length, y / length};
+        const auto length = magnitude(vector);
+        return {vector.x / length, vector.y / length};
     }
 
     Vector2D generateRandomDirection() {
@@ -55,25 +53,17 @@ namespace {
         return normalize(direction);
     }
 
-    Vector2D rotate(Vector2D velocity, float theta) {
-        const auto vx = velocity.x * std::cos(theta) - velocity.y * std::sin(theta);
-        const auto vy = velocity.x * std::sin(theta) + velocity.y * std::cos(theta);
-        std::cerr << vx << "\t" << vy << '\n';
-        return {vx, vy};
-    }
-
-    float reflection(Vector2D v1, Vector2D v2) {
+    Vector2D reflection(Vector2D v1, Vector2D v2) {
         const float dotProduct = v1.x * v2.x + v1.y * v2.y;
-        const float magnitudeProduct = magnitude(v1) * magnitude(v2);
-        const float theta = -std::acos(dotProduct / magnitudeProduct);
-        return theta;
+        // R = v1 - 2(v1 * v2)v2
+        return {
+            v1.x - 2 * dotProduct * v2.x,
+            v2.y - 2 * dotProduct * v2.y
+        };
     }
 
     Vector2D calculateDirection(Vector2D v1, Vector2D v2) {
-        const auto theta = reflection(v1, v2);
-        std::cerr << theta << "\t" << theta * (180.0 / std::numbers::pi) << '\n';
-        const auto direction = rotate({v1.x, v1.y}, theta);
-        return normalize(direction);
+        return normalize(reflection(v1, v2));
     }
 }
 
@@ -113,14 +103,16 @@ void Ball::update(float delta) {
         }
     }
 
-    const auto& paddle = *m_paddle.get().getCollideable();
-    if (*m_collideable == *m_paddle.get().getCollideable()) {
-        resetPosition(x, y);
-        const auto distanceX = static_cast<float>(m_collideable->getCenterX() - paddle.getCenterX());
-        const auto dx = distanceX / (static_cast<float>(m_paddle.get().getWidth()) / 2.f);
-        Vector2D direction = normalize({dx, -m_moveable->getDirectionY()});
-        m_moveable->setDirectionX(direction.x);
-        m_moveable->setDirectionY(direction.y);
+    const auto& paddle = m_paddle.get();
+    if (*m_collideable == *paddle.getCollideable()) {
+        setY(paddle.getY() - getHeight());
+
+        const auto distanceX = static_cast<float>(m_collideable->getCenterX() - paddle.getCollideable()->getCenterX());
+        const auto dx = distanceX / static_cast<float>(paddle.getCollideable()->getExtentX());
+        const auto paddleNormal = normalize({dx, -1.0f});
+        const auto oldDirection = m_moveable->getDirection();
+        const auto newDirection = calculateDirection(oldDirection, paddleNormal);
+        m_moveable->setDirection(newDirection);
         return;
     }
 

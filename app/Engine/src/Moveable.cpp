@@ -42,6 +42,11 @@ void Moveable::setDirectionY(float y) {
     m_directionY = y;
 }
 
+void Moveable::setDirection(Vector2D vector) {
+    setDirectionX(vector.x);
+    setDirectionY(vector.y);
+}
+
 void Moveable::setVelocity(float velocity) {
     m_velocity = velocity;
 }
@@ -49,3 +54,8 @@ void Moveable::setVelocity(float velocity) {
 float Moveable::currentDirection() const {
    return std::atan2(m_directionY, m_directionX);
 }
+
+Vector2D Moveable::getDirection() const {
+    return {m_directionX, m_directionY};
+}
+

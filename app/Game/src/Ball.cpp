@@ -70,8 +70,8 @@ namespace {
 Ball::Ball(std::reference_wrapper<Paddle> paddle, std::shared_ptr<events::EventManager> eventManager)
     : Entity(COLLIDEABLE | DRAWABLE | MOVEABLE, Drawable::Shape::CIRCLE)
     , m_paddle(paddle)
-    , m_eventManager(eventManager) {
-    assert(eventManager);
+    , m_eventManager(std::move(eventManager)) {
+    assert(m_eventManager);
 }
 
 void Ball::update(float delta) {

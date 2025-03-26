@@ -30,6 +30,11 @@ public:
 
 private:
     [[nodiscard]] bool outOfBounds() const;
+    [[nodiscard]] bool collidedWithWall();
+    [[nodiscard]] bool collidedWithPaddle();
+    [[nodiscard]] bool collidedWithBrick();
+
+    void resetToPreviousPosition();
 
     std::vector<std::reference_wrapper<Wall>> m_walls;
     std::vector<std::reference_wrapper<Brick>> m_bricks;
@@ -38,4 +43,6 @@ private:
     std::size_t m_hitCount{0};
     bool m_orangeBrickHit{false};
     bool m_redBrickHit{false};
+    int m_previousX{0};
+    int m_previousY{0};
 };

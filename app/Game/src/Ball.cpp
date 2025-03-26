@@ -32,9 +32,9 @@ namespace {
     }
 
     Vector2D generateRandomDirection() {
-        std::random_device rd;
-        std::mt19937 rng(rd());
-        std::uniform_int_distribution distribution(1, 3);
+        static std::random_device rd;
+        static std::mt19937 rng(rd());
+        static std::uniform_int_distribution distribution(1, 3);
 
         const Vector2D direction = [value = distribution(rng)]() -> Vector2D {
             switch (value) {

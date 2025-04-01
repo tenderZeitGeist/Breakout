@@ -7,6 +7,7 @@
 #include "Ball.h"
 #include "Brick.h"
 #include "Scene.h"
+#include "Score.h"
 #include "Paddle.h"
 #include "Wall.h"
 
@@ -36,6 +37,7 @@ public:
 
     void onBrickDestroyed(events::BrickDestroyedEvent& e);
     void onBallOutOfBounds(events::BallOutOfBoundsEvent& e);
+    void onIncreaseScore(events::IncreaseScore& e);
 
 private:
     void initializePaddle();
@@ -52,6 +54,7 @@ private:
     Wall m_rightWall;
     Paddle m_paddle;
     Ball m_ball;
+    Score m_score;
     std::vector<Brick> m_bricks;
     std::vector<std::reference_wrapper<Entity>> m_entities;
     std::reference_wrapper<const KeyHandler> m_keyHandler;

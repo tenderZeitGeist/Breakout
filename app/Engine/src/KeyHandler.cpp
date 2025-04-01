@@ -10,6 +10,12 @@
 namespace {
     std::size_t keyCodeToIndex(SDL_Keycode code) {
         switch (code) {
+            case SDLK_1:
+                return KeyHandler::_1;
+            case SDLK_2:
+                return KeyHandler::_2;
+            case SDLK_3:
+                return KeyHandler::_3;
             case SDLK_LEFT:
                 return KeyHandler::LEFT;
             case SDLK_RIGHT:
@@ -38,6 +44,18 @@ void KeyHandler::onKeyEvent(events::KeyPress& e) {
 
     if (m_keyStates[SPACE]) {
         m_eventManager->notify(events::StartStop());
+    }
+
+    if (m_keyStates[_1]) {
+        m_eventManager->notify(events::IncreaseScore(1));
+    }
+
+    if (m_keyStates[_2]) {
+        m_eventManager->notify(events::IncreaseScore(10));
+    }
+
+    if (m_keyStates[_3]) {
+        m_eventManager->notify(events::IncreaseScore(100));
     }
 }
 

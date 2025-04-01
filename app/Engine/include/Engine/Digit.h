@@ -10,6 +10,8 @@ class Digit : public Entity {
     static constexpr std::size_t kNumOfLines = 8;
 
 public:
+    explicit Digit();
+
     void setValue(int value);
     [[nodiscard]] int getValue() const;
 

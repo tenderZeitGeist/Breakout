@@ -12,12 +12,16 @@
 
 namespace events {
     struct KeyPress;
+    struct IncreaseScore;
     class EventManager;
 }
 
 class KeyHandler {
 public:
     enum Keys : std::int_fast8_t {
+        _1,
+        _2,
+        _3,
         LEFT,
         RIGHT,
         D,

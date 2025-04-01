@@ -1,31 +1,34 @@
 
 #include <Game/Score.h>
 
+
 namespace {
     constexpr int kMaxDisplayScore{999};
     constexpr std::size_t kBlinkingCount{5};
     constexpr std::size_t kBlinkingInterval{10};
+
+    constexpr std::array<int, Score::kNumOfDigits> kDecimals = {
+        1,
+        10,
+        100,
+    };
+}
+
+
+Score::Score()
+: Entity(DRAWABLE) {
 }
 
 void Score::setScore(int score) {
     m_score = score;
     score = std::min(score, kMaxDisplayScore);
 
-    std::size_t i{0};
-    while (score > 0) {
-        const auto digit = score % 10;
-        m_digits[i].setValue(digit);
-        score /= 10;
-        ++i;
-    }
-
-    if (i == 2) {
-        return;
-    }
-
-    while (i < 2) {
-        m_digits[i].setValue(0);
-        ++i;
+    int j = static_cast<int>(m_digits.size());
+    while (j > 0) {
+        const std::size_t index = j - 1;
+        const auto digit = (score / kDecimals[index]) % 10;
+        m_digits[index].setValue(digit);
+        --j;
     }
 }
 
@@ -68,6 +71,16 @@ void Score::update(float delta) {
         if (isVisible) {
             --m_blinksLeft;
         }
+    }
+}
+
+void Score::init(Entity::Values v) {
+    Entity::init(v);
+    const auto size = m_digits.size();
+    const auto width = m_rect.w / static_cast<decltype(m_rect.w)>(size);
+
+    for (int i = 0; i < size; ++i){
+        m_digits[i].init({m_rect.x, m_rect.y, m_rect.h, m_rect.w + (i * width)});
     }
 }
 

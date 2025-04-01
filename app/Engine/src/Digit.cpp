@@ -11,10 +11,6 @@ namespace {
     constexpr std::size_t kVLineLeftBottom = 4;
     constexpr std::size_t kVLineRightTop = 5;
     constexpr std::size_t kVLineRightBottom = 6;
-    constexpr std::size_t kVLineCenter = 7;
-
-    constexpr std::size_t BLINK_COUNT = 5;
-    constexpr std::size_t BLINK_INTERVAL = 10;
 
     [[nodiscard]] std::initializer_list<std::size_t> valueToLineIndices(int value) {
         switch (value) {
@@ -44,6 +40,8 @@ namespace {
         }
     }
 }
+
+Digit::Digit() : Entity(DRAWABLE) {}
 
 void Digit::setValue(int value) {
     if (value == m_value) {
@@ -90,4 +88,3 @@ void Digit::resize() {
     m_lines[kVLineRightTop] = { x + width - thickness, y, thickness + 1, halfHeight + 1 };
     m_lines[kVLineRightBottom] = { x + width - thickness, y + halfHeight, thickness + 1, halfHeight + 1 };
 }
-

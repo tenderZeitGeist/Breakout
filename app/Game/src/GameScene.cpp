@@ -20,6 +20,7 @@ GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::s
 , m_leftWall(1.0, 0.f)
 , m_rightWall(-1.f, 0.f)
 , m_ball(m_paddle, eventManager)
+, m_score()
 , m_keyHandler(keyHandler)
 , m_eventManager(std::move(eventManager)){
     initializeWalls();
@@ -162,4 +163,9 @@ void GameScene::onBallOutOfBounds(events::BallOutOfBoundsEvent& e) {
     m_paddle.reset();
     --m_lifeCounter;
     m_eventManager->notify(events::StartStop());
+}
+
+void GameScene::onIncreaseScore(events::IncreaseScore& e) {
+    m_pointerCounter += e.m_value;
+    m_score.setScore(static_cast<int>(m_pointerCounter));
 }

@@ -13,6 +13,7 @@ set(GAME_HEADER_FILES
         "${DIR_INCLUDE}/Game/GameEvent.h"
         "${DIR_INCLUDE}/Game/Paddle.h"
         "${DIR_INCLUDE}/Game/Scene.h"
+        "${DIR_INCLUDE}/Game/Score.h"
         "${DIR_INCLUDE}/Game/Wall.h"
 )
 
@@ -22,6 +23,7 @@ set(GAME_SOURCE_FILES
         "${DIR_SOURCE}/Game.cpp"
         "${DIR_SOURCE}/GameScene.cpp"
         "${DIR_SOURCE}/Paddle.cpp"
+        "${DIR_SOURCE}/Score.cpp"
         "${DIR_SOURCE}/Wall.cpp"
 )
 

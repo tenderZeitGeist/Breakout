@@ -27,6 +27,7 @@ GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::s
     initializeBricks();
     initializePaddle();
     initializeBall();
+    initializeScore();
     m_eventManager->subscribe<GameScene, events::BrickDestroyedEvent, &GameScene::onBrickDestroyed>(this);
     m_eventManager->subscribe<GameScene, events::BallOutOfBoundsEvent, &GameScene::onBallOutOfBounds>(this);
 }
@@ -142,6 +143,20 @@ void GameScene::initializeBall() {
     }
     m_ball.setBricks(std::move(brickRefs));
     m_entities.emplace_back(m_ball);
+}
+
+void GameScene::initializeScore() {
+    constexpr auto y = config::windowHalfHeight;
+    constexpr auto x = config::windowHalfWidth;
+    constexpr auto width = config::slotWidth * 4;
+    constexpr auto height = config::slotHeight * 2;
+    m_score.init({
+        .x = x,
+        .y = y,
+        .width = width,
+        .height = height,
+        .color = config::kWhiteColor });
+    m_entities.emplace_back(std::ref(m_score));
 }
 
 void GameScene::setPaddleDirection() const {

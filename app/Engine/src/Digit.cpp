@@ -12,7 +12,7 @@ namespace {
     constexpr std::size_t kVLineRightTop = 5;
     constexpr std::size_t kVLineRightBottom = 6;
 
-    [[nodiscard]] std::initializer_list<std::size_t> valueToLineIndices(int value) {
+    [[nodiscard]] std::vector<std::size_t> valueToLineIndices(int value) {
         switch (value) {
             case 0:
                 return {kHLineTop, kHLineBottom, kVLineLeftTop, kVLineLeftBottom, kVLineRightTop, kVLineRightBottom};
@@ -41,14 +41,16 @@ namespace {
     }
 }
 
-Digit::Digit() : Entity(DRAWABLE) {}
+Digit::Digit()
+: Entity(DRAWABLE)
+, m_lineIndices(std::move(valueToLineIndices(m_value))) {}
 
 void Digit::setValue(int value) {
     if (value == m_value) {
         return;
     }
     m_value = value;
-    m_lineIndices = valueToLineIndices(m_value);
+    m_lineIndices = std::move(valueToLineIndices(m_value));
 }
 
 int Digit::getValue() const {
@@ -68,6 +70,7 @@ void Digit::render(SDL_Renderer& renderer) {
 void Digit::init(Entity::Values v) {
     Entity::init(v);
     resize();
+    m_drawable->setVisible(true);
 }
 
 void Digit::resize() {
@@ -83,8 +86,8 @@ void Digit::resize() {
     m_lines[kHLineMiddle] = {x, y + halfHeight - thickness / 2, width + 2, thickness };
     m_lines[kHLineBottom] = {x, y + (height - thickness), width, thickness };
 
-    m_lines[kVLineLeftTop] = { x - 1, y, thickness, halfHeight + 1 };
-    m_lines[kVLineLeftBottom] = { x - 1, y + halfHeight, thickness, halfHeight + 1 };
-    m_lines[kVLineRightTop] = { x + width - thickness, y, thickness + 1, halfHeight + 1 };
-    m_lines[kVLineRightBottom] = { x + width - thickness, y + halfHeight, thickness + 1, halfHeight + 1 };
+    // m_lines[kVLineLeftTop] = { x - 1, y, thickness, halfHeight + 1 };
+    // m_lines[kVLineLeftBottom] = { x - 1, y + halfHeight, thickness, halfHeight + 1 };
+    // m_lines[kVLineRightTop] = { x + width - thickness, y, thickness + 1, halfHeight + 1 };
+    // m_lines[kVLineRightBottom] = { x + width - thickness, y + halfHeight, thickness + 1, halfHeight + 1 };
 }

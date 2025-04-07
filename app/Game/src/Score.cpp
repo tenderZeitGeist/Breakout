@@ -52,6 +52,8 @@ void Score::render(SDL_Renderer& renderer) {
         return;
     }
 
+    const auto color = m_drawable->getColor();
+    SDL_SetRenderDrawColor(&renderer, color.r, color.g, color.b, color.a);
     for (auto& digit: m_digits) {
         digit.render(renderer);
     }
@@ -78,9 +80,15 @@ void Score::init(Entity::Values v) {
     Entity::init(v);
     const auto size = m_digits.size();
     const auto width = m_rect.w / static_cast<decltype(m_rect.w)>(size);
-
-    for (int i = 0; i < size; ++i){
-        m_digits[i].init({m_rect.x, m_rect.y, m_rect.h, m_rect.w + (i * width)});
+    m_drawable->setVisible(true);
+    for (int i = 0; i < size; ++i) {
+        m_digits[i].init({
+            .x = m_rect.x + i * width + 10 * i,
+            .y = m_rect.y,
+            .width = width,
+            .height = m_rect.h,
+            .color = v.color
+        });
     }
 }
 

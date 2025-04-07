@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <Engine/Digit.h>
 
 #include <array>

@@ -44,6 +44,7 @@ private:
     void initializeWalls();
     void initializeBricks();
     void initializeBall();
+    void initializeScore();
     void setPaddleDirection() const;
 
     std::size_t m_pointerCounter{0};

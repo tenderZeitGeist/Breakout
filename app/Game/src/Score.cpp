@@ -80,13 +80,14 @@ void Score::init(Entity::Values v) {
     Entity::init(v);
     const auto size = m_digits.size();
     const auto width = m_rect.w / static_cast<decltype(m_rect.w)>(size);
+    const auto height = m_rect.h;
     m_drawable->setVisible(true);
     for (int i = 0; i < size; ++i) {
         m_digits[i].init({
             .x = m_rect.x + i * width + 10 * i,
             .y = m_rect.y,
             .width = width,
-            .height = m_rect.h,
+            .height = height,
             .color = v.color
         });
     }

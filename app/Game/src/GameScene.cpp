@@ -78,7 +78,7 @@ void GameScene::initializeWalls() {
         .x = 0,
         .y = 0,
         .width = config::windowWidth,
-        .height = config::slotHeight,
+        .height = config::digitHeight + config::slotHeight,
         .color = config::kDebugColor
     });
 
@@ -116,7 +116,7 @@ void GameScene::initializeBricks() {
             auto& brickRef = m_bricks.back();
             brickRef.init({
                 .x = config::slotHalfWidth + x * (config::slotWidth + config::slotSpacing),
-                .y = config::slotHalfWidth + y * (config::slotHeight + config::slotSpacing),
+                .y = config::slotHalfWidth + y * (config::slotHeight + config::slotSpacing) + config::digitHeight,
                 .width = config::slotWidth,
                 .height = config::slotHeight,
                 .color = config::kBricksFillStyles[colorIndex]
@@ -146,15 +146,13 @@ void GameScene::initializeBall() {
 }
 
 void GameScene::initializeScore() {
-    constexpr auto y = config::windowHalfHeight;
     constexpr auto x = config::windowHalfWidth;
-    constexpr auto width = config::slotWidth * 4;
-    constexpr auto height = config::slotHeight * 2;
+    constexpr auto y = config::slotHalfHeight;
     m_score.init({
         .x = x,
         .y = y,
-        .width = width,
-        .height = height,
+        .width = config::digitWidth,
+        .height = config::digitHeight,
         .color = config::kWhiteColor });
     m_entities.emplace_back(std::ref(m_score));
 }

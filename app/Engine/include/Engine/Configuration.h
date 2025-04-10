@@ -22,6 +22,9 @@ namespace config {
     static constexpr int slotHalfHeight = slotHeight / 2;
     static constexpr int slotSpacing = (windowWidth - 2 * slotHeight - 14 * slotWidth) / 13;
 
+    static constexpr int digitWidth = config::slotWidth * 4;
+    static constexpr int digitHeight = config::slotHeight * 5;
+
     static constexpr int frameRate = 60;
     static constexpr int frameTimes = 1000 / frameRate;
     static constexpr float frameTimesInFloat = static_cast<float>(frameTimes);

@@ -42,15 +42,15 @@ namespace {
 }
 
 Digit::Digit()
-: Entity(DRAWABLE)
-, m_lineIndices(std::move(valueToLineIndices(m_value))) {}
+    : Entity(DRAWABLE)
+    , m_lineIndices(valueToLineIndices(m_value)) {}
 
 void Digit::setValue(int value) {
     if (value == m_value) {
         return;
     }
     m_value = value;
-    m_lineIndices = std::move(valueToLineIndices(m_value));
+    m_lineIndices = valueToLineIndices(m_value);
 }
 
 int Digit::getValue() const {
@@ -80,14 +80,14 @@ void Digit::resize() {
     const auto x = m_rect.x;
     const auto y = m_rect.y;
     const auto width = m_rect.w;
-    const auto height = m_rect.w;
+    const auto height = m_rect.h;
 
-    m_lines[kHLineTop] = {x, y, width, thickness };
-    m_lines[kHLineMiddle] = {x, y + halfHeight - thickness / 2, width + 2, thickness };
-    m_lines[kHLineBottom] = {x, y + (height - thickness), width, thickness };
+    m_lines[kHLineTop] = {x, y, width, thickness};
+    m_lines[kHLineMiddle] = {x, y + halfHeight - thickness / 2, width + 2, thickness};
+    m_lines[kHLineBottom] = {x, y + height - thickness, width, thickness};
 
-    // m_lines[kVLineLeftTop] = { x - 1, y, thickness, halfHeight + 1 };
-    // m_lines[kVLineLeftBottom] = { x - 1, y + halfHeight, thickness, halfHeight + 1 };
-    // m_lines[kVLineRightTop] = { x + width - thickness, y, thickness + 1, halfHeight + 1 };
-    // m_lines[kVLineRightBottom] = { x + width - thickness, y + halfHeight, thickness + 1, halfHeight + 1 };
+    m_lines[kVLineLeftTop] = { x - 1, y + 1, thickness, halfHeight + 1};
+    m_lines[kVLineLeftBottom] = { x - 1, y + halfHeight, thickness, halfHeight + 1};
+    m_lines[kVLineRightTop] = { x + width - thickness, y, thickness + 1, halfHeight + 1};
+    m_lines[kVLineRightBottom] = { x + width - thickness, y + halfHeight, thickness + 1, halfHeight + 1};
 }

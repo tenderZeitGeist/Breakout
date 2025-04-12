@@ -23,18 +23,18 @@ namespace {
             case 3:
                 return {kHLineTop, kHLineMiddle, kHLineBottom, kVLineRightTop, kVLineRightBottom};
             case 4:
-                return {kHLineMiddle, kVLineRightTop, kVLineRightBottom};
+                return {kHLineMiddle, kVLineLeftTop, kVLineRightTop, kVLineRightBottom};
             case 5:
-                return {kHLineTop, kHLineMiddle, kHLineBottom, kVLineRightTop, kVLineLeftBottom};
+                return {kHLineTop, kHLineMiddle, kHLineBottom, kVLineLeftTop, kVLineRightBottom};
             case 6:
-                return {kHLineTop, kHLineMiddle, kHLineBottom, kVLineRightTop, kVLineLeftBottom, kVLineRightBottom};
+                return {kHLineTop, kHLineMiddle, kHLineBottom, kVLineLeftTop, kVLineLeftBottom, kVLineRightBottom};
             case 7:
                 return {kHLineTop, kVLineRightTop, kVLineRightBottom};
             case 8:
-                return {kHLineTop, kHLineBottom, kHLineBottom, kVLineRightTop, kVLineRightBottom, kVLineLeftTop,
-                        kVLineRightBottom};
+                return {kHLineTop, kHLineMiddle, kHLineBottom, kVLineRightTop, kVLineRightBottom, kVLineLeftTop,
+                        kVLineLeftBottom};
             case 9:
-                return {kHLineTop, kHLineBottom, kHLineBottom, kVLineRightTop, kVLineLeftTop, kVLineRightBottom};
+                return {kHLineTop, kHLineBottom, kHLineMiddle, kVLineRightTop, kVLineLeftTop, kVLineRightBottom};
             default:
                 assert(false);
         }
@@ -83,11 +83,11 @@ void Digit::resize() {
     const auto height = m_rect.h;
 
     m_lines[kHLineTop] = {x, y, width, thickness};
-    m_lines[kHLineMiddle] = {x, y + halfHeight - thickness / 2, width + 2, thickness};
+    m_lines[kHLineMiddle] = {x, y + halfHeight - thickness / 2, width + 1, thickness};
     m_lines[kHLineBottom] = {x, y + height - thickness, width, thickness};
 
-    m_lines[kVLineLeftTop] = { x - 1, y + 1, thickness, halfHeight + 1};
-    m_lines[kVLineLeftBottom] = { x - 1, y + halfHeight, thickness, halfHeight + 1};
+    m_lines[kVLineLeftTop] = { x , y + 1, thickness, halfHeight + 1};
+    m_lines[kVLineLeftBottom] = { x, y + halfHeight, thickness, halfHeight + 1};
     m_lines[kVLineRightTop] = { x + width - thickness, y, thickness + 1, halfHeight + 1};
     m_lines[kVLineRightBottom] = { x + width - thickness, y + halfHeight, thickness + 1, halfHeight + 1};
 }

@@ -23,12 +23,10 @@ void Score::setScore(int score) {
     m_score = score;
     score = std::min(score, kMaxDisplayScore);
 
-    int j = static_cast<int>(m_digits.size());
-    while (j > 0) {
-        const std::size_t index = j - 1;
-        const auto digit = (score / kDecimals[index]) % 10;
-        m_digits[index].setValue(digit);
-        --j;
+    for (auto& m_digit : m_digits) {
+        const auto digit = score % 10;
+        m_digit.setValue(digit);
+        score /= 10;
     }
 }
 
@@ -78,13 +76,16 @@ void Score::update(float delta) {
 
 void Score::init(Entity::Values v) {
     Entity::init(v);
-    const auto size = m_digits.size();
+    const auto size = static_cast<int>(m_digits.size());
     const auto width = m_rect.w / static_cast<decltype(m_rect.w)>(size);
     const auto height = m_rect.h;
     m_drawable->setVisible(true);
+
     for (int i = 0; i < size; ++i) {
+        const auto offset = size - i - 1;
+        constexpr int spacing = 10;
         m_digits[i].init({
-            .x = m_rect.x + i * width + 10 * i,
+            .x = m_rect.x + offset * width + spacing * offset,
             .y = m_rect.y,
             .width = width,
             .height = height,

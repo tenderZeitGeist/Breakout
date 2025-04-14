@@ -31,6 +31,7 @@ GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::s
     initializeLifePoints();
     m_eventManager->subscribe<GameScene, events::BrickDestroyedEvent, &GameScene::onBrickDestroyed>(this);
     m_eventManager->subscribe<GameScene, events::BallOutOfBoundsEvent, &GameScene::onBallOutOfBounds>(this);
+    m_eventManager->subscribe<GameScene, events::IncreaseScore, &GameScene::onIncreaseScore>(this);
 }
 
 void GameScene::update(float delta) {
@@ -183,17 +184,29 @@ void GameScene::onBrickDestroyed(events::BrickDestroyedEvent& e) {
     auto& brick = e.brick;
     brick.getDrawable()->setVisible(false);
     brick.getCollideable()->setEnabled(false);
-    m_pointerCounter += brick.getValue();
+    m_pointCounter += brick.getValue();
+    m_score.setScore(m_pointCounter);
+    m_score.setBlinking(true);
 }
 
 void GameScene::onBallOutOfBounds(events::BallOutOfBoundsEvent& e) {
     m_ball.reset();
     m_paddle.reset();
-    --m_lifeCounter;
+
+    const auto currentLifePoints = m_lifePoints.getLifePoints() - 1;
+
+    if (currentLifePoints <= 0) {
+        // TODO: This needs to be changed in order to not cause UB.
+        m_eventManager->notify(events::GameOver());
+        return;
+    }
+
+    m_lifePoints.setLifePoints(currentLifePoints);
     m_eventManager->notify(events::StartStop());
 }
 
 void GameScene::onIncreaseScore(events::IncreaseScore& e) {
-    m_pointerCounter += e.m_value;
-    m_score.setScore(static_cast<int>(m_pointerCounter));
+    m_pointCounter += e.m_value;
+    m_score.setScore(m_pointCounter);
+    m_score.setBlinking(true);
 }

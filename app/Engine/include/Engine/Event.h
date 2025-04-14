@@ -10,15 +10,10 @@
 namespace events {
     struct Event {
         Event() = default;
-
         Event(const Event&) = delete;
-
         Event(Event&&) = delete;
-
         Event operator=(const Event&) = delete;
-
         Event operator=(Event&&) = delete;
-
         virtual ~Event() = default;
     };
 
@@ -31,8 +26,8 @@ namespace events {
         using KeyEventType = decltype(SDL_Event::type);
 
         explicit KeyPress(KeyEventType keyEvent, SDL_Keycode code)
-            : m_keyEvent(keyEvent)
-            , m_code(code) {
+            : m_code(code)
+            , m_keyEvent(keyEvent) {
         }
 
         SDL_Keycode m_code{};
@@ -55,5 +50,13 @@ namespace events {
         }
 
         int m_value;
+    };
+
+    struct GameOver
+        : Event {
+    };
+
+    struct GameStarted
+        : Event {
     };
 }

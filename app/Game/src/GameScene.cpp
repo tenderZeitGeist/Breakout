@@ -28,6 +28,7 @@ GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::s
     initializePaddle();
     initializeBall();
     initializeScore();
+    initializeLifePoints();
     m_eventManager->subscribe<GameScene, events::BrickDestroyedEvent, &GameScene::onBrickDestroyed>(this);
     m_eventManager->subscribe<GameScene, events::BallOutOfBoundsEvent, &GameScene::onBallOutOfBounds>(this);
 }
@@ -78,7 +79,7 @@ void GameScene::initializeWalls() {
         .x = 0,
         .y = 0,
         .width = config::windowWidth,
-        .height = config::digitHeight + config::slotHeight,
+        .height = config::scoreHeight + config::slotHeight,
         .color = config::kDebugColor
     });
 
@@ -116,7 +117,7 @@ void GameScene::initializeBricks() {
             auto& brickRef = m_bricks.back();
             brickRef.init({
                 .x = config::slotHalfWidth + x * (config::slotWidth + config::slotSpacing),
-                .y = config::slotHalfWidth + y * (config::slotHeight + config::slotSpacing) + config::digitHeight,
+                .y = config::slotHalfWidth + y * (config::slotHeight + config::slotSpacing) + config::scoreHeight,
                 .width = config::slotWidth,
                 .height = config::slotHeight,
                 .color = config::kBricksFillStyles[colorIndex]
@@ -146,15 +147,29 @@ void GameScene::initializeBall() {
 }
 
 void GameScene::initializeScore() {
-    constexpr auto x = config::windowHalfWidth;
+    constexpr auto x = config::windowWidth - config::scoreWidth - config::slotHalfWidth - config::scoreSpacing * 2;
     constexpr auto y = config::slotHalfHeight;
     m_score.init({
         .x = x,
         .y = y,
-        .width = config::digitWidth,
-        .height = config::digitHeight,
+        .width = config::scoreWidth,
+        .height = config::scoreHeight,
         .color = config::kWhiteColor });
     m_entities.emplace_back(std::ref(m_score));
+}
+
+void GameScene::initializeLifePoints() {
+    constexpr auto x = config::slotHalfWidth;
+    constexpr auto y = config::slotHalfHeight;
+    m_lifePoints.init({
+        .x = x,
+        .y = y,
+        .width = static_cast<int>(config::slotWidth * 1.25),
+        .height = config::scoreHeight,
+        .color = config::kWhiteColor
+    });
+    m_lifePoints.setLifePoints(3);
+    m_entities.emplace_back(std::ref(m_lifePoints));
 }
 
 void GameScene::setPaddleDirection() const {

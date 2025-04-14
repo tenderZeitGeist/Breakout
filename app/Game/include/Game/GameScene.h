@@ -6,6 +6,7 @@
 
 #include "Ball.h"
 #include "Brick.h"
+#include "LifePoints.h"
 #include "Scene.h"
 #include "Score.h"
 #include "Paddle.h"
@@ -45,10 +46,10 @@ private:
     void initializeBricks();
     void initializeBall();
     void initializeScore();
+    void initializeLifePoints();
     void setPaddleDirection() const;
 
-    std::size_t m_pointerCounter{0};
-    std::size_t m_lifeCounter{3};
+    int m_pointCounter{0};
 
     Wall m_topWall;
     Wall m_leftWall;
@@ -56,6 +57,8 @@ private:
     Paddle m_paddle;
     Ball m_ball;
     Score m_score;
+    LifePoints m_lifePoints;
+
     std::vector<Brick> m_bricks;
     std::vector<std::reference_wrapper<Entity>> m_entities;
     std::reference_wrapper<const KeyHandler> m_keyHandler;

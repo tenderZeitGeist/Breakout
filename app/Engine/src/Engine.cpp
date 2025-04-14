@@ -30,7 +30,7 @@ Engine::Engine(int width, int height)
     , m_height(height)
     , m_eventManager(std::make_shared<events::EventManager>())
     , m_keyHandler(m_eventManager)
-    , m_game(m_eventManager) {
+    , m_game(m_eventManager, m_keyHandler) {
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         abortProgram("SDL Framework");
@@ -70,7 +70,6 @@ Engine::~Engine() {
 
 int Engine::run() {
     m_previousTick = currentTickInMilliseconds();
-    m_game.setScene(std::make_unique<GameScene>(std::cref(m_keyHandler), m_eventManager));
 
     while (m_keepRunning) {
         pollEvents();

@@ -46,6 +46,8 @@ namespace events {
             return true;
         }
 
+        // TODO: Add an unsubscribe function
+
         template<typename EventType>
         void notify(EventType&& e) const {
             notify<EventType>(std::forward<EventType&>(e));

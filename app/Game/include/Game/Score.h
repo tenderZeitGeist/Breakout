@@ -23,6 +23,6 @@ private:
     std::array<Digit, kNumOfDigits> m_digits;
     int m_score{0};
     bool m_blinking{false};
-    std::size_t m_blinkCounter{0};
-    std::size_t m_blinksLeft{0};
+    int m_blinkTicksCounter{0};
+    int m_blinksLeft{0};
 };

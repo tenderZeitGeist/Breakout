@@ -4,8 +4,8 @@
 
 namespace {
     constexpr int kMaxDisplayScore{999};
-    constexpr std::size_t kBlinkingCount{5};
-    constexpr std::size_t kBlinkingInterval{10};
+    constexpr int kBlinkingCount{5};
+    constexpr int kBlinkingInterval{12}; // 16ms * 12 ticks = 192 ms per blink
 
     constexpr std::array<int, Score::kNumOfDigits> kDecimals = {
         1,
@@ -16,14 +16,14 @@ namespace {
 
 
 Score::Score()
-: Entity(DRAWABLE) {
+    : Entity(DRAWABLE) {
 }
 
 void Score::setScore(int score) {
     m_score = score;
     score = std::min(score, kMaxDisplayScore);
 
-    for (auto& m_digit : m_digits) {
+    for (auto& m_digit: m_digits) {
         const auto digit = score % 10;
         m_digit.setValue(digit);
         score /= 10;
@@ -37,11 +37,11 @@ int Score::getScore() const {
 void Score::setBlinking(bool blinking) {
     if (blinking) {
         m_blinksLeft = kBlinkingCount;
-        m_blinkCounter = 0;
+        m_blinkTicksCounter = kBlinkingInterval;
     } else {
         m_drawable->setVisible(true);
         m_blinksLeft = 0;
-        m_blinkCounter = 0;
+        m_blinkTicksCounter = 0;
     }
 }
 
@@ -58,19 +58,24 @@ void Score::render(SDL_Renderer& renderer) {
 }
 
 void Score::update(float delta) {
-    if (m_blinksLeft == 0) {
+    if (m_blinksLeft <= 0) {
         return;
     }
 
-    --m_blinkCounter;
-    const auto expired = m_blinkCounter < 0;
-    if (expired) {
-        m_blinkCounter = kBlinkingCount;
-        const auto isVisible = m_drawable->isVisible();
-        m_drawable->setVisible(!isVisible);
-        if (isVisible) {
-            --m_blinksLeft;
-        }
+    --m_blinkTicksCounter;
+    if (m_blinkTicksCounter > 0) { // not expired
+        return;
+    }
+
+    m_blinkTicksCounter = kBlinkingInterval;
+    const auto isVisible = m_drawable->isVisible();
+    m_drawable->setVisible(!isVisible);
+    if (isVisible) {
+        --m_blinksLeft;
+    }
+
+    if (m_blinksLeft <= 0) {
+        setBlinking(false);
     }
 }
 

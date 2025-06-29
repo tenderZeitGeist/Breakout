@@ -3,20 +3,20 @@
 //
 
 #include "Game/Game.h"
-#include "Game/Scene.h"
 #include "Game/GameScene.h"
+#include "Game/Scene.h"
 
 #include <SDL2/SDL_render.h>
 
-#include <Engine/EventManager.h>
 #include <Engine/Event.h>
+#include <Engine/EventManager.h>
 
 #include <memory>
 
 Game::Game(std::shared_ptr<events::EventManager> eventManager, std::reference_wrapper<const KeyHandler> keyHandler)
     : m_eventManager(std::move(eventManager))
     , m_keyHandler(keyHandler)
-    , m_scene(std::make_unique<GameScene>(m_keyHandler, m_eventManager)){
+    , m_scene(std::make_unique<GameScene>(m_keyHandler, m_eventManager)) {
 
     m_eventManager->subscribe<Game, events::Debug, &Game::onDebug>(this);
     m_eventManager->subscribe<Game, events::StartStop, &Game::onStartStop>(this);
@@ -25,18 +25,41 @@ Game::Game(std::shared_ptr<events::EventManager> eventManager, std::reference_wr
 }
 
 void Game::update(float delta) {
-    if(!m_playing) {
-        return;
-    }
-
-    if (m_scene) {
-        m_scene->update(delta);
+    switch (m_state) {
+        case State::STOPPED:
+            resetGame();
+            break;
+        case State::RUNNING:
+            updateGame(delta);
+            break;
+        default:
+            break;
     }
 }
 
 void Game::render(SDL_Renderer& renderer) {
     if (m_scene) {
         m_scene->render(renderer);
+    }
+}
+
+void Game::initializeGame() {
+    m_scene = std::make_unique<GameScene>(m_keyHandler, m_eventManager);
+    m_state = State::RUNNING;
+}
+
+void Game::resetGame() {
+    // TODO: Switch back to game menu scene
+    initializeGame();
+}
+
+void Game::updateGame(float delta) {
+    if (!m_playing) {
+        return;
+    }
+
+    if (m_scene) {
+        m_scene->update(delta);
     }
 }
 
@@ -55,9 +78,10 @@ void Game::onGameStarted(events::GameStarted&) {
     m_playing = false;
     // TODO: This clean-up introduces UB during update() and needs to be taken care of.
     m_scene = std::make_unique<GameScene>(m_keyHandler, m_eventManager);
+    m_state = State::INITIALIZED;
 }
 
 void Game::onGameOver(events::GameOver&) {
-    // TODO: Replace with actual reset mechanism
-    m_eventManager->notify(events::GameStarted());
+    m_playing = false;
+    m_state = State::STOPPED;
 }

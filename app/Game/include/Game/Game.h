@@ -17,9 +17,10 @@ namespace events {
 }
 
 class Game {
+    using UpdateFunction = void (Game::*)(float);
 public:
     enum class State {
-        UNINTIALIZED,
+        UNINITIALIZED,
         INITIALIZED,
         RUNNING,
         STOPPED
@@ -31,6 +32,10 @@ public:
     void render(SDL_Renderer& renderer);
 
 private:
+    void initializeGame();
+    void resetGame();
+    void updateGame(float delta);
+
     void onDebug(events::Debug&);
     void onStartStop(events::StartStop&);
     void onGameOver(events::GameOver&);
@@ -39,8 +44,7 @@ private:
     std::shared_ptr<events::EventManager> m_eventManager;
     std::reference_wrapper<const KeyHandler> m_keyHandler;
     std::unique_ptr<Scene> m_scene;
-    State m_state{State::UNINTIALIZED};
+    State m_state{State::RUNNING};
     bool m_playing{false};
     bool m_debug{false};
-
 };

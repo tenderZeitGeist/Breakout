@@ -43,7 +43,9 @@ private:
 
     std::shared_ptr<events::EventManager> m_eventManager;
     std::reference_wrapper<const KeyHandler> m_keyHandler;
-    std::unique_ptr<Scene> m_scene;
+    std::unique_ptr<Scene> m_menuScene;
+    std::unique_ptr<Scene> m_gameScene;
+    Scene* m_activeScene;
     State m_state{State::RUNNING};
     bool m_playing{false};
     bool m_debug{false};

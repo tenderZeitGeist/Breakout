@@ -28,6 +28,7 @@ class GameScene
     : public Scene {
 public:
     explicit GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::shared_ptr<events::EventManager> eventManager);
+    ~GameScene() override;
 
     void update(float delta) override;
     void render(SDL_Renderer& renderer) override;

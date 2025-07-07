@@ -16,12 +16,14 @@
 Game::Game(std::shared_ptr<events::EventManager> eventManager, std::reference_wrapper<const KeyHandler> keyHandler)
     : m_eventManager(std::move(eventManager))
     , m_keyHandler(keyHandler)
-    , m_scene(std::make_unique<GameScene>(m_keyHandler, m_eventManager)) {
+    , m_menuScene(std::make_unique<MenuScene>(m_keyHandler, m_eventManager))
+    , m_gameScene(std::make_unique<GameScene>(m_keyHandler, m_eventManager)) {
 
     m_eventManager->subscribe<Game, events::Debug, &Game::onDebug>(this);
     m_eventManager->subscribe<Game, events::StartStop, &Game::onStartStop>(this);
     m_eventManager->subscribe<Game, events::GameOver, &Game::onGameOver>(this);
     m_eventManager->subscribe<Game, events::GameStarted, &Game::onGameStarted>(this);
+    m_activeScene = m_menuScene.get();
 }
 
 void Game::update(float delta) {
@@ -38,13 +40,13 @@ void Game::update(float delta) {
 }
 
 void Game::render(SDL_Renderer& renderer) {
-    if (m_scene) {
-        m_scene->render(renderer);
+    if (m_activeScene) {
+        m_activeScene->render(renderer);
     }
 }
 
 void Game::initializeGame() {
-    m_scene = std::make_unique<GameScene>(m_keyHandler, m_eventManager);
+    // m_activeScene->reset();
     m_state = State::RUNNING;
 }
 
@@ -58,15 +60,15 @@ void Game::updateGame(float delta) {
         return;
     }
 
-    if (m_scene) {
-        m_scene->update(delta);
+    if (m_activeScene) {
+        m_activeScene->update(delta);
     }
 }
 
 void Game::onDebug(events::Debug&) {
     m_debug = !m_debug;
-    if (m_scene) {
-        m_scene->onDebug(m_debug);
+    if (m_activeScene) {
+        m_activeScene->onDebug(m_debug);
     }
 }
 
@@ -77,7 +79,7 @@ void Game::onStartStop(events::StartStop&) {
 void Game::onGameStarted(events::GameStarted&) {
     m_playing = false;
     // TODO: This clean-up introduces UB during update() and needs to be taken care of.
-    m_scene = std::make_unique<GameScene>(m_keyHandler, m_eventManager);
+    m_activeScene = m_gameScene.get();
     m_state = State::INITIALIZED;
 }
 

@@ -34,6 +34,10 @@ GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::s
     m_eventManager->subscribe<GameScene, events::IncreaseScore, &GameScene::onIncreaseScore>(this);
 }
 
+GameScene::~GameScene() {
+    m_eventManager->unsubscribe(this);
+}
+
 void GameScene::update(float delta) {
     setPaddleDirection();
     for (auto& entity: m_entities) {

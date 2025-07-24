@@ -26,11 +26,11 @@ namespace {
 }
 
 Engine::Engine(int width, int height)
-    : m_width(width)
-    , m_height(height)
-    , m_eventManager(std::make_shared<events::EventManager>())
+    : m_eventManager(std::make_shared<events::EventManager>())
     , m_keyHandler(m_eventManager)
-    , m_game(m_eventManager, m_keyHandler) {
+    , m_game(m_eventManager, m_keyHandler)
+    , m_width(width)
+    , m_height(height) {
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         abortProgram("SDL Framework");

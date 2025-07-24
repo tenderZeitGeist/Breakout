@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.25)
 
 project(Engine C CXX)
 
@@ -16,6 +16,8 @@ set(ENGINE_HEADER_FILES
         "${DIR_INCLUDE}/Engine/EventManager.h"
         "${DIR_INCLUDE}/Engine/KeyHandler.h"
         "${DIR_INCLUDE}/Engine/Moveable.h"
+        "${DIR_INCLUDE}/Engine/TextureRenderer.h"
+        "${DIR_INCLUDE}/Engine/Text.h"
 )
 
 set(ENGINE_SOURCE_FILES
@@ -26,6 +28,7 @@ set(ENGINE_SOURCE_FILES
         "${DIR_SOURCE}/Entity.cpp"
         "${DIR_SOURCE}/KeyHandler.cpp"
         "${DIR_SOURCE}/Moveable.cpp"
+        "${DIR_SOURCE}/TextureRenderer.cpp"
 )
 
 add_library(${PROJECT_NAME} STATIC ${ENGINE_SOURCE_FILES} ${ENGINE_HEADER_FILES})

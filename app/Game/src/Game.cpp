@@ -4,7 +4,7 @@
 
 #include "Game/Game.h"
 #include "Game/GameScene.h"
-#include "Game/Scene.h"
+#include "Game/MenuScene.h"
 
 #include <SDL2/SDL_render.h>
 
@@ -15,10 +15,7 @@
 
 Game::Game(std::shared_ptr<events::EventManager> eventManager, std::reference_wrapper<const KeyHandler> keyHandler)
     : m_eventManager(std::move(eventManager))
-    , m_keyHandler(keyHandler)
-    , m_menuScene(std::make_unique<MenuScene>(m_keyHandler, m_eventManager))
-    , m_gameScene(std::make_unique<GameScene>(m_keyHandler, m_eventManager)) {
-
+    , m_keyHandler(keyHandler) {
     m_eventManager->subscribe<Game, events::Debug, &Game::onDebug>(this);
     m_eventManager->subscribe<Game, events::StartStop, &Game::onStartStop>(this);
     m_eventManager->subscribe<Game, events::GameOver, &Game::onGameOver>(this);
@@ -45,14 +42,17 @@ void Game::render(SDL_Renderer& renderer) {
     }
 }
 
-void Game::initializeGame() {
-    // m_activeScene->reset();
-    m_state = State::RUNNING;
+void Game::initializeGame(const TextureRenderer& textureRenderer) {
+    m_menuScene = std::make_unique<MenuScene>(m_keyHandler, m_eventManager, textureRenderer);
+    m_gameScene = std::make_unique<GameScene>(m_keyHandler, m_eventManager);
+    m_activeScene = m_menuScene.get();
+    m_state = State::INITIALIZED;
 }
 
 void Game::resetGame() {
     // TODO: Switch back to game menu scene
-    initializeGame();
+    // m_activeScene->reset();
+    m_activeScene = m_menuScene.get();
 }
 
 void Game::updateGame(float delta) {
@@ -77,13 +77,12 @@ void Game::onStartStop(events::StartStop&) {
 }
 
 void Game::onGameStarted(events::GameStarted&) {
-    m_playing = false;
-    // TODO: This clean-up introduces UB during update() and needs to be taken care of.
     m_activeScene = m_gameScene.get();
-    m_state = State::INITIALIZED;
+    m_state = State::RUNNING;
 }
 
 void Game::onGameOver(events::GameOver&) {
     m_playing = false;
+    m_activeScene = m_menuScene.get();
     m_state = State::STOPPED;
 }

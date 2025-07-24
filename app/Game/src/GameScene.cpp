@@ -35,7 +35,6 @@ GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::s
 }
 
 GameScene::~GameScene() {
-    m_eventManager->unsubscribe(this);
 }
 
 void GameScene::update(float delta) {

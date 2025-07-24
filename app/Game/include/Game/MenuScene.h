@@ -2,16 +2,20 @@
 #pragma once
 
 #include <Engine/KeyHandler.h>
+#include <Engine/Text.h>
 #include <Game/Scene.h>
 
 #include <memory>
+#include <vector>
 
 #include <SDL2/SDL.h>
 
+class TextureRenderer;
+
 class MenuScene : public Scene {
 public:
-    MenuScene(std::reference_wrapper<const KeyHandler> keyHandler, std::shared_ptr<events::EventManager> eventManager);
-
+    MenuScene(std::reference_wrapper<const KeyHandler> keyHandler, std::shared_ptr<events::EventManager> eventManager,
+              const TextureRenderer& textureRenderer);
     void update(float delta) override;
     void render(SDL_Renderer& renderer) override;
     void enter() override;
@@ -21,16 +25,5 @@ public:
 private:
     std::reference_wrapper<const KeyHandler> m_keyHandler;
     std::shared_ptr<events::EventManager> m_eventManager;
-
-    SDL_Texture* m_topicText;
-    SDL_Texture* m_controlsText;
-    SDL_Texture* m_spacebarText;
-    SDL_Texture* m_leftArrowText;
-    SDL_Texture* m_rightArrowText;
-
-    SDL_Rect m_topicTextPosition;
-    SDL_Rect m_controlTextPosition;
-    SDL_Rect m_spacebarTextPosition;
-    SDL_Rect m_leftArrowTextPosition;
-    SDL_Rect m_rightArrowTextPosition;
+    std::vector<Text> m_texts;
 };

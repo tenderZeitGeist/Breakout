@@ -1,7 +1,8 @@
-#include "Engine/Configuration.h"
 #include "Engine/Engine.h"
+#include "Engine/Configuration.h"
 #include "Engine/Event.h"
 #include "Engine/EventManager.h"
+#include "Engine/TextureRenderer.h"
 
 #include <chrono>
 #include <iostream>
@@ -11,18 +12,18 @@
 #include <Game/GameScene.h>
 
 namespace {
-    void abortProgram(std::string&& reason) {
-        std::cerr << reason + " couldn't be established. Aborting program." << '\n'
-                  << "Error reason: " << SDL_GetError() << '\n';
-        std::abort();
-    }
+void abortProgram(std::string&& reason) {
+    std::cerr << reason + " couldn't be established. Aborting program." << '\n'
+              << "Error reason: " << SDL_GetError() << '\n';
+    std::abort();
+}
 
-    using Clock = std::chrono::high_resolution_clock;
-    using TimeUnit = std::chrono::milliseconds;
+using Clock = std::chrono::high_resolution_clock;
+using TimeUnit = std::chrono::milliseconds;
 
-    std::size_t currentTickInMilliseconds() {
-        return static_cast<std::size_t>(std::chrono::duration_cast<TimeUnit>(Clock::now().time_since_epoch()).count());
-    }
+std::size_t currentTickInMilliseconds() {
+    return static_cast<std::size_t>(std::chrono::duration_cast<TimeUnit>(Clock::now().time_since_epoch()).count());
+}
 }
 
 Engine::Engine(int width, int height)
@@ -40,14 +41,7 @@ Engine::Engine(int width, int height)
         abortProgram("SDL_ttf");
     }
 
-    m_window = SDL_CreateWindow(
-        "Breakout",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        m_width,
-        m_height,
-        0
-    );
+    m_window = SDL_CreateWindow("Breakout", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_width, m_height, 0);
 
     if (!m_window) {
         abortProgram("Window");
@@ -62,6 +56,10 @@ Engine::Engine(int width, int height)
     }
 
     m_eventManager->subscribe<Engine, events::Shutdown, &Engine::onShutdown>(this);
+
+    m_font = TTF_OpenFont(FONT_PATH, 28);
+    const auto textureRenderer = TextureRenderer(std::ref(*m_renderer), std::ref(*m_font));
+    m_game.initializeGame(textureRenderer);
 }
 
 Engine::~Engine() {
@@ -78,11 +76,12 @@ int Engine::run() {
         m_previousTick = currentTick;
 
         m_deltaAccumulator += timeDelta;
-        if (config::frameTimes < m_deltaAccumulator) {
-            update();
-            draw();
-            m_deltaAccumulator -= config::frameTimes;
+        if (config::frameTimes > m_deltaAccumulator) {
+            continue;
         }
+        update();
+        draw();
+        m_deltaAccumulator -= config::frameTimes;
     }
 
     return 0;
@@ -114,6 +113,10 @@ void Engine::shutdown() {
         SDL_DestroyWindow(m_window);
     }
 
+    if (m_font) {
+        TTF_CloseFont(m_font);
+    }
+
     TTF_Quit();
     SDL_Quit();
 }
@@ -127,10 +130,7 @@ void Engine::pollEvents() {
                 break;
             case SDL_KEYDOWN:
             case SDL_KEYUP:
-                m_eventManager->notify(events::KeyPress(
-                    event.type,
-                    event.key.keysym.sym
-                ));
+                m_eventManager->notify(events::KeyPress(event.type, event.key.keysym.sym));
                 break;
         }
     }

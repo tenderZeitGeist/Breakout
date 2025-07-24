@@ -24,6 +24,8 @@ namespace {
                 return KeyHandler::D;
             case SDLK_SPACE:
                 return KeyHandler::SPACE;
+            case SDLK_KP_ENTER:
+                return KeyHandler::ENTER;
         }
         return KeyHandler::INVALID;
     }

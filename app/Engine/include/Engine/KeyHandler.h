@@ -26,6 +26,7 @@ public:
         RIGHT,
         D,
         SPACE,
+        ENTER,
         INVALID,
         NUM_OF_KEYS
     };

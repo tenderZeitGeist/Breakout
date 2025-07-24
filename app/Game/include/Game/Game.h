@@ -1,11 +1,11 @@
 #pragma once
 
 #include <memory>
-
 #include <Engine/KeyHandler.h>
 
 class Scene;
 class SDL_Renderer;
+class TextureRenderer;
 
 namespace events {
     class EventManager;
@@ -30,9 +30,9 @@ public:
 
     void update(float delta);
     void render(SDL_Renderer& renderer);
+    void initializeGame(const TextureRenderer& textureRenderer);
 
 private:
-    void initializeGame();
     void resetGame();
     void updateGame(float delta);
 
@@ -46,7 +46,7 @@ private:
     std::unique_ptr<Scene> m_menuScene;
     std::unique_ptr<Scene> m_gameScene;
     Scene* m_activeScene;
-    State m_state{State::RUNNING};
+    State m_state{State::UNINITIALIZED};
     bool m_playing{false};
     bool m_debug{false};
 };

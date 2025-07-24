@@ -32,6 +32,7 @@ private:
 private:
     SDL_Window* m_window{nullptr};
     SDL_Renderer* m_renderer{nullptr};
+    TTF_Font* m_font{nullptr};
 
     std::thread m_pollThread;
     std::shared_ptr<events::EventManager> m_eventManager;

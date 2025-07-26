@@ -1,7 +1,9 @@
 #pragma once
 
-#include <memory>
 #include <Engine/KeyHandler.h>
+
+#include <memory>
+#include <unordered_set>
 
 class Scene;
 class SDL_Renderer;
@@ -26,7 +28,7 @@ public:
         STOPPED
     };
 
-    explicit Game(std::shared_ptr<events::EventManager> eventManager, std::reference_wrapper<const KeyHandler> keyHandler);
+    explicit Game(std::shared_ptr<events::EventManager> eventManager, std::reference_wrapper<const inputs::KeyHandler> keyHandler);
 
     void update(float delta);
     void render(SDL_Renderer& renderer);
@@ -35,14 +37,17 @@ public:
 private:
     void resetGame();
     void updateGame(float delta);
+    void queryInputs();
+    void triggerEvent(inputs::InputEvent inputEvent);
 
-    void onDebug(events::Debug&);
-    void onStartStop(events::StartStop&);
+    void onDebug();
+    void onStartStop();
     void onGameOver(events::GameOver&);
     void onGameStarted(events::GameStarted&);
 
     std::shared_ptr<events::EventManager> m_eventManager;
-    std::reference_wrapper<const KeyHandler> m_keyHandler;
+    std::reference_wrapper<const inputs::KeyHandler> m_keyHandler;
+    std::unordered_set<inputs::Keys> m_pressedKeys;
     std::unique_ptr<Scene> m_menuScene;
     std::unique_ptr<Scene> m_gameScene;
     Scene* m_activeScene;

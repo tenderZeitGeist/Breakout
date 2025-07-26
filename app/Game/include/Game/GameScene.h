@@ -16,10 +16,13 @@
 
 class Entity;
 class Game;
-class KeyHandler;
 
 namespace events {
     class EventManager;
+    struct StartMovingLeft;
+    struct StopMovingLeft;
+    struct StartMovingRight;
+    struct StopMovingRight;
     struct BrickDestroyedEvent;
     struct BallOutOfBoundsEvent;
 }
@@ -27,7 +30,7 @@ namespace events {
 class GameScene
     : public Scene {
 public:
-    explicit GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::shared_ptr<events::EventManager> eventManager);
+    explicit GameScene(std::shared_ptr<events::EventManager> eventManager);
     ~GameScene() override;
 
     void update(float delta) override;
@@ -36,10 +39,6 @@ public:
     void exit() override;
 
     void onDebug(bool debug) override;
-
-    void onBrickDestroyed(events::BrickDestroyedEvent& e);
-    void onBallOutOfBounds(events::BallOutOfBoundsEvent& e);
-    void onIncreaseScore(events::IncreaseScore& e);
 
 private:
     void initializePaddle();
@@ -50,6 +49,16 @@ private:
     void initializeLifePoints();
     void setPaddleDirection() const;
 
+    void onBrickDestroyed(events::BrickDestroyedEvent& e);
+    void onBallOutOfBounds(events::BallOutOfBoundsEvent& e);
+    void onIncreaseScore(events::IncreaseScore& e);
+    void onStartMovingLeft(events::StartMovingLeft&);
+    void onStopMovingLeft(events::StopMovingLeft&);
+    void onStartMovingRight(events::StartMovingRight&);
+    void onStopMovingRight(events::StopMovingRight&);
+
+    bool m_moveLeft{false};
+    bool m_moveRight{false};
     int m_pointCounter{0};
 
     Wall m_topWall;
@@ -62,6 +71,5 @@ private:
 
     std::vector<Brick> m_bricks;
     std::vector<std::reference_wrapper<Entity>> m_entities;
-    std::reference_wrapper<const KeyHandler> m_keyHandler;
     std::shared_ptr<events::EventManager> m_eventManager;
 };

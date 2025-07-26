@@ -8,29 +8,30 @@
 #include <cassert>
 
 namespace {
-    std::size_t keyCodeToIndex(SDL_Keycode code) {
-        switch (code) {
-            case SDLK_1:
-                return KeyHandler::_1;
-            case SDLK_2:
-                return KeyHandler::_2;
-            case SDLK_3:
-                return KeyHandler::_3;
-            case SDLK_LEFT:
-                return KeyHandler::LEFT;
-            case SDLK_RIGHT:
-                return KeyHandler::RIGHT;
-            case SDLK_d:
-                return KeyHandler::D;
-            case SDLK_SPACE:
-                return KeyHandler::SPACE;
-            case SDLK_KP_ENTER:
-                return KeyHandler::ENTER;
-        }
-        return KeyHandler::INVALID;
+std::size_t keyCodeToIndex(SDL_Keycode code) {
+    switch (code) {
+        case SDLK_1:
+            return inputs::Keys::_1;
+        case SDLK_2:
+            return inputs::Keys::_2;
+        case SDLK_3:
+            return inputs::Keys::_3;
+        case SDLK_LEFT:
+            return inputs::Keys::LEFT;
+        case SDLK_RIGHT:
+            return inputs::Keys::RIGHT;
+        case SDLK_d:
+            return inputs::Keys::D;
+        case SDLK_SPACE:
+            return inputs::Keys::SPACE;
+        case SDLK_KP_ENTER:
+            return inputs::Keys::ENTER;
     }
+    return inputs::Keys::INVALID;
+}
 }
 
+namespace inputs {
 
 KeyHandler::KeyHandler(std::shared_ptr<events::EventManager> eventManager) noexcept
     : m_eventManager(std::move(eventManager)) {
@@ -39,29 +40,9 @@ KeyHandler::KeyHandler(std::shared_ptr<events::EventManager> eventManager) noexc
 
 void KeyHandler::onKeyEvent(events::KeyPress& e) {
     setKeyState(e.m_code, e.m_keyEvent == SDL_KEYDOWN);
-
-    if (m_keyStates[D]) {
-        m_eventManager->notify(events::Debug());
-    }
-
-    if (m_keyStates[SPACE]) {
-        m_eventManager->notify(events::StartStop());
-    }
-
-    if (m_keyStates[_1]) {
-        m_eventManager->notify(events::IncreaseScore(1));
-    }
-
-    if (m_keyStates[_2]) {
-        m_eventManager->notify(events::IncreaseScore(10));
-    }
-
-    if (m_keyStates[_3]) {
-        m_eventManager->notify(events::IncreaseScore(100));
-    }
 }
 
-const KeyHandler::KeyStateArray& KeyHandler::getKeyStates() const {
+const KeyStateArray& KeyHandler::getKeyStates() const {
     return m_keyStates;
 }
 
@@ -70,3 +51,4 @@ void KeyHandler::setKeyState(SDL_Keycode code, bool state) {
     m_keyStates[index] = state;
 }
 
+}

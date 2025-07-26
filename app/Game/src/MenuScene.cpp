@@ -7,10 +7,8 @@
 
 #include <SDL2/SDL_ttf.h>
 
-MenuScene::MenuScene(std::reference_wrapper<const KeyHandler> keyHandler,
-                     std::shared_ptr<events::EventManager> eventManager, const TextureRenderer& textureRenderer)
-    : m_keyHandler(keyHandler)
-    , m_eventManager(std::move(eventManager)) {
+MenuScene::MenuScene(std::shared_ptr<events::EventManager> eventManager, const TextureRenderer& textureRenderer)
+    : m_eventManager(std::move(eventManager)) {
     for (const auto& text : {"BREAKOUT",
                              "Controls:",
                              "[Spacebar]: Pause/Unpause the game",

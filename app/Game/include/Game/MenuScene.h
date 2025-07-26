@@ -14,7 +14,7 @@ class TextureRenderer;
 
 class MenuScene : public Scene {
 public:
-    MenuScene(std::reference_wrapper<const KeyHandler> keyHandler, std::shared_ptr<events::EventManager> eventManager,
+    MenuScene(std::shared_ptr<events::EventManager> eventManager,
               const TextureRenderer& textureRenderer);
     void update(float delta) override;
     void render(SDL_Renderer& renderer) override;
@@ -23,7 +23,6 @@ public:
     void onDebug(bool debug) override;
 
 private:
-    std::reference_wrapper<const KeyHandler> m_keyHandler;
     std::shared_ptr<events::EventManager> m_eventManager;
     std::vector<Text> m_texts;
 };

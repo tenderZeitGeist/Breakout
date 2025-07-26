@@ -5,24 +5,23 @@
 #include <SDL2/SDL.h>
 
 #include "Game/Game.h"
-#include "Game/GameScene.h"
 #include "Game/GameEvent.h"
+#include "Game/GameScene.h"
 
 #include <Engine/Configuration.h>
 #include <Engine/EventManager.h>
 
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 #include <ranges>
 
-GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::shared_ptr<events::EventManager> eventManager)
-: m_topWall(0.f, -1.f)
-, m_leftWall(1.0, 0.f)
-, m_rightWall(-1.f, 0.f)
-, m_ball(m_paddle, eventManager)
-, m_score()
-, m_keyHandler(keyHandler)
-, m_eventManager(std::move(eventManager)){
+GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager)
+    : m_topWall(0.f, -1.f)
+    , m_leftWall(1.0, 0.f)
+    , m_rightWall(-1.f, 0.f)
+    , m_ball(m_paddle, eventManager)
+    , m_score()
+    , m_eventManager(std::move(eventManager)) {
     initializeWalls();
     initializeBricks();
     initializePaddle();
@@ -32,6 +31,10 @@ GameScene::GameScene(std::reference_wrapper<const KeyHandler> keyHandler, std::s
     m_eventManager->subscribe<GameScene, events::BrickDestroyedEvent, &GameScene::onBrickDestroyed>(this);
     m_eventManager->subscribe<GameScene, events::BallOutOfBoundsEvent, &GameScene::onBallOutOfBounds>(this);
     m_eventManager->subscribe<GameScene, events::IncreaseScore, &GameScene::onIncreaseScore>(this);
+    m_eventManager->subscribe<GameScene, events::StartMovingLeft, &GameScene::onStartMovingLeft>(this);
+    m_eventManager->subscribe<GameScene, events::StopMovingLeft, &GameScene::onStopMovingLeft>(this);
+    m_eventManager->subscribe<GameScene, events::StartMovingRight, &GameScene::onStartMovingRight>(this);
+    m_eventManager->subscribe<GameScene, events::StopMovingRight, &GameScene::onStopMovingRight>(this);
 }
 
 GameScene::~GameScene() {
@@ -39,39 +42,36 @@ GameScene::~GameScene() {
 
 void GameScene::update(float delta) {
     setPaddleDirection();
-    for (auto& entity: m_entities) {
+    for (auto& entity : m_entities) {
         entity.get().update(delta);
     }
 }
 
 void GameScene::render(SDL_Renderer& renderer) {
-    for (auto& entity: m_entities) {
+    for (auto& entity : m_entities) {
         entity.get().render(renderer);
     }
 }
 
 void GameScene::enter() {
-
 }
 
 void GameScene::exit() {
 }
 
 void GameScene::onDebug(bool debug) {
-    for (auto entityRef: m_entities) {
+    for (auto entityRef : m_entities) {
         entityRef.get().onDebug(debug);
     }
 }
 
 void GameScene::initializePaddle() {
-    m_paddle.init({
-            .x = config::windowHalfWidth - config::slotHalfWidth,
-            .y = config::windowHeight - 100,
-            .width = config::slotWidth,
-            .height = config::slotHeight,
-            .velocity = static_cast<float>(config::windowHeight) / 1350.f,
-            .color = config::kPaddleColor
-        }
+    m_paddle.init({.x = config::windowHalfWidth - config::slotHalfWidth,
+                   .y = config::windowHeight - 100,
+                   .width = config::slotWidth,
+                   .height = config::slotHeight,
+                   .velocity = static_cast<float>(config::windowHeight) / 1350.f,
+                   .color = config::kPaddleColor}
 
     );
     m_paddle.setWalls({m_leftWall, m_rightWall});
@@ -79,33 +79,27 @@ void GameScene::initializePaddle() {
 }
 
 void GameScene::initializeWalls() {
-    m_topWall.init({
-        .x = 0,
-        .y = 0,
-        .width = config::windowWidth,
-        .height = config::scoreHeight + config::slotHeight,
-        .color = config::kDebugColor
-    });
+    m_topWall.init({.x = 0,
+                    .y = 0,
+                    .width = config::windowWidth,
+                    .height = config::scoreHeight + config::slotHeight,
+                    .color = config::kDebugColor});
 
     m_entities.emplace_back(m_topWall);
 
-    m_leftWall.init({
-        .x = 0,
-        .y = 0,
-        .width = config::slotHalfWidth,
-        .height = config::windowHeight,
-        .color = config::kDebugColor
-    });
+    m_leftWall.init({.x = 0,
+                     .y = 0,
+                     .width = config::slotHalfWidth,
+                     .height = config::windowHeight,
+                     .color = config::kDebugColor});
 
     m_entities.emplace_back(m_leftWall);
 
-    m_rightWall.init({
-        .x = config::windowWidth - config::slotHalfWidth,
-        .y = 0,
-        .width = config::slotHalfWidth,
-        .height = config::windowHeight,
-        .color = config::kDebugColor
-    });
+    m_rightWall.init({.x = config::windowWidth - config::slotHalfWidth,
+                      .y = 0,
+                      .width = config::slotHalfWidth,
+                      .height = config::windowHeight,
+                      .color = config::kDebugColor});
 
     m_entities.emplace_back(m_rightWall);
 }
@@ -119,26 +113,23 @@ void GameScene::initializeBricks() {
         for (int x = 0; x < amountX; ++x) {
             m_bricks.emplace_back();
             auto& brickRef = m_bricks.back();
-            brickRef.init({
-                .x = config::slotHalfWidth + x * (config::slotWidth + config::slotSpacing),
-                .y = config::slotHalfWidth + y * (config::slotHeight + config::slotSpacing) + config::scoreHeight,
-                .width = config::slotWidth,
-                .height = config::slotHeight,
-                .color = config::kBricksFillStyles[colorIndex]
-            });
+            brickRef.init(
+                    {.x = config::slotHalfWidth + x * (config::slotWidth + config::slotSpacing),
+                     .y = config::slotHalfWidth + y * (config::slotHeight + config::slotSpacing) + config::scoreHeight,
+                     .width = config::slotWidth,
+                     .height = config::slotHeight,
+                     .color = config::kBricksFillStyles[colorIndex]});
             m_entities.emplace_back(brickRef);
         }
     }
 }
 
 void GameScene::initializeBall() {
-    m_ball.init({
-        .x = config::windowHalfWidth - config::slotHalfHeight,
-        .y = config::windowHalfHeight - config::slotHalfHeight,
-        .width = config::slotHeight,
-        .height = config::slotHeight,
-        .color = config::kPaddleColor
-    });
+    m_ball.init({.x = config::windowHalfWidth - config::slotHalfHeight,
+                 .y = config::windowHalfHeight - config::slotHalfHeight,
+                 .width = config::slotHeight,
+                 .height = config::slotHeight,
+                 .color = config::kPaddleColor});
 
     m_ball.setWalls({m_topWall, m_leftWall, m_rightWall});
     std::vector<std::reference_wrapper<Brick>> brickRefs;
@@ -153,33 +144,27 @@ void GameScene::initializeBall() {
 void GameScene::initializeScore() {
     constexpr auto x = config::windowWidth - config::scoreWidth - config::slotHalfWidth - config::scoreSpacing * 2;
     constexpr auto y = config::slotHalfHeight;
-    m_score.init({
-        .x = x,
-        .y = y,
-        .width = config::scoreWidth,
-        .height = config::scoreHeight,
-        .color = config::kWhiteColor });
+    m_score.init(
+            {.x = x, .y = y, .width = config::scoreWidth, .height = config::scoreHeight, .color = config::kWhiteColor});
     m_entities.emplace_back(std::ref(m_score));
 }
 
 void GameScene::initializeLifePoints() {
     constexpr auto x = config::slotHalfWidth;
     constexpr auto y = config::slotHalfHeight;
-    m_lifePoints.init({
-        .x = x,
-        .y = y,
-        .width = static_cast<int>(config::slotWidth * 1.25),
-        .height = config::scoreHeight,
-        .color = config::kWhiteColor
-    });
+    m_lifePoints.init({.x = x,
+                       .y = y,
+                       .width = static_cast<int>(config::slotWidth * 1.25),
+                       .height = config::scoreHeight,
+                       .color = config::kWhiteColor});
     m_lifePoints.setLifePoints(3);
     m_entities.emplace_back(std::ref(m_lifePoints));
 }
 
 void GameScene::setPaddleDirection() const {
-    const auto& keyStates = m_keyHandler.get().getKeyStates();
-    const float leftDirection = static_cast<float>(keyStates[KeyHandler::LEFT]) * -1.f;
-    const float rightDirection = static_cast<float>(keyStates[KeyHandler::RIGHT]) * 1.f;
+    constexpr float coefficient = 1.f;
+    const float leftDirection = static_cast<float>(m_moveLeft) * -coefficient;
+    const float rightDirection = static_cast<float>(m_moveRight) * coefficient;
     m_paddle.getMoveable()->setDirectionX(leftDirection + rightDirection);
 }
 
@@ -212,4 +197,20 @@ void GameScene::onIncreaseScore(events::IncreaseScore& e) {
     m_pointCounter += e.m_value;
     m_score.setScore(m_pointCounter);
     m_score.setBlinking(true);
+}
+
+void GameScene::onStartMovingLeft(events::StartMovingLeft&) {
+    m_moveLeft = true;
+}
+
+void GameScene::onStopMovingLeft(events::StopMovingLeft&) {
+    m_moveLeft = false;
+}
+
+void GameScene::onStartMovingRight(events::StartMovingRight&) {
+    m_moveRight = true;
+}
+
+void GameScene::onStopMovingRight(events::StopMovingRight&) {
+    m_moveRight = false;
 }

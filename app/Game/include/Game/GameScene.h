@@ -35,6 +35,7 @@ public:
 
     void update(float delta) override;
     void render(SDL_Renderer& renderer) override;
+    void reset() override;
     void enter() override;
     void exit() override;
 

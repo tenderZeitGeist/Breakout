@@ -34,7 +34,7 @@ MenuScene::MenuScene(std::shared_ptr<events::EventManager> eventManager, const T
     }
 }
 
-void MenuScene::update(float delta) {
+void MenuScene::update(float) {
 }
 
 void MenuScene::render(SDL_Renderer& renderer) {
@@ -43,11 +43,14 @@ void MenuScene::render(SDL_Renderer& renderer) {
     }
 }
 
+void MenuScene::reset() {
+}
+
 void MenuScene::enter() {
 }
 
 void MenuScene::exit() {
 }
 
-void MenuScene::onDebug(bool debug) {
+void MenuScene::onDebug(bool) {
 }

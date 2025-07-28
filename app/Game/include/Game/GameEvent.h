@@ -7,12 +7,12 @@ class Brick;
 
 namespace events {
 
-    struct BrickDestroyedEvent : Event {
-        explicit BrickDestroyedEvent(const Brick& brick) : brick(brick) {}
+    struct BrickDestroyed : Event {
+        explicit BrickDestroyed(const Brick& brick) : brick(brick) {}
         const Brick& brick;
     };
 
-    struct BallOutOfBoundsEvent : Event {
+    struct BallOutOfBounds : Event {
     };
 
 }

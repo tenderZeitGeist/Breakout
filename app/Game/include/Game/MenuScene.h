@@ -16,11 +16,12 @@ class MenuScene : public Scene {
 public:
     MenuScene(std::shared_ptr<events::EventManager> eventManager,
               const TextureRenderer& textureRenderer);
-    void update(float delta) override;
+    void update(float) override;
     void render(SDL_Renderer& renderer) override;
+    void reset() override;
     void enter() override;
     void exit() override;
-    void onDebug(bool debug) override;
+    void onDebug(bool) override;
 
 private:
     std::shared_ptr<events::EventManager> m_eventManager;

@@ -172,8 +172,7 @@ void GameScene::onBrickDestroyed(events::BrickDestroyedEvent& e) {
     auto& brick = e.brick;
     brick.getDrawable()->setVisible(false);
     brick.getCollideable()->setEnabled(false);
-    m_pointCounter += brick.getValue();
-    m_score.setScore(m_pointCounter);
+    m_score.increaseScore(brick.getValue());
     m_score.setBlinking(true);
 }
 
@@ -194,8 +193,7 @@ void GameScene::onBallOutOfBounds(events::BallOutOfBoundsEvent& e) {
 }
 
 void GameScene::onIncreaseScore(events::IncreaseScore& e) {
-    m_pointCounter += e.m_value;
-    m_score.setScore(m_pointCounter);
+    m_score.increaseScore(e.m_value);
     m_score.setBlinking(true);
 }
 

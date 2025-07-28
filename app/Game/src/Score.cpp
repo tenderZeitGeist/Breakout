@@ -19,19 +19,8 @@ Score::Score()
     : Entity(DRAWABLE) {
 }
 
-void Score::setScore(int score) {
-    m_score = score;
-    score = std::min(score, kMaxDisplayScore);
-
-    for (auto& m_digit: m_digits) {
-        const auto digit = score % 10;
-        m_digit.setValue(digit);
-        score /= 10;
-    }
-}
-
-int Score::getScore() const {
-    return m_score;
+void Score::increaseScore(int points) {
+    setScore(getScore() + points);
 }
 
 void Score::setBlinking(bool blinking) {
@@ -57,7 +46,7 @@ void Score::render(SDL_Renderer& renderer) {
     }
 }
 
-void Score::update(float delta) {
+void Score::update(float) {
     if (m_blinksLeft <= 0) {
         return;
     }
@@ -99,3 +88,22 @@ void Score::init(Entity::Values v) {
     }
 }
 
+void Score::reset() {
+    setBlinking(false);
+    setScore(0);
+}
+
+void Score::setScore(int score) {
+    m_score = score;
+    score = std::min(score, kMaxDisplayScore);
+
+    for (auto& m_digit: m_digits) {
+        const auto digit = score % 10;
+        m_digit.setValue(digit);
+        score /= 10;
+    }
+}
+
+int Score::getScore() const {
+    return m_score;
+}

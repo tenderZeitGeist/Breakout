@@ -24,7 +24,7 @@ std::size_t keyCodeToIndex(SDL_Keycode code) {
             return inputs::Keys::D;
         case SDLK_SPACE:
             return inputs::Keys::SPACE;
-        case SDLK_KP_ENTER:
+        case SDLK_RETURN:
             return inputs::Keys::ENTER;
     }
     return inputs::Keys::INVALID;

@@ -35,6 +35,10 @@ void Entity::init(Entity::Values v) {
     }
 }
 
+void Entity::reset() {
+
+}
+
 void Entity::render(SDL_Renderer& renderer) {
     if (m_drawable && m_drawable->isVisible()) {
         m_drawable->render(renderer);

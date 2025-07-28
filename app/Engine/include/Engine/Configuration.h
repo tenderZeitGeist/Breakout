@@ -43,4 +43,6 @@ namespace config {
         kBricksFillStyle3,
         kBricksFillStyle4,
     };
+
+    static constexpr int defaultLifePoints = 3;
 }

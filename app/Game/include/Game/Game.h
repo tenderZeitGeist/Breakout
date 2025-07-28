@@ -16,6 +16,7 @@ namespace events {
     struct StartStop;
     struct GameStarted;
     struct GameOver;
+    struct BallOutOfBounds;
 }
 
 class Game {
@@ -35,15 +36,17 @@ public:
     void initializeGame(const TextureRenderer& textureRenderer);
 
 private:
+    void startGame();
     void resetGame();
     void updateGame(float delta);
     void queryInputs();
     void triggerEvent(inputs::InputEvent inputEvent);
+    void togglePlayingState();
 
     void onDebug();
-    void onStartStop();
+    void onStartGame();
+    void onBallOutOfBounds(events::BallOutOfBounds&);
     void onGameOver(events::GameOver&);
-    void onGameStarted(events::GameStarted&);
 
     std::shared_ptr<events::EventManager> m_eventManager;
     std::reference_wrapper<const inputs::KeyHandler> m_keyHandler;
@@ -52,6 +55,7 @@ private:
     std::unique_ptr<Scene> m_gameScene;
     Scene* m_activeScene;
     State m_state{State::UNINITIALIZED};
+    bool m_started{false};
     bool m_playing{false};
     bool m_debug{false};
 };

@@ -29,8 +29,8 @@ GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager)
     initializeBall();
     initializeScore();
     initializeLifePoints();
-    m_eventManager->subscribe<GameScene, events::BrickDestroyedEvent, &GameScene::onBrickDestroyed>(this);
-    m_eventManager->subscribe<GameScene, events::BallOutOfBoundsEvent, &GameScene::onBallOutOfBounds>(this);
+    m_eventManager->subscribe<GameScene, events::BrickDestroyed, &GameScene::onBrickDestroyed>(this);
+    m_eventManager->subscribe<GameScene, events::BallOutOfBounds, &GameScene::onBallOutOfBounds>(this);
     m_eventManager->subscribe<GameScene, events::IncreaseScore, &GameScene::onIncreaseScore>(this);
     m_eventManager->subscribe<GameScene, events::StartMovingLeft, &GameScene::onStartMovingLeft>(this);
     m_eventManager->subscribe<GameScene, events::StopMovingLeft, &GameScene::onStopMovingLeft>(this);
@@ -174,7 +174,7 @@ void GameScene::setPaddleDirection() const {
     m_paddle.getMoveable()->setDirectionX(leftDirection + rightDirection);
 }
 
-void GameScene::onBrickDestroyed(events::BrickDestroyedEvent& e) {
+void GameScene::onBrickDestroyed(events::BrickDestroyed& e) {
     auto& brick = e.brick;
     brick.getDrawable()->setVisible(false);
     brick.getCollideable()->setEnabled(false);
@@ -182,7 +182,7 @@ void GameScene::onBrickDestroyed(events::BrickDestroyedEvent& e) {
     m_score.setBlinking(true);
 }
 
-void GameScene::onBallOutOfBounds(events::BallOutOfBoundsEvent& e) {
+void GameScene::onBallOutOfBounds(events::BallOutOfBounds&) {
     m_ball.reset();
     m_paddle.reset();
 

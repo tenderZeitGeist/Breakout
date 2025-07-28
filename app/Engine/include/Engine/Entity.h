@@ -41,6 +41,7 @@ public:
 
     virtual void render(SDL_Renderer& renderer);
     virtual void init(Values v);
+    virtual void reset();
 
     [[nodiscard]] int getX() const;
     [[nodiscard]] int getY() const;

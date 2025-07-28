@@ -38,9 +38,6 @@ GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager)
     m_eventManager->subscribe<GameScene, events::StopMovingRight, &GameScene::onStopMovingRight>(this);
 }
 
-GameScene::~GameScene() {
-}
-
 void GameScene::update(float delta) {
     setPaddleDirection();
     for (auto& entity : m_entities) {

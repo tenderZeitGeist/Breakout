@@ -54,6 +54,12 @@ void GameScene::render(SDL_Renderer& renderer) {
     }
 }
 
+void GameScene::reset() {
+    for (auto entityRef : m_entities) {
+       entityRef.get().reset();
+    }
+}
+
 void GameScene::enter() {
 }
 

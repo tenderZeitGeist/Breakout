@@ -11,6 +11,7 @@ public:
     virtual ~Scene() = default;
     virtual void update(float delta) = 0;
     virtual void render(SDL_Renderer& renderer) = 0;
+    virtual void reset() = 0;
     virtual void enter() = 0;
     virtual void exit() = 0;
     virtual void onDebug(bool debug) = 0;

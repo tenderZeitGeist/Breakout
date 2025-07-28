@@ -5,8 +5,7 @@
 #include "Game/Game.h"
 #include "Game/GameScene.h"
 #include "Game/MenuScene.h"
-
-#include <SDL2/SDL_render.h>
+#include "Game/GameEvent.h"
 
 #include <Engine/Event.h>
 #include <Engine/EventManager.h>
@@ -27,7 +26,7 @@ static constexpr std::array<inputs::KeyBinding, inputs::Keys::NUM_OF_KEYS> kBind
         {inputs::InputEvent::START_MOVE_RIGHT, inputs::InputEvent::STOP_MOVE_RIGHT}, // KeyHandler::RIGHT
         {inputs::InputEvent::SHOW_DEBUG, inputs::InputEvent::NONE}, // KeyHandler::D
         {inputs::InputEvent::START_STOP, inputs::InputEvent::NONE}, // KeyHandler::SPACE
-        {inputs::InputEvent::NONE, inputs::InputEvent::NONE}, // KeyHandler::ENTER
+        {inputs::InputEvent::START_GAME, inputs::InputEvent::NONE}, // KeyHandler::ENTER
 }};
 
 }
@@ -37,19 +36,23 @@ Game::Game(std::shared_ptr<events::EventManager> eventManager,
     : m_eventManager(std::move(eventManager))
     , m_keyHandler(keyHandler) {
     m_eventManager->subscribe<Game, events::GameOver, &Game::onGameOver>(this);
-    m_eventManager->subscribe<Game, events::GameStarted, &Game::onGameStarted>(this);
+    m_eventManager->subscribe<Game, events::BallOutOfBounds, &Game::onBallOutOfBounds>(this);
     m_activeScene = m_menuScene.get();
 }
 
 void Game::update(float delta) {
     queryInputs();
+    updateGame(delta);
+
     switch (m_state) {
         case State::STOPPED:
             resetGame();
             break;
-        case State::RUNNING:
-            updateGame(delta);
+        case State::INITIALIZED:
+            startGame();
             break;
+        case State::RUNNING:
+        case State::UNINITIALIZED:
         default:
             break;
     }
@@ -68,10 +71,20 @@ void Game::initializeGame(const TextureRenderer& textureRenderer) {
     m_state = State::INITIALIZED;
 }
 
+void Game::startGame() {
+    if (!m_started) {
+        return;
+    }
+    m_started = false;
+    m_activeScene = m_gameScene.get();
+    m_state = State::RUNNING;
+}
+
 void Game::resetGame() {
-    // TODO: Switch back to game menu scene
-    // m_activeScene->reset();
+    m_activeScene->reset();
     m_activeScene = m_menuScene.get();
+    m_playing = false;
+    m_state = State::INITIALIZED;
 }
 
 void Game::updateGame(float delta) {
@@ -84,6 +97,10 @@ void Game::updateGame(float delta) {
     }
 }
 
+void Game::togglePlayingState() {
+    m_playing = !m_playing;
+}
+
 void Game::onDebug() {
     m_debug = !m_debug;
     if (m_activeScene) {
@@ -91,18 +108,15 @@ void Game::onDebug() {
     }
 }
 
-void Game::onStartStop() {
-    m_playing = !m_playing;
+void Game::onBallOutOfBounds(events::BallOutOfBounds&) {
+    togglePlayingState();
 }
 
-void Game::onGameStarted(events::GameStarted&) {
-    m_activeScene = m_gameScene.get();
-    m_state = State::RUNNING;
+void Game::onStartGame() {
+    m_started = true;
 }
 
 void Game::onGameOver(events::GameOver&) {
-    m_playing = false;
-    m_activeScene = m_menuScene.get();
     m_state = State::STOPPED;
 }
 
@@ -146,10 +160,12 @@ void Game::triggerEvent(inputs::InputEvent inputEvent) {
             onDebug();
             break;
         case inputs::InputEvent::START_STOP:
-            onStartStop();
+            togglePlayingState();
+            break;
+        case inputs::InputEvent::START_GAME:
+            onStartGame();
             break;
         case inputs::InputEvent::NONE:
-            break;
         default:
             break;
     }

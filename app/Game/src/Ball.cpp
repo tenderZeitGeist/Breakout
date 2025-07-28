@@ -79,7 +79,7 @@ void Ball::update(float delta) {
     m_moveable->move(delta);
 
     if (outOfBounds()) {
-        m_eventManager->notify(events::BallOutOfBoundsEvent());
+        m_eventManager->notify(events::BallOutOfBounds());
         return;
     }
 
@@ -175,7 +175,7 @@ bool Ball::collidedWithBrick() {
         if (*m_collideable == *brick.getCollideable()) {
             resetToPreviousPosition();
             m_moveable->setDirectionY(-m_moveable->getDirectionY());
-            m_eventManager->notify(events::BrickDestroyedEvent{brick});
+            m_eventManager->notify(events::BrickDestroyed{brick});
             return true;
         }
     }

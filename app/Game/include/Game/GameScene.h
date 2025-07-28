@@ -23,8 +23,8 @@ namespace events {
     struct StopMovingLeft;
     struct StartMovingRight;
     struct StopMovingRight;
-    struct BrickDestroyedEvent;
-    struct BallOutOfBoundsEvent;
+    struct BrickDestroyed;
+    struct BallOutOfBounds;
 }
 
 class GameScene
@@ -50,8 +50,8 @@ private:
     void initializeLifePoints();
     void setPaddleDirection() const;
 
-    void onBrickDestroyed(events::BrickDestroyedEvent& e);
-    void onBallOutOfBounds(events::BallOutOfBoundsEvent& e);
+    void onBrickDestroyed(events::BrickDestroyed& e);
+    void onBallOutOfBounds(events::BallOutOfBounds&);
     void onIncreaseScore(events::IncreaseScore& e);
     void onStartMovingLeft(events::StartMovingLeft&);
     void onStopMovingLeft(events::StopMovingLeft&);
@@ -60,7 +60,6 @@ private:
 
     bool m_moveLeft{false};
     bool m_moveRight{false};
-    int m_pointCounter{0};
 
     Wall m_topWall;
     Wall m_leftWall;

@@ -31,7 +31,7 @@ class GameScene
     : public Scene {
 public:
     explicit GameScene(std::shared_ptr<events::EventManager> eventManager);
-    ~GameScene() override;
+    ~GameScene() override = default;
 
     void update(float delta) override;
     void render(SDL_Renderer& renderer) override;

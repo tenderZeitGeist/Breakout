@@ -21,6 +21,7 @@ GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager)
     , m_rightWall(-1.f, 0.f)
     , m_ball(m_paddle, eventManager)
     , m_score()
+    , m_lifePoints(config::defaultLifePoints)
     , m_eventManager(std::move(eventManager)) {
     initializeWalls();
     initializeBricks();
@@ -157,7 +158,6 @@ void GameScene::initializeLifePoints() {
                        .width = static_cast<int>(config::slotWidth * 1.25),
                        .height = config::scoreHeight,
                        .color = config::kWhiteColor});
-    m_lifePoints.setLifePoints(3);
     m_entities.emplace_back(std::ref(m_lifePoints));
 }
 
@@ -181,9 +181,7 @@ void GameScene::onBallOutOfBounds(events::BallOutOfBoundsEvent& e) {
     m_paddle.reset();
 
     const auto currentLifePoints = m_lifePoints.getLifePoints() - 1;
-
     if (currentLifePoints <= 0) {
-        // TODO: This needs to be changed in order to not cause UB.
         m_eventManager->notify(events::GameOver());
         return;
     }

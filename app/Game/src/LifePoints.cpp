@@ -1,8 +1,10 @@
 
 #include <Game/LifePoints.h>
 
-LifePoints::LifePoints() : Entity(DRAWABLE) {
-
+LifePoints::LifePoints(int defaultLifePoints)
+    : Entity(DRAWABLE)
+    , m_defaultLifePoints(defaultLifePoints) {
+    setLifePoints(m_defaultLifePoints);
 }
 
 void LifePoints::setLifePoints(int lifePoints) {
@@ -27,4 +29,8 @@ void LifePoints::render(SDL_Renderer& renderer) {
     const auto& color = m_drawable->getColor();
     SDL_SetRenderDrawColor(&renderer, color.r, color.g, color.b, color.a);
     m_digit.render(renderer);
+}
+
+void LifePoints::reset() {
+    m_digit.setValue(m_defaultLifePoints);
 }

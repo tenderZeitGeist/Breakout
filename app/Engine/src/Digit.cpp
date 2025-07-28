@@ -37,6 +37,7 @@ namespace {
                 return {kHLineTop, kHLineBottom, kHLineMiddle, kVLineRightTop, kVLineLeftTop, kVLineRightBottom};
             default:
                 assert(false);
+                return {};
         }
     }
 }

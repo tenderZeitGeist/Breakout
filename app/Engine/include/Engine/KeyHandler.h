@@ -39,7 +39,8 @@ enum class InputEvent {
     START_MOVE_LEFT,
     STOP_MOVE_LEFT,
     START_MOVE_RIGHT,
-    STOP_MOVE_RIGHT
+    STOP_MOVE_RIGHT,
+    START_GAME,
 };
 
 struct KeyBinding {

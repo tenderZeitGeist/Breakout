@@ -7,10 +7,11 @@ class Brick
     : public Entity {
 public:
     explicit Brick();
-    Brick(Brick&&) = default;
-    Brick& operator=(Brick&&) = default;
-    [[nodiscard]] std::size_t getValue() const;
+
+    void reset() override;
+
+    [[nodiscard]] int getValue() const;
 
 private:
-    std::size_t m_value{1};
+    int m_value{1};
 };

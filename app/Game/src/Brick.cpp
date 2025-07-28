@@ -2,10 +2,15 @@
 #include "Game/Brick.h"
 
 Brick::Brick()
-    : Entity(COLLIDEABLE | DRAWABLE){
+    : Entity(COLLIDEABLE | DRAWABLE) {
     m_collideable->setEnabled(true);
 }
 
-std::size_t Brick::getValue() const {
+void Brick::reset() {
+    m_collideable->setEnabled(true);
+    m_drawable->setVisible(true);
+}
+
+int Brick::getValue() const {
     return m_value;
 }

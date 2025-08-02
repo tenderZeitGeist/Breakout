@@ -16,6 +16,7 @@ set(ENGINE_HEADER_FILES
         "${DIR_INCLUDE}/Engine/EventManager.h"
         "${DIR_INCLUDE}/Engine/KeyHandler.h"
         "${DIR_INCLUDE}/Engine/Moveable.h"
+        "${DIR_INCLUDE}/Engine/PerformanceMetrics.h"
         "${DIR_INCLUDE}/Engine/TextureRenderer.h"
         "${DIR_INCLUDE}/Engine/Text.h"
 )
@@ -29,6 +30,7 @@ set(ENGINE_SOURCE_FILES
         "${DIR_SOURCE}/KeyHandler.cpp"
         "${DIR_SOURCE}/Moveable.cpp"
         "${DIR_SOURCE}/TextureRenderer.cpp"
+        "${DIR_SOURCE}/PerformanceMetrics.cpp"
 )
 
 add_library(${PROJECT_NAME} STATIC ${ENGINE_SOURCE_FILES} ${ENGINE_HEADER_FILES})

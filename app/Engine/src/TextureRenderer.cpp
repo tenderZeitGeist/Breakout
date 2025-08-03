@@ -5,13 +5,15 @@
 #include <Engine/Text.h>
 #include <Engine/TextureRenderer.h>
 
-TextureRenderer::TextureRenderer(std::reference_wrapper<SDL_Renderer> renderer, std::reference_wrapper<TTF_Font> font)
+TextureRenderer::TextureRenderer(std::reference_wrapper<SDL_Renderer> renderer, std::reference_wrapper<TTF_Font> normalFont, std::reference_wrapper<TTF_Font> headlineFont)
     : m_renderer(renderer)
-    , m_font(font) {
+    , m_mediumFont(normalFont)
+    , m_largeFont(headlineFont){
 }
 
-Text TextureRenderer::createText(std::string_view text) const {
-    const auto surface = [font = &m_font.get(), text = text.data()]() -> SDL_Surface* {
+Text TextureRenderer::createText(std::string_view text, bool large) const {
+    auto& selectedFont = large ? m_largeFont.get() : m_mediumFont.get();
+    const auto surface = [font = &selectedFont, text = text.data()]() -> SDL_Surface* {
         try {
             return TTF_RenderText_Blended(font, text, config::kWhiteColor);
         } catch (...) {

@@ -10,12 +10,14 @@
 
 #include <Engine/Configuration.h>
 #include <Engine/EventManager.h>
+#include <Engine/TextureRenderer.h>
+#include <Engine/Text.h>
 
 #include <algorithm>
 #include <iostream>
 #include <ranges>
 
-GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager)
+GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager, const TextureRenderer& textureRenderer)
     : m_topWall(0.f, -1.f)
     , m_leftWall(1.0, 0.f)
     , m_rightWall(-1.f, 0.f)
@@ -29,6 +31,7 @@ GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager)
     initializeBall();
     initializeScore();
     initializeLifePoints();
+    initializeGameOverText(textureRenderer);
     m_eventManager->subscribe<GameScene, events::BrickDestroyed, &GameScene::onBrickDestroyed>(this);
     m_eventManager->subscribe<GameScene, events::BallOutOfBounds, &GameScene::onBallOutOfBounds>(this);
     m_eventManager->subscribe<GameScene, events::IncreaseScore, &GameScene::onIncreaseScore>(this);
@@ -36,9 +39,14 @@ GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager)
     m_eventManager->subscribe<GameScene, events::StopMovingLeft, &GameScene::onStopMovingLeft>(this);
     m_eventManager->subscribe<GameScene, events::StartMovingRight, &GameScene::onStartMovingRight>(this);
     m_eventManager->subscribe<GameScene, events::StopMovingRight, &GameScene::onStopMovingRight>(this);
+    m_eventManager->subscribe<GameScene, events::ReturnToMenu, &GameScene::onReturnToMenu>(this);
 }
 
 void GameScene::update(float delta) {
+    if (m_gameOver) {
+        return;
+    }
+
     setPaddleDirection();
     for (auto& entity : m_entities) {
         entity.get().update(delta);
@@ -49,12 +57,29 @@ void GameScene::render(SDL_Renderer& renderer) {
     for (auto& entity : m_entities) {
         entity.get().render(renderer);
     }
+
+    if (!m_gameOver) {
+        return;
+    }
+    // TODO: Move this into own object/function
+    static constexpr int blinksInMs = 2000;
+    static constexpr int blinkRate = blinksInMs / config::frameTimes;
+    static int counter = 0;
+    static bool visible = true;
+    counter = (++counter) % blinkRate;
+    if (!counter) {
+        visible = !visible;
+    }
+    if (visible) {
+        SDL_RenderCopy(&renderer, m_gameOverText.texture.get(), nullptr, &m_gameOverText.position);
+    }
 }
 
 void GameScene::reset() {
     for (auto entityRef : m_entities) {
        entityRef.get().reset();
     }
+    m_gameOver = false;
 }
 
 void GameScene::enter() {
@@ -164,6 +189,19 @@ void GameScene::initializeLifePoints() {
     m_entities.emplace_back(std::ref(m_lifePoints));
 }
 
+void GameScene::initializeGameOverText(const TextureRenderer& textureRenderer) {
+    auto gameOverText = textureRenderer.createText("GAME OVER", true);
+    if (!gameOverText) {
+        // TODO: Error handling/logging?
+        return;
+    }
+    auto& textPosition = gameOverText.position;
+    SDL_QueryTexture(gameOverText.texture.get(), nullptr, nullptr, &textPosition.w, &textPosition.h);
+    textPosition.x = config::windowHalfWidth - textPosition.w / 2;
+    textPosition.y = config::windowHalfHeight - textPosition.h / 2;
+    m_gameOverText = std::move(gameOverText);
+}
+
 void GameScene::setPaddleDirection() const {
     constexpr float coefficient = 1.f;
     const float leftDirection = static_cast<float>(m_moveLeft) * -coefficient;
@@ -184,12 +222,12 @@ void GameScene::onBallOutOfBounds(events::BallOutOfBounds&) {
     m_paddle.reset();
 
     const auto currentLifePoints = m_lifePoints.getLifePoints() - 1;
+    m_lifePoints.setLifePoints(currentLifePoints);
     if (currentLifePoints <= 0) {
-        m_eventManager->notify(events::GameOver());
+        setGameOverState();
         return;
     }
 
-    m_lifePoints.setLifePoints(currentLifePoints);
     m_eventManager->notify(events::StartStop());
 }
 
@@ -212,4 +250,17 @@ void GameScene::onStartMovingRight(events::StartMovingRight&) {
 
 void GameScene::onStopMovingRight(events::StopMovingRight&) {
     m_moveRight = false;
+}
+
+void GameScene::onReturnToMenu(events::ReturnToMenu&) {
+    if (!m_gameOver) {
+        return;
+    }
+    m_eventManager->notify(events::GameOver());
+}
+
+void GameScene::setGameOverState() {
+    m_gameOver = true;
+    m_ball.getDrawable()->setVisible(false);
+    m_paddle.getDrawable()->setVisible(false);
 }

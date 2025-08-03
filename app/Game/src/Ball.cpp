@@ -108,6 +108,7 @@ void Ball::reset() {
 
     const auto [x, y] = generateRandomDirection();
     m_moveable->setDirection({x, y});
+    m_drawable->setVisible(true);
 }
 
 void Ball::setWalls(std::vector<std::reference_wrapper<Wall>> walls) {

@@ -12,6 +12,8 @@
 #include "Paddle.h"
 #include "Wall.h"
 
+#include <Engine/Text.h>
+
 #include <vector>
 
 class Entity;
@@ -25,12 +27,13 @@ namespace events {
     struct StopMovingRight;
     struct BrickDestroyed;
     struct BallOutOfBounds;
+    struct ReturnToMenu;
 }
 
 class GameScene
     : public Scene {
 public:
-    explicit GameScene(std::shared_ptr<events::EventManager> eventManager);
+    explicit GameScene(std::shared_ptr<events::EventManager> eventManager, const TextureRenderer& textureRenderer);
     ~GameScene() override = default;
 
     void update(float delta) override;
@@ -48,7 +51,9 @@ private:
     void initializeBall();
     void initializeScore();
     void initializeLifePoints();
+    void initializeGameOverText(const TextureRenderer& textureRenderer);
     void setPaddleDirection() const;
+    void setGameOverState();
 
     void onBrickDestroyed(events::BrickDestroyed& e);
     void onBallOutOfBounds(events::BallOutOfBounds&);
@@ -57,9 +62,11 @@ private:
     void onStopMovingLeft(events::StopMovingLeft&);
     void onStartMovingRight(events::StartMovingRight&);
     void onStopMovingRight(events::StopMovingRight&);
+    void onReturnToMenu(events::ReturnToMenu&);
 
     bool m_moveLeft{false};
     bool m_moveRight{false};
+    bool m_gameOver{false};
 
     Wall m_topWall;
     Wall m_leftWall;
@@ -68,6 +75,7 @@ private:
     Ball m_ball;
     Score m_score;
     LifePoints m_lifePoints;
+    Text m_gameOverText;
 
     std::vector<Brick> m_bricks;
     std::vector<std::reference_wrapper<Entity>> m_entities;

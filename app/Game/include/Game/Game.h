@@ -25,6 +25,7 @@ public:
     enum class State {
         UNINITIALIZED,
         INITIALIZED,
+        START,
         RUNNING,
         STOPPED
     };
@@ -55,7 +56,6 @@ private:
     std::unique_ptr<Scene> m_gameScene;
     Scene* m_activeScene;
     State m_state{State::UNINITIALIZED};
-    bool m_started{false};
     bool m_playing{false};
     bool m_debug{false};
 };

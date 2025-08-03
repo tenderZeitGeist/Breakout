@@ -203,7 +203,7 @@ void GameScene::initializeGameOverText(const TextureRenderer& textureRenderer) {
 }
 
 void GameScene::setPaddleDirection() const {
-    constexpr float coefficient = 1.f;
+    static constexpr float coefficient = 1.f;
     const float leftDirection = static_cast<float>(m_moveLeft) * -coefficient;
     const float rightDirection = static_cast<float>(m_moveRight) * coefficient;
     m_paddle.getMoveable()->setDirectionX(leftDirection + rightDirection);

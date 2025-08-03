@@ -3,17 +3,15 @@
 //
 
 #include "Game/Game.h"
+#include "Game/GameEvent.h"
 #include "Game/GameScene.h"
 #include "Game/MenuScene.h"
-#include "Game/GameEvent.h"
 
 #include <Engine/Event.h>
 #include <Engine/EventManager.h>
 
 #include <array>
 #include <memory>
-
-#include <iostream>
 
 namespace {
 
@@ -48,9 +46,9 @@ void Game::update(float delta) {
         case State::STOPPED:
             resetGame();
             break;
-        case State::INITIALIZED:
+        case State::START:
             startGame();
-            break;
+        case State::INITIALIZED:
         case State::RUNNING:
         case State::UNINITIALIZED:
         default:
@@ -66,16 +64,12 @@ void Game::render(SDL_Renderer& renderer) {
 
 void Game::initializeGame(const TextureRenderer& textureRenderer) {
     m_menuScene = std::make_unique<MenuScene>(m_eventManager, textureRenderer);
-    m_gameScene = std::make_unique<GameScene>(m_eventManager);
+    m_gameScene = std::make_unique<GameScene>(m_eventManager, textureRenderer);
     m_activeScene = m_menuScene.get();
     m_state = State::INITIALIZED;
 }
 
 void Game::startGame() {
-    if (!m_started) {
-        return;
-    }
-    m_started = false;
     m_activeScene = m_gameScene.get();
     m_state = State::RUNNING;
 }
@@ -113,7 +107,13 @@ void Game::onBallOutOfBounds(events::BallOutOfBounds&) {
 }
 
 void Game::onStartGame() {
-    m_started = true;
+    if (m_state == State::RUNNING) {
+        m_eventManager->notify(events::ReturnToMenu());
+        return;
+    }
+    if (m_state == State::INITIALIZED) {
+        m_state = State::START;
+    }
 }
 
 void Game::onGameOver(events::GameOver&) {

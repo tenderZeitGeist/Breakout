@@ -46,5 +46,6 @@ struct StartMovingLeft : Event {};
 struct StopMovingLeft: Event {};
 struct StartMovingRight: Event {};
 struct StopMovingRight : Event {};
+struct ReturnToMenu : Event {};
 
 }

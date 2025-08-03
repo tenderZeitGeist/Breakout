@@ -53,6 +53,7 @@ void Paddle::reset() {
     if (m_originalWidth != getWidth()) {
         setWidth(m_originalWidth);
     }
+    m_drawable->setVisible(true);
 }
 
 void Paddle::setWalls(std::initializer_list<std::reference_wrapper<Wall>> walls) {

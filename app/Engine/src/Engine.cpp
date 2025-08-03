@@ -57,8 +57,10 @@ Engine::Engine(int width, int height)
 
     m_eventManager->subscribe<Engine, events::Shutdown, &Engine::onShutdown>(this);
 
-    m_font = TTF_OpenFont(FONT_PATH, 28);
-    const auto textureRenderer = TextureRenderer(std::ref(*m_renderer), std::ref(*m_font));
+    m_mediumFont = TTF_OpenFont(FONT_PATH, 28);
+    m_largeFont = TTF_OpenFont(FONT_PATH, 56);
+    const auto textureRenderer = TextureRenderer(std::ref(*m_renderer), std::ref(*m_mediumFont), std::ref
+                                                 (*m_largeFont));
     m_game.initializeGame(textureRenderer);
 }
 
@@ -113,8 +115,12 @@ void Engine::shutdown() {
         SDL_DestroyWindow(m_window);
     }
 
-    if (m_font) {
-        TTF_CloseFont(m_font);
+    if (m_mediumFont) {
+        TTF_CloseFont(m_mediumFont);
+    }
+
+    if (m_largeFont) {
+        TTF_CloseFont(m_largeFont);
     }
 
     TTF_Quit();

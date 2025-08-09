@@ -26,12 +26,11 @@ void Score::increaseScore(int points) {
 void Score::setBlinking(bool blinking) {
     if (blinking) {
         m_blinksLeft = kBlinkingCount;
-        m_blinkTicksCounter = kBlinkingInterval;
     } else {
         m_drawable->setVisible(true);
         m_blinksLeft = 0;
-        m_blinkTicksCounter = 0;
     }
+    m_blinkTicksCounter = 0;
 }
 
 void Score::render(SDL_Renderer& renderer) {
@@ -51,12 +50,11 @@ void Score::update(float) {
         return;
     }
 
-    --m_blinkTicksCounter;
-    if (m_blinkTicksCounter > 0) { // not expired
+    m_blinkTicksCounter = ++m_blinkTicksCounter % kBlinkingInterval;
+    if (m_blinkTicksCounter != 0) { // not expired
         return;
     }
 
-    m_blinkTicksCounter = kBlinkingInterval;
     const auto isVisible = m_drawable->isVisible();
     m_drawable->setVisible(!isVisible);
     if (isVisible) {

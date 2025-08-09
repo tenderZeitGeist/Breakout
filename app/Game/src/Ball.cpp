@@ -120,7 +120,7 @@ void Ball::setBricks(std::vector<std::reference_wrapper<Brick>> bricks) {
 }
 
 constexpr float Ball::initialVelocity() {
-    return static_cast<float>(config::windowHeight) / (config::windowHeight * 4.f);
+    return static_cast<float>(config::windowHeight) / (config::windowHeight * 3.f);
 }
 
 bool Ball::outOfBounds() const {

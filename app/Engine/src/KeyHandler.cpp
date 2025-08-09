@@ -16,6 +16,8 @@ std::size_t keyCodeToIndex(SDL_Keycode code) {
             return inputs::Keys::_2;
         case SDLK_3:
             return inputs::Keys::_3;
+        case SDLK_4:
+            return inputs::Keys::_4;
         case SDLK_LEFT:
             return inputs::Keys::LEFT;
         case SDLK_RIGHT:

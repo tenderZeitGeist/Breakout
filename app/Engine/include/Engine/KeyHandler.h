@@ -23,6 +23,7 @@ enum Keys : std::uint_fast8_t {
     _1,
     _2,
     _3,
+    _4,
     LEFT,
     RIGHT,
     D,
@@ -41,6 +42,7 @@ enum class InputEvent {
     START_MOVE_RIGHT,
     STOP_MOVE_RIGHT,
     START_GAME,
+    DESTROY_ALL_BRICKS,
 };
 
 struct KeyBinding {

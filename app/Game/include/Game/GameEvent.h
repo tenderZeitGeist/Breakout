@@ -8,8 +8,8 @@ class Brick;
 namespace events {
 
     struct BrickDestroyed : Event {
-        explicit BrickDestroyed(const Brick& brick) : brick(brick) {}
-        const Brick& brick;
+        explicit BrickDestroyed(std::reference_wrapper<const Brick> brick) : brick(brick) {}
+        std::reference_wrapper<const Brick> brick;
     };
 
     struct BallOutOfBounds : Event {

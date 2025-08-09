@@ -20,6 +20,7 @@ static constexpr std::array<inputs::KeyBinding, inputs::Keys::NUM_OF_KEYS> kBind
         {inputs::InputEvent::INCREASE_SCORE, inputs::InputEvent::NONE}, // KeyHandler::_1
         {inputs::InputEvent::INCREASE_SCORE, inputs::InputEvent::NONE}, // KeyHandler::_2
         {inputs::InputEvent::INCREASE_SCORE, inputs::InputEvent::NONE}, // KeyHandler::_3
+        {inputs::InputEvent::DESTROY_ALL_BRICKS, inputs::InputEvent::NONE}, // KeyHandler::_4
         {inputs::InputEvent::START_MOVE_LEFT, inputs::InputEvent::STOP_MOVE_LEFT}, // KeyHandler::LEFT
         {inputs::InputEvent::START_MOVE_RIGHT, inputs::InputEvent::STOP_MOVE_RIGHT}, // KeyHandler::RIGHT
         {inputs::InputEvent::SHOW_DEBUG, inputs::InputEvent::NONE}, // KeyHandler::D
@@ -35,7 +36,6 @@ Game::Game(std::shared_ptr<events::EventManager> eventManager,
     , m_keyHandler(keyHandler) {
     m_eventManager->subscribe<Game, events::GameOver, &Game::onGameOver>(this);
     m_eventManager->subscribe<Game, events::BallOutOfBounds, &Game::onBallOutOfBounds>(this);
-    m_activeScene = m_menuScene.get();
 }
 
 void Game::update(float delta) {
@@ -57,9 +57,10 @@ void Game::update(float delta) {
 }
 
 void Game::render(SDL_Renderer& renderer) {
-    if (m_activeScene) {
-        m_activeScene->render(renderer);
+    if (!m_activeScene) {
+        return;
     }
+    m_activeScene->render(renderer);
 }
 
 void Game::initializeGame(const TextureRenderer& textureRenderer) {
@@ -86,9 +87,11 @@ void Game::updateGame(float delta) {
         return;
     }
 
-    if (m_activeScene) {
-        m_activeScene->update(delta);
+    if (!m_activeScene){
+        return;
     }
+
+    m_activeScene->update(delta);
 }
 
 void Game::togglePlayingState() {
@@ -96,10 +99,11 @@ void Game::togglePlayingState() {
 }
 
 void Game::onDebug() {
-    m_debug = !m_debug;
-    if (m_activeScene) {
-        m_activeScene->onDebug(m_debug);
+    if (!m_activeScene) {
+        return;
     }
+    m_debug = !m_debug;
+    m_activeScene->onDebug(m_debug);
 }
 
 void Game::onBallOutOfBounds(events::BallOutOfBounds&) {
@@ -155,6 +159,9 @@ void Game::triggerEvent(inputs::InputEvent inputEvent) {
             break;
         case inputs::InputEvent::STOP_MOVE_RIGHT:
             m_eventManager->notify(events::StopMovingRight());
+            break;
+        case inputs::InputEvent::DESTROY_ALL_BRICKS:
+            m_eventManager->notify(events::DestoryAllBricks());
             break;
         case inputs::InputEvent::SHOW_DEBUG:
             onDebug();

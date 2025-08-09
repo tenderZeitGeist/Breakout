@@ -11,10 +11,8 @@
 #include <Engine/Configuration.h>
 #include <Engine/EventManager.h>
 #include <Engine/TextureRenderer.h>
-#include <Engine/Text.h>
 
 #include <algorithm>
-#include <iostream>
 #include <ranges>
 
 GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager, const TextureRenderer& textureRenderer)
@@ -24,6 +22,7 @@ GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager, const T
     , m_ball(m_paddle, eventManager)
     , m_score()
     , m_lifePoints(config::defaultLifePoints)
+    , m_gameOverState(textureRenderer)
     , m_eventManager(std::move(eventManager)) {
     initializeWalls();
     initializeBricks();
@@ -31,10 +30,10 @@ GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager, const T
     initializeBall();
     initializeScore();
     initializeLifePoints();
-    initializeGameOverText(textureRenderer);
     m_eventManager->subscribe<GameScene, events::BrickDestroyed, &GameScene::onBrickDestroyed>(this);
     m_eventManager->subscribe<GameScene, events::BallOutOfBounds, &GameScene::onBallOutOfBounds>(this);
     m_eventManager->subscribe<GameScene, events::IncreaseScore, &GameScene::onIncreaseScore>(this);
+    m_eventManager->subscribe<GameScene, events::DestoryAllBricks, &GameScene::onDestroyAllBricks>(this);
     m_eventManager->subscribe<GameScene, events::StartMovingLeft, &GameScene::onStartMovingLeft>(this);
     m_eventManager->subscribe<GameScene, events::StopMovingLeft, &GameScene::onStopMovingLeft>(this);
     m_eventManager->subscribe<GameScene, events::StartMovingRight, &GameScene::onStartMovingRight>(this);
@@ -44,6 +43,7 @@ GameScene::GameScene(std::shared_ptr<events::EventManager> eventManager, const T
 
 void GameScene::update(float delta) {
     if (m_gameOver) {
+        m_gameOverState.update(delta);
         return;
     }
 
@@ -51,6 +51,7 @@ void GameScene::update(float delta) {
     for (auto& entity : m_entities) {
         entity.get().update(delta);
     }
+    checkForGameOver();
 }
 
 void GameScene::render(SDL_Renderer& renderer) {
@@ -61,25 +62,16 @@ void GameScene::render(SDL_Renderer& renderer) {
     if (!m_gameOver) {
         return;
     }
-    // TODO: Move this into own object/function
-    static constexpr int blinksInMs = 2000;
-    static constexpr int blinkRate = blinksInMs / config::frameTimes;
-    static int counter = 0;
-    static bool visible = true;
-    counter = (++counter) % blinkRate;
-    if (!counter) {
-        visible = !visible;
-    }
-    if (visible) {
-        SDL_RenderCopy(&renderer, m_gameOverText.texture.get(), nullptr, &m_gameOverText.position);
-    }
+
+    m_gameOverState.render(renderer);
 }
 
 void GameScene::reset() {
     for (auto entityRef : m_entities) {
-       entityRef.get().reset();
+        entityRef.get().reset();
     }
     m_gameOver = false;
+    m_gameOverState.reset();
 }
 
 void GameScene::enter() {
@@ -99,7 +91,7 @@ void GameScene::initializePaddle() {
                    .y = config::windowHeight - 100,
                    .width = config::slotWidth,
                    .height = config::slotHeight,
-                   .velocity = static_cast<float>(config::windowHeight) / 1350.f,
+                   .velocity = static_cast<float>(config::windowHeight) / 1200.f,
                    .color = config::kPaddleColor}
 
     );
@@ -189,19 +181,6 @@ void GameScene::initializeLifePoints() {
     m_entities.emplace_back(std::ref(m_lifePoints));
 }
 
-void GameScene::initializeGameOverText(const TextureRenderer& textureRenderer) {
-    auto gameOverText = textureRenderer.createText("GAME OVER", true);
-    if (!gameOverText) {
-        // TODO: Error handling/logging?
-        return;
-    }
-    auto& textPosition = gameOverText.position;
-    SDL_QueryTexture(gameOverText.texture.get(), nullptr, nullptr, &textPosition.w, &textPosition.h);
-    textPosition.x = config::windowHalfWidth - textPosition.w / 2;
-    textPosition.y = config::windowHalfHeight - textPosition.h / 2;
-    m_gameOverText = std::move(gameOverText);
-}
-
 void GameScene::setPaddleDirection() const {
     static constexpr float coefficient = 1.f;
     const float leftDirection = static_cast<float>(m_moveLeft) * -coefficient;
@@ -209,12 +188,30 @@ void GameScene::setPaddleDirection() const {
     m_paddle.getMoveable()->setDirectionX(leftDirection + rightDirection);
 }
 
+void GameScene::setGameOverState() {
+    m_gameOver = true;
+    m_ball.getDrawable()->setVisible(false);
+    m_paddle.getDrawable()->setVisible(false);
+    m_gameOverState.setActiveText(m_lifePoints.getLifePoints() > 0 ? GameOverText::WINNING : GameOverText::LOSING);
+}
+
+void GameScene::checkForGameOver() {
+    const auto hitAllBricks = std::ranges::all_of(m_bricks, [](const auto& brick) {
+      return !brick.getDrawable()->isVisible() && !brick.getCollideable()->isEnabled();
+    });
+    if (!hitAllBricks) {
+        return;
+    }
+    setGameOverState();
+}
+
 void GameScene::onBrickDestroyed(events::BrickDestroyed& e) {
-    auto& brick = e.brick;
+    auto& brick = e.brick.get();
     brick.getDrawable()->setVisible(false);
     brick.getCollideable()->setEnabled(false);
     m_score.increaseScore(brick.getValue());
     m_score.setBlinking(true);
+    checkForGameOver();
 }
 
 void GameScene::onBallOutOfBounds(events::BallOutOfBounds&) {
@@ -234,6 +231,12 @@ void GameScene::onBallOutOfBounds(events::BallOutOfBounds&) {
 void GameScene::onIncreaseScore(events::IncreaseScore& e) {
     m_score.increaseScore(e.m_value);
     m_score.setBlinking(true);
+}
+
+void GameScene::onDestroyAllBricks(events::DestoryAllBricks&) {
+    for (const auto& brick : m_bricks) {
+        m_eventManager->notify(events::BrickDestroyed(std::cref(brick)));
+    }
 }
 
 void GameScene::onStartMovingLeft(events::StartMovingLeft&) {
@@ -259,8 +262,3 @@ void GameScene::onReturnToMenu(events::ReturnToMenu&) {
     m_eventManager->notify(events::GameOver());
 }
 
-void GameScene::setGameOverState() {
-    m_gameOver = true;
-    m_ball.getDrawable()->setVisible(false);
-    m_paddle.getDrawable()->setVisible(false);
-}

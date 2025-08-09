@@ -54,7 +54,7 @@ private:
     std::unordered_set<inputs::Keys> m_pressedKeys;
     std::unique_ptr<Scene> m_menuScene;
     std::unique_ptr<Scene> m_gameScene;
-    Scene* m_activeScene;
+    Scene* m_activeScene{nullptr};
     State m_state{State::UNINITIALIZED};
     bool m_playing{false};
     bool m_debug{false};

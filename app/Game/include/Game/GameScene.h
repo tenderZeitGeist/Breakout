@@ -11,6 +11,7 @@
 #include "Score.h"
 #include "Paddle.h"
 #include "Wall.h"
+#include "GameOverState.h"
 
 #include <Engine/Text.h>
 
@@ -51,13 +52,14 @@ private:
     void initializeBall();
     void initializeScore();
     void initializeLifePoints();
-    void initializeGameOverText(const TextureRenderer& textureRenderer);
     void setPaddleDirection() const;
     void setGameOverState();
+    void checkForGameOver();
 
     void onBrickDestroyed(events::BrickDestroyed& e);
     void onBallOutOfBounds(events::BallOutOfBounds&);
     void onIncreaseScore(events::IncreaseScore& e);
+    void onDestroyAllBricks(events::DestoryAllBricks&);
     void onStartMovingLeft(events::StartMovingLeft&);
     void onStopMovingLeft(events::StopMovingLeft&);
     void onStartMovingRight(events::StartMovingRight&);
@@ -75,7 +77,7 @@ private:
     Ball m_ball;
     Score m_score;
     LifePoints m_lifePoints;
-    Text m_gameOverText;
+    GameOverState m_gameOverState;
 
     std::vector<Brick> m_bricks;
     std::vector<std::reference_wrapper<Entity>> m_entities;

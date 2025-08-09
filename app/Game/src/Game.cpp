@@ -43,14 +43,14 @@ void Game::update(float delta) {
     updateGame(delta);
 
     switch (m_state) {
-        case State::STOPPED:
+        case GameState::STOPPED:
             resetGame();
             break;
-        case State::START:
+        case GameState::START:
             startGame();
-        case State::INITIALIZED:
-        case State::RUNNING:
-        case State::UNINITIALIZED:
+        case GameState::INITIALIZED:
+        case GameState::RUNNING:
+        case GameState::UNINITIALIZED:
         default:
             break;
     }
@@ -67,19 +67,19 @@ void Game::initializeGame(const TextureRenderer& textureRenderer) {
     m_menuScene = std::make_unique<MenuScene>(m_eventManager, textureRenderer);
     m_gameScene = std::make_unique<GameScene>(m_eventManager, textureRenderer);
     m_activeScene = m_menuScene.get();
-    m_state = State::INITIALIZED;
+    m_state = GameState::INITIALIZED;
 }
 
 void Game::startGame() {
     m_activeScene = m_gameScene.get();
-    m_state = State::RUNNING;
+    m_state = GameState::RUNNING;
 }
 
 void Game::resetGame() {
     m_activeScene->reset();
     m_activeScene = m_menuScene.get();
     m_playing = false;
-    m_state = State::INITIALIZED;
+    m_state = GameState::INITIALIZED;
 }
 
 void Game::updateGame(float delta) {
@@ -95,6 +95,9 @@ void Game::updateGame(float delta) {
 }
 
 void Game::togglePlayingState() {
+    if (m_state != GameState::RUNNING) {
+        return;
+    }
     m_playing = !m_playing;
 }
 
@@ -111,17 +114,17 @@ void Game::onBallOutOfBounds(events::BallOutOfBounds&) {
 }
 
 void Game::onStartGame() {
-    if (m_state == State::RUNNING) {
+    if (m_state == GameState::RUNNING) {
         m_eventManager->notify(events::ReturnToMenu());
         return;
     }
-    if (m_state == State::INITIALIZED) {
-        m_state = State::START;
+    if (m_state == GameState::INITIALIZED) {
+        m_state = GameState::START;
     }
 }
 
 void Game::onGameOver(events::GameOver&) {
-    m_state = State::STOPPED;
+    m_state = GameState::STOPPED;
 }
 
 void Game::queryInputs() {

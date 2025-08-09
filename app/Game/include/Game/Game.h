@@ -22,7 +22,7 @@ namespace events {
 class Game {
     using UpdateFunction = void (Game::*)(float);
 public:
-    enum class State {
+    enum class GameState {
         UNINITIALIZED,
         INITIALIZED,
         START,
@@ -55,7 +55,7 @@ private:
     std::unique_ptr<Scene> m_menuScene;
     std::unique_ptr<Scene> m_gameScene;
     Scene* m_activeScene{nullptr};
-    State m_state{State::UNINITIALIZED};
+    GameState m_state{GameState::UNINITIALIZED};
     bool m_playing{false};
     bool m_debug{false};
 };

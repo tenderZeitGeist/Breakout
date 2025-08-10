@@ -10,12 +10,12 @@
 
 namespace {
 
-constexpr std::size_t kTimingsSize = 1000;
+constexpr std::size_t kTimingsSize = 100;
 
 std::tuple<double, double, double> calculateMetrics(const std::vector<double>& timings) {
     const auto min = *std::ranges::min_element(timings);
     const auto max = *std::ranges::max_element(timings);
-    const auto average = std::reduce(timings.begin(), timings.end()) / timings.size();
+    const auto average = std::reduce(timings.begin(), timings.end()) / static_cast<double>(timings.size());
     return {min, max, average};
 }
 

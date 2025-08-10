@@ -50,7 +50,7 @@ void Score::update(float) {
         return;
     }
 
-    m_blinkTicksCounter = ++m_blinkTicksCounter % kBlinkingInterval;
+    m_blinkTicksCounter = (m_blinkTicksCounter + 1) % kBlinkingInterval;
     if (m_blinkTicksCounter != 0) { // not expired
         return;
     }

@@ -18,15 +18,15 @@ int LifePoints::getLifePoints() const {
 void LifePoints::init(Values v) {
     Entity::init(v);
     m_digit.init(v);
-    m_drawable->setVisible(true);
+    m_drawable.setVisible(true);
 }
 
 void LifePoints::render(SDL_Renderer& renderer) {
-    if (!m_drawable->isVisible()) {
+    if (!m_drawable.isVisible()) {
         return;
     }
 
-    const auto& color = m_drawable->getColor();
+    const auto& color = m_drawable.getColor();
     SDL_SetRenderDrawColor(&renderer, color.r, color.g, color.b, color.a);
     m_digit.render(renderer);
 }

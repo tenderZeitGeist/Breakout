@@ -52,7 +52,7 @@ private:
     void initializeBall();
     void initializeScore();
     void initializeLifePoints();
-    void setPaddleDirection() const;
+    void setPaddleDirection();
     void setGameOverState();
     void checkForGameOver();
 

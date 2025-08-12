@@ -54,20 +54,23 @@ public:
     virtual void setWidth(int width);
     virtual void setHeight(int height);
 
-    [[nodiscard]] virtual Collideable* getCollideable() const;
-    [[nodiscard]] virtual Drawable* getDrawable() const;
-    [[nodiscard]] virtual Moveable* getMoveable() const;
+    [[nodiscard]] virtual Collideable& getCollideable();
+    [[nodiscard]] virtual Drawable& getDrawable();
+    [[nodiscard]] virtual Moveable& getMoveable();
 
     virtual void onDebug(bool debug);
 
 protected:
-    explicit Entity(ComposeMask composeMask, Drawable::Shape shape = Drawable::Shape::RECT);
+    explicit Entity(ComposeMask composeMask);
     Entity(Entity&&) = default;
     Entity& operator=(Entity&&) = default;
 
     SDL_Rect m_rect;
 
-    std::unique_ptr<Collideable> m_collideable;
-    std::unique_ptr<Moveable> m_moveable;
-    std::unique_ptr<Drawable> m_drawable;
+    Collideable m_collideable;
+    Drawable m_drawable;
+    Moveable m_moveable;
 };
+
+class Circle : public Entity {};
+class Rect : public Entity {};

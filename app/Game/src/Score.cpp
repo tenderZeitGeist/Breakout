@@ -27,18 +27,18 @@ void Score::setBlinking(bool blinking) {
     if (blinking) {
         m_blinksLeft = kBlinkingCount;
     } else {
-        m_drawable->setVisible(true);
+        m_drawable.setVisible(true);
         m_blinksLeft = 0;
     }
     m_blinkTicksCounter = 0;
 }
 
 void Score::render(SDL_Renderer& renderer) {
-    if (!m_drawable->isVisible()) {
+    if (!m_drawable.isVisible()) {
         return;
     }
 
-    const auto color = m_drawable->getColor();
+    const auto color = m_drawable.getColor();
     SDL_SetRenderDrawColor(&renderer, color.r, color.g, color.b, color.a);
     for (auto& digit: m_digits) {
         digit.render(renderer);
@@ -55,8 +55,8 @@ void Score::update(float) {
         return;
     }
 
-    const auto isVisible = m_drawable->isVisible();
-    m_drawable->setVisible(!isVisible);
+    const auto isVisible = m_drawable.isVisible();
+    m_drawable.setVisible(!isVisible);
     if (isVisible) {
         --m_blinksLeft;
     }
@@ -71,7 +71,7 @@ void Score::init(Entity::Values v) {
     const auto size = static_cast<int>(m_digits.size());
     const auto width = m_rect.w / static_cast<decltype(m_rect.w)>(size);
     const auto height = m_rect.h;
-    m_drawable->setVisible(true);
+    m_drawable.setVisible(true);
 
     for (int i = 0; i < size; ++i) {
         const auto offset = size - i - 1;

@@ -11,25 +11,17 @@
 
 #include "Engine/Configuration.h"
 
-Drawable::Drawable(Entity& entity, Shape shape)
-: m_entity(entity)
-, m_shape(shape) {
+Drawable::Drawable(Entity& entity)
+: m_entity(entity) {
 }
 
 void Drawable::render(SDL_Renderer& renderer) const {
     const auto color = getColor();
     SDL_SetRenderDrawColor(&renderer, color.r, color.g, color.b, color.a);
-    switch (m_shape) {
-        case Shape::RECT:
-            drawRect(renderer);
-            break;
-        case Shape::CIRCLE:
-            drawCircle(renderer);
-            break;
-    }
+    drawRect(renderer);
 
     if(m_debug) {
-        const auto direction = m_entity.getMoveable()->currentDirection();
+        const auto direction = m_entity.getMoveable().currentDirection();
         constexpr auto debugColor = config::kDebugColor;
         const auto centerX = m_entity.getX() + m_entity.getWidth() / 2;
         const auto centerY = m_entity.getY() + m_entity.getHeight() / 2;

@@ -4,10 +4,12 @@
 
 #pragma once
 
+#include <Engine/Component.h>
+
 class Entity;
 struct Vector2D;
 
-class Moveable {
+class Moveable : public Component {
 public:
     explicit Moveable(Entity& entity);
     void move(float delta);

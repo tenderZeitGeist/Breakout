@@ -9,12 +9,12 @@ Wall::Wall(float x, float y)
 : Entity(Entity::COLLIDEABLE | Entity::DRAWABLE)
 , m_normalX(x)
 , m_normalY(y) {
-    Entity::getCollideable()->setEnabled(true);
-    Entity::getDrawable()->setVisible(false);
+    Entity::getCollideable().setEnabled(true);
+    Entity::getDrawable().setVisible(false);
 }
 
 void Wall::onDebug(bool debug) {
-    m_drawable->setVisible(debug);
+    m_drawable.setVisible(debug);
 }
 
 Vector2D Wall::getNormals() const {

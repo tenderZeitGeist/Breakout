@@ -13,10 +13,10 @@ Paddle::Paddle()
 }
 
 void Paddle::update(float dt) {
-    m_moveable->move(dt);
+    m_moveable.move(dt);
     for (const auto wallRef : m_walls) {
-        const auto& wall = wallRef.get();
-        const auto collision = collides(*wall.getCollideable(), *m_collideable);
+        auto& wall = wallRef.get();
+        const auto collision = collides(wall.getCollideable(), m_collideable);
         if (!collision) {
             continue;
         }
@@ -53,7 +53,7 @@ void Paddle::reset() {
     if (m_originalWidth != getWidth()) {
         setWidth(m_originalWidth);
     }
-    m_drawable->setVisible(true);
+    m_drawable.setVisible(true);
 }
 
 void Paddle::setWalls(std::initializer_list<std::reference_wrapper<Wall>> walls) {

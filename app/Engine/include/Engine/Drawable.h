@@ -4,20 +4,17 @@
 
 #pragma once
 
+#include <Engine/Component.h>
+
 #include <SDL2/SDL.h>
 
 class Entity;
 class Game;
 struct SDL_Renderer;
 
-class Drawable {
+class Drawable : public Component {
 public:
-    enum class Shape {
-        RECT,
-        CIRCLE
-    };
-
-    explicit Drawable(Entity& entity, Shape shape = Shape::RECT);
+    explicit Drawable(Entity& entity);
 
     ~Drawable() = default;
     void render(SDL_Renderer& renderer) const;
@@ -34,7 +31,6 @@ private:
     void drawCircle(SDL_Renderer& renderer) const;
 
     Entity& m_entity;
-    Shape m_shape;
     SDL_Color m_color{};
     bool m_visible{true};
     bool m_debug{false};

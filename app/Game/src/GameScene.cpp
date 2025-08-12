@@ -181,23 +181,23 @@ void GameScene::initializeLifePoints() {
     m_entities.emplace_back(std::ref(m_lifePoints));
 }
 
-void GameScene::setPaddleDirection() const {
+void GameScene::setPaddleDirection() {
     static constexpr float coefficient = 1.f;
     const float leftDirection = static_cast<float>(m_moveLeft) * -coefficient;
     const float rightDirection = static_cast<float>(m_moveRight) * coefficient;
-    m_paddle.getMoveable()->setDirectionX(leftDirection + rightDirection);
+    m_paddle.getMoveable().setDirectionX(leftDirection + rightDirection);
 }
 
 void GameScene::setGameOverState() {
     m_gameOver = true;
-    m_ball.getDrawable()->setVisible(false);
-    m_paddle.getDrawable()->setVisible(false);
+    m_ball.getDrawable().setVisible(false);
+    m_paddle.getDrawable().setVisible(false);
     m_gameOverState.setActiveText(m_lifePoints.getLifePoints() > 0 ? GameOverText::WINNING : GameOverText::LOSING);
 }
 
 void GameScene::checkForGameOver() {
-    const auto hitAllBricks = std::ranges::all_of(m_bricks, [](const auto& brick) {
-      return !brick.getDrawable()->isVisible() && !brick.getCollideable()->isEnabled();
+    const auto hitAllBricks = std::ranges::all_of(m_bricks, [](auto& brick) {
+      return !brick.getDrawable().isVisible() && !brick.getCollideable().isEnabled();
     });
     if (!hitAllBricks) {
         return;
@@ -207,8 +207,8 @@ void GameScene::checkForGameOver() {
 
 void GameScene::onBrickDestroyed(events::BrickDestroyed& e) {
     auto& brick = e.brick.get();
-    brick.getDrawable()->setVisible(false);
-    brick.getCollideable()->setEnabled(false);
+    brick.getDrawable().setVisible(false);
+    brick.getCollideable().setEnabled(false);
     m_score.increaseScore(brick.getValue());
     m_score.setBlinking(true);
     checkForGameOver();
@@ -234,8 +234,8 @@ void GameScene::onIncreaseScore(events::IncreaseScore& e) {
 }
 
 void GameScene::onDestroyAllBricks(events::DestoryAllBricks&) {
-    for (const auto& brick : m_bricks) {
-        m_eventManager->notify(events::BrickDestroyed(std::cref(brick)));
+    for (auto& brick : m_bricks) {
+        m_eventManager->notify(events::BrickDestroyed(std::ref(brick)));
     }
 }
 

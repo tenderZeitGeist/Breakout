@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <Engine/Component.h>
+
 #include <cstdint>
 
 class Entity;
@@ -16,7 +18,7 @@ enum Side : std::uint8_t {
     BOTTOM = 1 << 3,
 };
 
-class Collideable {
+class Collideable : public Component {
 public:
     explicit Collideable(Entity& entity);
 

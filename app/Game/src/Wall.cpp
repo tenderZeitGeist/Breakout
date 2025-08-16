@@ -9,8 +9,8 @@ Wall::Wall(float x, float y)
 : Entity(Entity::COLLIDEABLE | Entity::DRAWABLE)
 , m_normalX(x)
 , m_normalY(y) {
-    Entity::getCollideable().setEnabled(true);
-    Entity::getDrawable().setVisible(false);
+    Entity::getCollideable().get().setEnabled(true);
+    Entity::getDrawable().get().setVisible(false);
 }
 
 void Wall::onDebug(bool debug) {

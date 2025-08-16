@@ -9,7 +9,6 @@ Entity::Entity(ComposeMask composeMask)
     , m_drawable(*this)
     , m_moveable(*this)
     , m_collideable(*this) {
-    auto& self = *this;
     if (composeMask & DRAWABLE) {
         m_drawable.setActive(true);
     }
@@ -105,16 +104,28 @@ void Entity::setHeight(int height) {
     m_rect.h = static_cast<Uint16>(height);
 }
 
-Collideable& Entity::getCollideable() {
-    return m_collideable;
+std::reference_wrapper<const Collideable> Entity::getCollideable() const {
+    return std::cref(m_collideable);
 }
 
-Drawable& Entity::getDrawable() {
-    return m_drawable;
+std::reference_wrapper<const Drawable> Entity::getDrawable() const {
+    return std::cref(m_drawable);
 }
 
-Moveable& Entity::getMoveable() {
-    return m_moveable;
+std::reference_wrapper<const Moveable> Entity::getMoveable() const {
+    return std::cref(m_moveable);
+}
+
+std::reference_wrapper<Collideable> Entity::getCollideable() {
+    return std::ref(m_collideable);
+}
+
+std::reference_wrapper<Drawable> Entity::getDrawable() {
+    return std::ref(m_drawable);
+}
+
+std::reference_wrapper<Moveable> Entity::getMoveable() {
+    return std::ref(m_moveable);
 }
 
 void Entity::onDebug(bool debug) {

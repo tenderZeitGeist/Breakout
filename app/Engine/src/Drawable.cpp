@@ -21,7 +21,7 @@ void Drawable::render(SDL_Renderer& renderer) const {
     drawRect(renderer);
 
     if(m_debug) {
-        const auto direction = m_entity.getMoveable().currentDirection();
+        const auto direction = m_entity.getMoveable().get().currentDirection();
         constexpr auto debugColor = config::kDebugColor;
         const auto centerX = m_entity.getX() + m_entity.getWidth() / 2;
         const auto centerY = m_entity.getY() + m_entity.getHeight() / 2;

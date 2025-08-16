@@ -8,13 +8,15 @@
 
 #include <SDL2/SDL.h>
 
+#include <functional>
+
 class Entity;
 class Game;
 struct SDL_Renderer;
 
 class Drawable : public Component {
 public:
-    explicit Drawable(Entity& entity);
+    explicit Drawable(std::reference_wrapper<Entity> entity);
 
     ~Drawable() = default;
     void render(SDL_Renderer& renderer) const;
@@ -30,7 +32,7 @@ private:
     void drawRect(SDL_Renderer& renderer) const;
     void drawCircle(SDL_Renderer& renderer) const;
 
-    Entity& m_entity;
+    std::reference_wrapper<Entity> m_entity;
     SDL_Color m_color{};
     bool m_visible{true};
     bool m_debug{false};

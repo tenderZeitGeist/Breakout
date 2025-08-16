@@ -59,7 +59,7 @@ int Digit::getValue() const {
 }
 
 void Digit::render(SDL_Renderer& renderer) {
-    if (!m_drawable->isVisible()) {
+    if (!m_drawable.isVisible()) {
         return;
     }
 
@@ -71,7 +71,7 @@ void Digit::render(SDL_Renderer& renderer) {
 void Digit::init(Entity::Values v) {
     Entity::init(v);
     resize();
-    m_drawable->setVisible(true);
+    m_drawable.setVisible(true);
 }
 
 void Digit::resize() {

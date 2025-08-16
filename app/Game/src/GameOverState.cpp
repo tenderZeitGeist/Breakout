@@ -29,7 +29,7 @@ GameOverState::GameOverState(std::reference_wrapper<const TextureRenderer> textu
 void GameOverState::render(SDL_Renderer& renderer) {
     static constexpr int blinksInMs = 2000;
     static constexpr int blinkRate = blinksInMs / config::frameTimes;
-    m_counter = ++m_counter % blinkRate;
+    m_counter = (m_counter + 1) % blinkRate;
     if (m_counter == 0) {
         m_visible = !m_visible;
     }

@@ -9,7 +9,7 @@
 
 #include <SDL2/SDL.h>
 
-#include <memory>
+#include <functional>
 
 struct SDL_Renderer;
 
@@ -54,9 +54,12 @@ public:
     virtual void setWidth(int width);
     virtual void setHeight(int height);
 
-    [[nodiscard]] virtual Collideable& getCollideable();
-    [[nodiscard]] virtual Drawable& getDrawable();
-    [[nodiscard]] virtual Moveable& getMoveable();
+    [[nodiscard]] virtual std::reference_wrapper<const Collideable> getCollideable() const;
+    [[nodiscard]] virtual std::reference_wrapper<const Drawable> getDrawable() const;
+    [[nodiscard]] virtual std::reference_wrapper<const Moveable> getMoveable() const;
+    [[nodiscard]] virtual std::reference_wrapper<Collideable> getCollideable();
+    [[nodiscard]] virtual std::reference_wrapper<Drawable> getDrawable();
+    [[nodiscard]] virtual std::reference_wrapper<Moveable> getMoveable();
 
     virtual void onDebug(bool debug);
 
@@ -67,9 +70,9 @@ protected:
 
     SDL_Rect m_rect;
 
-    Collideable m_collideable;
     Drawable m_drawable;
     Moveable m_moveable;
+    Collideable m_collideable;
 };
 
 class Circle : public Entity {};

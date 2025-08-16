@@ -185,19 +185,19 @@ void GameScene::setPaddleDirection() {
     static constexpr float coefficient = 1.f;
     const float leftDirection = static_cast<float>(m_moveLeft) * -coefficient;
     const float rightDirection = static_cast<float>(m_moveRight) * coefficient;
-    m_paddle.getMoveable().setDirectionX(leftDirection + rightDirection);
+    m_paddle.getMoveable().get().setDirectionX(leftDirection + rightDirection);
 }
 
 void GameScene::setGameOverState() {
     m_gameOver = true;
-    m_ball.getDrawable().setVisible(false);
-    m_paddle.getDrawable().setVisible(false);
+    m_ball.getDrawable().get().setVisible(false);
+    m_paddle.getDrawable().get().setVisible(false);
     m_gameOverState.setActiveText(m_lifePoints.getLifePoints() > 0 ? GameOverText::WINNING : GameOverText::LOSING);
 }
 
 void GameScene::checkForGameOver() {
     const auto hitAllBricks = std::ranges::all_of(m_bricks, [](auto& brick) {
-      return !brick.getDrawable().isVisible() && !brick.getCollideable().isEnabled();
+      return !brick.getDrawable().get().isVisible() && !brick.getCollideable().get().isEnabled();
     });
     if (!hitAllBricks) {
         return;
@@ -207,8 +207,8 @@ void GameScene::checkForGameOver() {
 
 void GameScene::onBrickDestroyed(events::BrickDestroyed& e) {
     auto& brick = e.brick.get();
-    brick.getDrawable().setVisible(false);
-    brick.getCollideable().setEnabled(false);
+    brick.getDrawable().get().setVisible(false);
+    brick.getCollideable().get().setEnabled(false);
     m_score.increaseScore(brick.getValue());
     m_score.setBlinking(true);
     checkForGameOver();

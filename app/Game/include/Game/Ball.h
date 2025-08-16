@@ -6,6 +6,7 @@
 #include <Engine/Entity.h>
 #include <Game/Wall.h>
 
+#include <memory>
 #include <vector>
 
 class Brick;

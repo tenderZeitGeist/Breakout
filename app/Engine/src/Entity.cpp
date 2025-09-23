@@ -4,11 +4,16 @@
 
 #include "Engine/Entity.h"
 
+#include "Engine/Shape.h"
+
+#include <cassert>
+
 Entity::Entity(ComposeMask composeMask)
     : m_rect({0, 0, 0, 0})
     , m_drawable(*this)
     , m_moveable(*this)
-    , m_collideable(*this) {
+    , m_collideable(*this)
+    , m_shapeVariant{RectShape{*this}} {
     if (composeMask & DRAWABLE) {
         m_drawable.setActive(true);
     }
@@ -20,8 +25,7 @@ Entity::Entity(ComposeMask composeMask)
     }
 }
 
-void Entity::update(float delta) {
-
+void Entity::update(float) {
 }
 
 void Entity::init(Entity::Values v) {
@@ -35,10 +39,18 @@ void Entity::init(Entity::Values v) {
     if (m_moveable.isActive()) {
         m_moveable.setVelocity(v.velocity);
     }
+
+    switch (v.shape) {
+        case ShapeType::RECT:
+            break;
+        case ShapeType::CIRCLE:
+            assert(getWidth() == getHeight() && "Unequal width and height.");
+            m_shapeVariant = CircleShape{getWidth(), *this};
+            break;
+    }
 }
 
 void Entity::reset() {
-
 }
 
 void Entity::render(SDL_Renderer& renderer) {
@@ -64,44 +76,66 @@ int Entity::getHeight() const {
     return m_rect.h;
 }
 
+int Entity::getCenterX() const {
+    return m_centerX;
+}
+
+int Entity::getCenterY() const {
+    return m_centerY;
+}
+
+int Entity::getExtentX() const {
+    return m_extentX;
+}
+
+int Entity::getExtentY() const {
+    return m_extentY;
+}
+
 const SDL_Rect& Entity::getRect() const {
     return m_rect;
 }
 
 void Entity::setX(int x) {
-    if (m_collideable.isActive()) {
-        const auto centerX = m_collideable.getCenterX();
-        const auto deltaX = getX() - x;
-        m_collideable.setCenterX(centerX - deltaX);
-    }
+    const auto deltaX = getX() - x;
+    setCenterX(getCenterX() - deltaX);
     m_rect.x = static_cast<Sint16>(x);
 }
 
 void Entity::setY(int y) {
-    if (m_collideable.isActive()) {
-        const auto centerY = m_collideable.getCenterY();
-        const auto deltaY = getY() - y;
-        m_collideable.setCenterY(centerY - deltaY);
-    }
+    const auto deltaY = getY() - y;
+    setCenterY(getCenterY() - deltaY);
     m_rect.y = static_cast<Sint16>(y);
 }
 
 void Entity::setWidth(int width) {
-    if (m_collideable.isActive()) {
-        const auto extentX = width / 2;
-        m_collideable.setExtentX(extentX);
-        m_collideable.setCenterX(getX() + extentX);
-    }
+    const auto extent = width / 2;
+    setExtentX(extent);
+    setCenterX(getX() + extent);
     m_rect.w = static_cast<Uint16>(width);
 }
 
 void Entity::setHeight(int height) {
-    if (m_collideable.isActive()) {
-        const auto extentY = height / 2;
-        m_collideable.setExtentY(extentY);
-        m_collideable.setCenterY(getY() + extentY);
-    }
+    const auto extent = height / 2;
+    setExtentY(extent);
+    setCenterY(getY() + extent);
     m_rect.h = static_cast<Uint16>(height);
+}
+
+void Entity::setCenterX(int centerX) {
+    m_centerX = centerX;
+}
+
+void Entity::setCenterY(int centerY) {
+    m_centerY = centerY;
+}
+
+void Entity::setExtentX(int extentX) {
+    m_extentX = extentX;
+}
+
+void Entity::setExtentY(int extentY) {
+    m_extentY = extentY;
 }
 
 std::reference_wrapper<const Collideable> Entity::getCollideable() const {
@@ -116,6 +150,10 @@ std::reference_wrapper<const Moveable> Entity::getMoveable() const {
     return std::cref(m_moveable);
 }
 
+std::reference_wrapper<const ShapeVariant> Entity::getShape() const {
+    return std::cref(m_shapeVariant);
+}
+
 std::reference_wrapper<Collideable> Entity::getCollideable() {
     return std::ref(m_collideable);
 }
@@ -128,6 +166,10 @@ std::reference_wrapper<Moveable> Entity::getMoveable() {
     return std::ref(m_moveable);
 }
 
-void Entity::onDebug(bool debug) {
+std::reference_wrapper<ShapeVariant> Entity::getShape() {
+    return std::ref(m_shapeVariant);
+}
+
+void Entity::onDebug(bool) {
     // Base case may be ignored.
 }

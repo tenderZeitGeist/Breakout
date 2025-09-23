@@ -8,6 +8,7 @@ set(DIR_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/include)
 set(ENGINE_HEADER_FILES
         "${DIR_INCLUDE}/Engine/Configuration.h"
         "${DIR_INCLUDE}/Engine/Collideable.h"
+        "${DIR_INCLUDE}/Engine/CollisionVisitor.h"
         "${DIR_INCLUDE}/Engine/Component.h"
         "${DIR_INCLUDE}/Engine/Digit.h"
         "${DIR_INCLUDE}/Engine/Drawable.h"
@@ -18,6 +19,7 @@ set(ENGINE_HEADER_FILES
         "${DIR_INCLUDE}/Engine/KeyHandler.h"
         "${DIR_INCLUDE}/Engine/Moveable.h"
         "${DIR_INCLUDE}/Engine/PerformanceMetrics.h"
+        "${DIR_INCLUDE}/Engine/RenderVisitor.h"
         "${DIR_INCLUDE}/Engine/Shape.h"
         "${DIR_INCLUDE}/Engine/TextureRenderer.h"
         "${DIR_INCLUDE}/Engine/Text.h"
@@ -25,6 +27,7 @@ set(ENGINE_HEADER_FILES
 
 set(ENGINE_SOURCE_FILES
         "${DIR_SOURCE}/Collideable.cpp"
+        "${DIR_SOURCE}/CollisionVisitor.cpp"
         "${DIR_SOURCE}/Component.cpp"
         "${DIR_SOURCE}/Digit.cpp"
         "${DIR_SOURCE}/Drawable.cpp"
@@ -34,6 +37,7 @@ set(ENGINE_SOURCE_FILES
         "${DIR_SOURCE}/Moveable.cpp"
         "${DIR_SOURCE}/TextureRenderer.cpp"
         "${DIR_SOURCE}/PerformanceMetrics.cpp"
+        "${DIR_SOURCE}/RenderVisitor.cpp"
         "${DIR_SOURCE}/Shape.cpp"
 )
 

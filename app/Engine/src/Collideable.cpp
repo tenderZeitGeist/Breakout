@@ -3,39 +3,46 @@
 //
 
 #include "Engine/Collideable.h"
+#include "Engine/CollisionVisitor.h"
 
 #include <cmath>
+#include <variant>
+
+#include "Engine/Entity.h"
 
 namespace {
 
-    int determineSide(int overlapX, int overlapY, bool fromRight, bool fromBottom) {
-        if (overlapX <= 0 || overlapY <= 0) {
-            return Side::NONE;
-        }
-
-        if (overlapX < overlapY) {
-            return fromRight ? Side::RIGHT : LEFT;
-        }
-
-        return fromBottom ? Side::BOTTOM : Side::TOP;
+int determineSide(int overlapX, int overlapY, bool fromRight, bool fromBottom) {
+    if (overlapX <= 0 || overlapY <= 0) {
+        return Side::NONE;
     }
+
+    if (overlapX < overlapY) {
+        return fromRight ? Side::RIGHT : LEFT;
+    }
+
+    return fromBottom ? Side::BOTTOM : Side::TOP;
+}
 
 }
 
-Collideable::Collideable(Entity& entity){
-
+Collideable::Collideable(std::reference_wrapper<Entity> entity)
+    : m_entity(entity) {
 }
 
 bool operator==(const Collideable& lhs, const Collideable& rhs) {
-    return static_cast<bool>(collides(lhs, rhs));
+    if (!lhs.isEnabled() || !rhs.isEnabled()) {
+        return false;
+    }
+    return std::visit(CollisionVisitor{}, lhs.m_entity.get().getShape().get(), rhs.m_entity.get().getShape().get());
 }
 
-bool operator !=(const Collideable& lhs, const Collideable& rhs) {
+bool operator!=(const Collideable& lhs, const Collideable& rhs) {
     return !(lhs == rhs);
 }
 
-Side collides(const Collideable& lhs, const Collideable& rhs) {
-    if(!lhs.isEnabled() || !rhs.isEnabled()) {
+Side collides(const Entity& lhs, const Entity& rhs) {
+    if (!lhs.getCollideable().get().isEnabled() || !rhs.getCollideable().get().isEnabled()) {
         return Side::NONE;
     }
 
@@ -46,48 +53,13 @@ Side collides(const Collideable& lhs, const Collideable& rhs) {
     const auto overlapX = sumOfExtentX - std::abs(deltaX);
     const auto overlapY = sumOfExtentY - std::abs(deltaY);
 
-    return static_cast<Side>(determineSide(
-        overlapX, overlapY, deltaX > 0, deltaY > 0
-    ));
+    return static_cast<Side>(determineSide(overlapX, overlapY, deltaX > 0, deltaY > 0));
 }
 
 bool Collideable::isEnabled() const {
     return m_enabled;
 }
 
-int Collideable::getExtentX() const {
-    return m_extentX;
-}
-
-int Collideable::getExtentY() const {
-    return m_extentY;
-}
-
-int Collideable::getCenterX() const {
-    return m_centerX;
-}
-
-int Collideable::getCenterY() const {
-    return m_centerY;
-}
-
 void Collideable::setEnabled(bool enabled) {
     m_enabled = enabled;
 }
-
-void Collideable::setExtentX(int extentX) {
-    m_extentX = extentX;
-}
-
-void Collideable::setExtentY(int extentY) {
-    m_extentY = extentY;
-}
-
-void Collideable::setCenterX(int centerX) {
-    m_centerX = centerX;
-}
-
-void Collideable::setCenterY(int centerY) {
-     m_centerY = centerY;
-}
-

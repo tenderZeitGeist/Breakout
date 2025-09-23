@@ -23,7 +23,7 @@ public:
     void update(float delta) override;
     void init(Values v) override;
     void onDebug(bool debug) override;
-    void reset();
+    void reset() override;
 
     void setWalls(std::vector<std::reference_wrapper<Wall>> walls);
     void setBricks(std::vector<std::reference_wrapper<Brick>> bricks);

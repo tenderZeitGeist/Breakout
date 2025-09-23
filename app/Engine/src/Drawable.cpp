@@ -4,32 +4,39 @@
 
 #include "Engine/Drawable.h"
 #include "Engine/Entity.h"
+#include "Engine/RenderVisitor.h"
 
 #include <SDL2/SDL_render.h>
 
-#include <array>
+#include <variant>
 
 #include "Engine/Configuration.h"
 
-Drawable::Drawable(Entity& entity)
+Drawable::Drawable(std::reference_wrapper<Entity> entity)
 : m_entity(entity) {
 }
 
 void Drawable::render(SDL_Renderer& renderer) const {
     const auto color = getColor();
     SDL_SetRenderDrawColor(&renderer, color.r, color.g, color.b, color.a);
-    drawRect(renderer);
+    std::visit(RenderVisitor{renderer}, m_entity.get().getShape().get());
+    // drawRect(renderer);
 
-    if(m_debug) {
-        const auto direction = m_entity.getMoveable().get().currentDirection();
-        constexpr auto debugColor = config::kDebugColor;
-        const auto centerX = m_entity.getX() + m_entity.getWidth() / 2;
-        const auto centerY = m_entity.getY() + m_entity.getHeight() / 2;
-        const auto directionX = centerX + static_cast<int>(static_cast<float>(m_entity.getWidth()) * std::cos(direction) * 2);
-        const auto directionY = centerY + static_cast<int>(static_cast<float>(m_entity.getHeight()) * std::sin(direction) * 2);
-        SDL_SetRenderDrawColor(&renderer, debugColor.r, debugColor.g, debugColor.b, debugColor.a);
-        SDL_RenderDrawLine(&renderer, centerX, centerY, directionX, directionY);
+    if(!m_debug) {
+        return;
     }
+
+    const auto& entity = m_entity.get();
+    const auto direction = entity.getMoveable().get().currentDirection();
+    constexpr auto debugColor = config::kDebugColor;
+    const auto centerX = entity.getX() + entity.getWidth() / 2;
+    const auto centerY = entity.getY() + entity.getHeight() / 2;
+    // const auto centerX = entity.getX() + entity.getWidth() / 2;
+    // const auto centerY = entity.getY() + entity.getHeight() / 2;
+    const auto directionX = centerX + static_cast<int>(static_cast<float>(entity.getWidth()) * std::cos(direction) * 2);
+    const auto directionY = centerY + static_cast<int>(static_cast<float>(entity.getHeight()) * std::sin(direction) * 2);
+    SDL_SetRenderDrawColor(&renderer, debugColor.r, debugColor.g, debugColor.b, debugColor.a);
+    SDL_RenderDrawLine(&renderer, centerX, centerY, directionX, directionY);
 }
 
 bool Drawable::isVisible() const {
@@ -50,48 +57,4 @@ void Drawable::setColor(const SDL_Color& color) {
 
 void Drawable::showVector(bool debug) {
     m_debug = debug;
-}
-
-void Drawable::drawRect(SDL_Renderer& renderer) const {
-    SDL_RenderFillRect(&renderer, &m_entity.getRect());
-}
-
-void Drawable::drawCircle(SDL_Renderer& renderer) const {
-    const int diameter = m_entity.getWidth();
-    const int radius = diameter / 2;
-    const auto centerX = m_entity.getX() + radius;
-    const auto centerY = m_entity.getY() + radius;
-
-    int x = radius - 1;
-    int y = 0;
-    int dx = 1;
-    int dy = 1;
-    int error = dx - diameter;
-
-    static std::array<SDL_Point, 8> points;
-
-    while (x >= y) {
-        points = {
-            centerX + x, centerY - y,
-            centerX + x, centerY + y,
-            centerX - x, centerY - y,
-            centerX - x, centerY + y,
-            centerX + y, centerY - x,
-            centerX + y, centerY + x,
-            centerX - y, centerY - x,
-            centerX - y, centerY + x
-        };
-            SDL_RenderDrawLines(&renderer, points.data(), points.size());
-
-        if(error <= 0) {
-            ++y;
-            error += dy;
-            dy += 2;
-        }
-        if(error > 0) {
-            --x;
-            dx += 2;
-            error += dx - diameter;
-        }
-    }
 }

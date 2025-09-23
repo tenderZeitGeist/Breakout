@@ -148,9 +148,10 @@ void GameScene::initializeBricks() {
 void GameScene::initializeBall() {
     m_ball.init({.x = config::windowHalfWidth - config::slotHalfHeight,
                  .y = config::windowHalfHeight - config::slotHalfHeight,
-                 .width = config::slotHeight,
-                 .height = config::slotHeight,
-                 .color = config::kPaddleColor});
+                 .width = config::slotHalfHeight ,
+                 .height = config::slotHalfHeight,
+                 .color = config::kPaddleColor,
+                 .shape = ShapeType::CIRCLE});
 
     m_ball.setWalls({m_topWall, m_leftWall, m_rightWall});
     std::vector<std::reference_wrapper<Brick>> brickRefs;
@@ -197,7 +198,7 @@ void GameScene::setGameOverState() {
 
 void GameScene::checkForGameOver() {
     const auto hitAllBricks = std::ranges::all_of(m_bricks, [](auto& brick) {
-      return !brick.getDrawable().get().isVisible() && !brick.getCollideable().get().isEnabled();
+        return !brick.getDrawable().get().isVisible() && !brick.getCollideable().get().isEnabled();
     });
     if (!hitAllBricks) {
         return;
@@ -261,4 +262,3 @@ void GameScene::onReturnToMenu(events::ReturnToMenu&) {
     }
     m_eventManager->notify(events::GameOver());
 }
-

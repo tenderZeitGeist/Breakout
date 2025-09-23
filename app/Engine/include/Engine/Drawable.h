@@ -18,7 +18,7 @@ class Drawable : public Component {
 public:
     explicit Drawable(std::reference_wrapper<Entity> entity);
 
-    ~Drawable() = default;
+    ~Drawable() override = default;
     void render(SDL_Renderer& renderer) const;
 
     [[nodiscard]] bool isVisible() const;
@@ -29,9 +29,6 @@ public:
     void showVector(bool debug);
 
 private:
-    void drawRect(SDL_Renderer& renderer) const;
-    void drawCircle(SDL_Renderer& renderer) const;
-
     std::reference_wrapper<Entity> m_entity;
     SDL_Color m_color{};
     bool m_visible{true};

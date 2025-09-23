@@ -3,7 +3,7 @@
 //
 
 #include "Game/Paddle.h"
-
+#include <Engine/Collideable.h>
 #include <Engine/Configuration.h>
 
 Paddle::Paddle()
@@ -13,19 +13,13 @@ Paddle::Paddle()
 }
 
 void Paddle::update(float dt) {
+    const auto previousX = getX();
     m_moveable.move(dt);
     for (const auto wallRef : m_walls) {
         auto& wall = wallRef.get();
-        const auto collision = collides(wall.getCollideable(), m_collideable);
-        if (!collision) {
-            continue;
-        }
-
-        if (collision & Side::LEFT) {
-            setX(wall.getX() + wall.getWidth());
-        }
-        if (collision & Side::RIGHT) {
-            setX(wall.getX() - getWidth());
+        if (wall.getCollideable() == getCollideable()) {
+            setX(previousX);
+            return;
         }
     }
 }

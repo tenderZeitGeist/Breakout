@@ -53,7 +53,7 @@ namespace {
     }
 
     Vector2D reflection(Vector2D v1, Vector2D v2) {
-        const float dotProduct = v1.x * v2.x + v1.y * v2.y;
+        const auto dotProduct = v1.x * v2.x + v1.y * v2.y;
         // R = v1 - 2(v1 * v2)v2
         return {
             v1.x - 2 * dotProduct * v2.x,
@@ -103,8 +103,8 @@ void Ball::onDebug(bool debug) {
 }
 
 void Ball::reset() {
-    setX(config::windowHalfWidth - m_collideable.getExtentX());
-    setY(config::windowHalfHeight - m_collideable.getExtentY());
+    setX(config::windowHalfWidth - getExtentX());
+    setY(config::windowHalfHeight - getExtentY());
 
     const auto [x, y] = generateRandomDirection();
     m_moveable.setDirection({x, y});
@@ -124,9 +124,8 @@ constexpr float Ball::initialVelocity() {
 }
 
 bool Ball::outOfBounds() const {
-    const auto collideable = getCollideable().get();
-    const auto centerX = collideable.getCenterX();
-    const auto centerY = collideable.getCenterY();
+    const auto centerX = getCenterX();
+    const auto centerY = getCenterY();
     const auto x = centerX < 0 || centerX > config::windowWidth;
     const auto y = centerY < 0 || centerY > config::windowHeight;
     return x || y;
@@ -156,10 +155,10 @@ bool Ball::collidedWithPaddle() {
     if (m_collideable != paddle.getCollideable()) {
         return false;
     }
-    setY(paddle.getY() - getHeight());
+    resetToPreviousPosition();
 
-    const auto distanceX = static_cast<float>(m_collideable.getCenterX() - paddle.getCollideable().get().getCenterX());
-    const auto dx = distanceX / static_cast<float>(paddle.getCollideable().get().getExtentX());
+    const auto distanceX = static_cast<float>(getCenterX() - paddle.getCenterX());
+    const auto dx = distanceX / static_cast<float>(paddle.getExtentX());
     const auto paddleNormal = normalize({dx, -1.0f});
     const auto oldDirection = m_moveable.getDirection();
     const auto newDirection = calculateDirection(oldDirection, paddleNormal);

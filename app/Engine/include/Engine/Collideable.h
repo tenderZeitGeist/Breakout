@@ -7,6 +7,7 @@
 #include <Engine/Component.h>
 
 #include <cstdint>
+#include <functional>
 
 class Entity;
 
@@ -20,29 +21,16 @@ enum Side : std::uint8_t {
 
 class Collideable : public Component {
 public:
-    explicit Collideable(Entity& entity);
+    explicit Collideable(std::reference_wrapper<Entity> entity);
 
     friend bool operator==(const Collideable& lhs, const Collideable& rhs);
     friend bool operator!=(const Collideable& lhs, const Collideable& rhs);
-    friend Side collides(const Collideable& lhs, const Collideable& rhs);
+    friend Side collides(const Entity& lhs, const Entity& rhs);
 
     [[nodiscard]] bool isEnabled() const;
-    [[nodiscard]] int getExtentX() const;
-    [[nodiscard]] int getExtentY() const;
-    [[nodiscard]] int getCenterX() const;
-    [[nodiscard]] int getCenterY() const;
-
     void setEnabled(bool enabled);
-    void setExtentX(int extentX);
-    void setExtentY(int extentY);
-    void setCenterX(int centerX);
-    void setCenterY(int centerY);
 
 private:
     bool m_enabled{true};
-    int m_extentX{0};
-    int m_extentY{0};
-    int m_centerX{0};
-    int m_centerY{0};
+    std::reference_wrapper<Entity> m_entity;
 };
-

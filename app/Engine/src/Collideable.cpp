@@ -42,7 +42,7 @@ bool operator!=(const Collideable& lhs, const Collideable& rhs) {
 }
 
 Side collides(const Entity& lhs, const Entity& rhs) {
-    if (!lhs.getCollideable().get().isEnabled() || !rhs.getCollideable().get().isEnabled()) {
+    if (!lhs.getCollidable().get().isEnabled() || !rhs.getCollidable().get().isEnabled()) {
         return Side::NONE;
     }
 

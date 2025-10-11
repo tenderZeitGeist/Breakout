@@ -198,7 +198,7 @@ void GameScene::setGameOverState() {
 
 void GameScene::checkForGameOver() {
     const auto hitAllBricks = std::ranges::all_of(m_bricks, [](auto& brick) {
-        return !brick.getDrawable().get().isVisible() && !brick.getCollideable().get().isEnabled();
+        return !brick.getDrawable().get().isVisible() && !brick.getCollidable().get().isEnabled();
     });
     if (!hitAllBricks) {
         return;
@@ -209,7 +209,7 @@ void GameScene::checkForGameOver() {
 void GameScene::onBrickDestroyed(events::BrickDestroyed& e) {
     auto& brick = e.brick.get();
     brick.getDrawable().get().setVisible(false);
-    brick.getCollideable().get().setEnabled(false);
+    brick.getCollidable().get().setEnabled(false);
     m_score.increaseScore(brick.getValue());
     m_score.setBlinking(true);
     checkForGameOver();

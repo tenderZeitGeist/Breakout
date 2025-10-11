@@ -3,9 +3,6 @@
 
 #include "Engine/Entity.h"
 
-#include <cmath>
-#include <numbers>
-
 RenderVisitor::RenderVisitor(SDL_Renderer& renderer)
     : m_renderer(renderer) {
 }

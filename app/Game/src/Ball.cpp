@@ -4,66 +4,71 @@
 
 #include <Game/Ball.h>
 #include <Game/Brick.h>
-#include <Game/Wall.h>
-#include <Game/Paddle.h>
 #include <Game/GameEvent.h>
+#include <Game/Paddle.h>
+#include <Game/Wall.h>
 
 #include <Engine/Configuration.h>
 #include <Engine/EventManager.h>
 
 #include <algorithm>
 #include <cassert>
-#include <random>
 #include <cmath>
+#include <random>
 
 namespace {
-    float magnitude(float x, float y) {
-        return std::sqrt(x * x + y * y);
-    }
+float magnitude(float x, float y) {
+    return std::sqrt(x * x + y * y);
+}
 
-    float magnitude(Vector2D v) {
-        return magnitude(v.x, v.y);
-    }
+float magnitude(Vector2D v) {
+    return magnitude(v.x, v.y);
+}
 
-    Vector2D normalize(const Vector2D vector) {
-        const auto length = magnitude(vector);
-        return {vector.x / length, vector.y / length};
-    }
+Vector2D normalize(const Vector2D vector) {
+    const auto length = magnitude(vector);
+    return {vector.x / length, vector.y / length};
+}
 
-    Vector2D generateRandomDirection() {
-        static std::random_device rd;
-        static std::mt19937 rng(rd());
-        static std::uniform_int_distribution distribution(1, 3);
+Vector2D generateRandomDirection() {
+    static std::random_device rd;
+    static std::mt19937 rng(rd());
+    static std::uniform_int_distribution distribution(1, 3);
 
-        const Vector2D direction = [value = distribution(rng)]() -> Vector2D {
-            switch (value) {
-                case 1:
-                    return {0.f, 1.f};
-                case 2:
-                    return {0.5f, 0.5f};
-                case 3:
-                    return {-0.5f, 0.5f};
-                default:
-                    break;
-            }
-            assert("Invalid number generated");
-            return {};
-        }();
-        return normalize(direction);
-    }
+    const Vector2D direction = [value = distribution(rng)]() -> Vector2D {
+        switch (value) {
+            case 1:
+                return {0.f, 1.f};
+            case 2:
+                return {0.f, 1.f};
+                return {0.5f, 0.5f};
+            case 3:
+                return {0.f, 1.f};
+                return {-0.5f, 0.5f};
+            default:
+                break;
+        }
+        assert("Invalid number generated");
+        return {};
+    }();
+    return normalize(direction);
+}
 
-    Vector2D reflection(Vector2D v1, Vector2D v2) {
-        const auto dotProduct = v1.x * v2.x + v1.y * v2.y;
-        // R = v1 - 2(v1 * v2)v2
-        return {
-            v1.x - 2 * dotProduct * v2.x,
-            v2.y - 2 * dotProduct * v2.y
-        };
-    }
+Vector2D reflection(Vector2D v1, Vector2D v2) {
+    const auto dotProduct = v1.x * v2.x + v1.y * v2.y;
+    // R = v1 - 2(v1 * v2)v2
+    return {v1.x - 2 * dotProduct * v2.x, v1.y - 2 * dotProduct * v2.y};
+}
 
-    Vector2D calculateDirection(Vector2D v1, Vector2D v2) {
-        return normalize(reflection(v1, v2));
-    }
+Vector2D calculateDirection(Vector2D v1, Vector2D v2) {
+    return normalize(reflection(v1, v2));
+}
+
+Vector2D calculateClampedDirection(Vector2D v1, Vector2D v2, float maxDirX) {
+    const auto direction = calculateDirection(v1, v2);
+    return {std::clamp(direction.x, -maxDirX, maxDirX), direction.y};
+}
+
 }
 
 Ball::Ball(std::reference_wrapper<Paddle> paddle, std::shared_ptr<events::EventManager> eventManager)
@@ -91,11 +96,7 @@ void Ball::update(float delta) {
 void Ball::init(Values v) {
     Entity::init(v);
     assert(getWidth() == getHeight());
-    m_drawable.setVisible(true);
-    const auto [dx, dy] = generateRandomDirection();
-    m_moveable.setDirectionX(dx);
-    m_moveable.setDirectionY(dy);
-    m_moveable.setVelocity(initialVelocity());
+    reset();
 }
 
 void Ball::onDebug(bool debug) {
@@ -105,9 +106,8 @@ void Ball::onDebug(bool debug) {
 void Ball::reset() {
     setX(config::windowHalfWidth - getExtentX());
     setY(config::windowHalfHeight - getExtentY());
-
-    const auto [x, y] = generateRandomDirection();
-    m_moveable.setDirection({x, y});
+    m_moveable.setDirection(generateRandomDirection());
+    m_moveable.setVelocity(initialVelocity());
     m_drawable.setVisible(true);
 }
 
@@ -133,7 +133,7 @@ bool Ball::outOfBounds() const {
 
 bool Ball::collidedWithWall() {
     // TODO: Refactor logic to use ranges.
-    for (auto wallRef: m_walls) {
+    for (auto wallRef : m_walls) {
         const auto& wall = wallRef.get();
         if (wall.getCollidable() == m_collidable) {
             resetToPreviousPosition();
@@ -155,13 +155,14 @@ bool Ball::collidedWithPaddle() {
     if (m_collidable != paddle.getCollidable()) {
         return false;
     }
-    resetToPreviousPosition();
+
+    setX(m_previousX);
+    setY(getY() - getExtentY() - paddle.getExtentY());
 
     const auto distanceX = static_cast<float>(getCenterX() - paddle.getCenterX());
-    const auto dx = distanceX / static_cast<float>(paddle.getExtentX());
-    const auto paddleNormal = normalize({dx, -1.0f});
-    const auto oldDirection = m_moveable.getDirection();
-    const auto newDirection = calculateDirection(oldDirection, paddleNormal);
+    const auto dx = std::clamp(distanceX / static_cast<float>(paddle.getExtentX()), -0.9f, 0.9f);
+    const auto dy = -m_moveable.getDirectionY();
+    const auto newDirection = normalize(Vector2D{dx, dy});
     m_moveable.setDirection(newDirection);
 
     return true;
@@ -170,11 +171,18 @@ bool Ball::collidedWithPaddle() {
 
 bool Ball::collidedWithBrick() {
     // TODO: Refactor logic to use ranges.
-    for (auto brickRef: m_bricks) {
+    for (auto brickRef : m_bricks) {
         const auto& brick = brickRef.get();
         if (m_collidable == brick.getCollidable()) {
+            const auto side = determineSide(m_collidable, brick.getCollidable());
+            if (side == LEFT || side == RIGHT) {
+                m_moveable.setDirectionX(-m_moveable.getDirectionX());
+            } else if (side == TOP || side == BOTTOM) {
+                m_moveable.setDirectionY(-m_moveable.getDirectionY());
+            } else {
+                assert(false && "Impossible state.");
+            }
             resetToPreviousPosition();
-            m_moveable.setDirectionY(-m_moveable.getDirectionY());
             m_eventManager->notify(events::BrickDestroyed{brickRef});
             return true;
         }

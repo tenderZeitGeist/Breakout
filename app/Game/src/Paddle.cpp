@@ -3,7 +3,7 @@
 //
 
 #include "Game/Paddle.h"
-#include <Engine/Collideable.h>
+#include <Engine/Collidable.h>
 #include <Engine/Configuration.h>
 
 Paddle::Paddle()

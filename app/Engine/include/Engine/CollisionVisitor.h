@@ -1,7 +1,5 @@
 #pragma once
 
-#include <variant>
-
 class CircleShape;
 class RectShape;
 

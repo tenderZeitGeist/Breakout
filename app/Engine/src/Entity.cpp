@@ -138,7 +138,7 @@ void Entity::setExtentY(int extentY) {
     m_extentY = extentY;
 }
 
-std::reference_wrapper<const Collideable> Entity::getCollidable() const {
+std::reference_wrapper<const Collidable> Entity::getCollidable() const {
     return std::cref(m_collidable);
 }
 
@@ -154,7 +154,7 @@ std::reference_wrapper<const ShapeVariant> Entity::getShape() const {
     return std::cref(m_shapeVariant);
 }
 
-std::reference_wrapper<Collideable> Entity::getCollidable() {
+std::reference_wrapper<Collidable> Entity::getCollidable() {
     return std::ref(m_collidable);
 }
 

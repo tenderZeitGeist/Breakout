@@ -7,7 +7,7 @@ set(DIR_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/include)
 
 set(ENGINE_HEADER_FILES
         "${DIR_INCLUDE}/Engine/Configuration.h"
-        "${DIR_INCLUDE}/Engine/Collideable.h"
+        "${DIR_INCLUDE}/Engine/Collidable.h"
         "${DIR_INCLUDE}/Engine/CollisionVisitor.h"
         "${DIR_INCLUDE}/Engine/Component.h"
         "${DIR_INCLUDE}/Engine/Digit.h"
@@ -26,7 +26,7 @@ set(ENGINE_HEADER_FILES
 )
 
 set(ENGINE_SOURCE_FILES
-        "${DIR_SOURCE}/Collideable.cpp"
+        "${DIR_SOURCE}/Collidable.cpp"
         "${DIR_SOURCE}/CollisionVisitor.cpp"
         "${DIR_SOURCE}/Component.cpp"
         "${DIR_SOURCE}/Digit.cpp"

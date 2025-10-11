@@ -130,7 +130,7 @@ void GameScene::initializeBricks() {
     constexpr auto amountY = 8;
     m_bricks.reserve(amountX * amountY);
     for (int y = 0; y < amountY; ++y) {
-        const auto colorIndex = y / 2;
+        const auto colorIndex = static_cast<std::size_t>(y / 2);
         for (int x = 0; x < amountX; ++x) {
             m_bricks.emplace_back();
             auto& brickRef = m_bricks.back();

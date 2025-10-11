@@ -12,7 +12,7 @@ Entity::Entity(ComposeMask composeMask)
     : m_rect({0, 0, 0, 0})
     , m_drawable(*this)
     , m_moveable(*this)
-    , m_collideable(*this)
+    , m_collidable(*this)
     , m_shapeVariant{RectShape{*this}} {
     if (composeMask & DRAWABLE) {
         m_drawable.setActive(true);
@@ -20,8 +20,8 @@ Entity::Entity(ComposeMask composeMask)
     if (composeMask & MOVEABLE) {
         m_moveable.setActive(true);
     }
-    if (composeMask & COLLIDEABLE) {
-        m_collideable.setActive(true);
+    if (composeMask & COLLIDABLE) {
+        m_collidable.setActive(true);
     }
 }
 
@@ -138,8 +138,8 @@ void Entity::setExtentY(int extentY) {
     m_extentY = extentY;
 }
 
-std::reference_wrapper<const Collideable> Entity::getCollideable() const {
-    return std::cref(m_collideable);
+std::reference_wrapper<const Collideable> Entity::getCollidable() const {
+    return std::cref(m_collidable);
 }
 
 std::reference_wrapper<const Drawable> Entity::getDrawable() const {
@@ -154,8 +154,8 @@ std::reference_wrapper<const ShapeVariant> Entity::getShape() const {
     return std::cref(m_shapeVariant);
 }
 
-std::reference_wrapper<Collideable> Entity::getCollideable() {
-    return std::ref(m_collideable);
+std::reference_wrapper<Collideable> Entity::getCollidable() {
+    return std::ref(m_collidable);
 }
 
 std::reference_wrapper<Drawable> Entity::getDrawable() {

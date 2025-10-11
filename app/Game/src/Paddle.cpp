@@ -7,7 +7,7 @@
 #include <Engine/Configuration.h>
 
 Paddle::Paddle()
-    : Entity(DRAWABLE | MOVEABLE | COLLIDEABLE)
+    : Entity(DRAWABLE | MOVEABLE | COLLIDABLE)
     , m_originalWidth(0)
     , m_currentWidth(0) {
 }
@@ -17,7 +17,7 @@ void Paddle::update(float dt) {
     m_moveable.move(dt);
     for (const auto wallRef : m_walls) {
         auto& wall = wallRef.get();
-        if (wall.getCollideable() == getCollideable()) {
+        if (wall.getCollidable() == getCollidable()) {
             setX(previousX);
             return;
         }

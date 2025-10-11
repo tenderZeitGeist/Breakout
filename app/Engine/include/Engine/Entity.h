@@ -35,7 +35,7 @@ public:
     enum Compose : ComposeMask {
         DRAWABLE = 1 << 0,
         MOVEABLE = 1 << 1,
-        COLLIDEABLE = 1 << 2,
+        COLLIDABLE = 1 << 2,
     };
 
     virtual ~Entity() = default;
@@ -64,11 +64,11 @@ public:
     virtual void setExtentX(int extentX);
     virtual void setExtentY(int extentY);
 
-    [[nodiscard]] virtual std::reference_wrapper<const Collideable> getCollideable() const;
+    [[nodiscard]] virtual std::reference_wrapper<const Collideable> getCollidable() const;
     [[nodiscard]] virtual std::reference_wrapper<const Drawable> getDrawable() const;
     [[nodiscard]] virtual std::reference_wrapper<const Moveable> getMoveable() const;
     [[nodiscard]] virtual std::reference_wrapper<const ShapeVariant> getShape() const;
-    [[nodiscard]] virtual std::reference_wrapper<Collideable> getCollideable();
+    [[nodiscard]] virtual std::reference_wrapper<Collideable> getCollidable();
     [[nodiscard]] virtual std::reference_wrapper<Drawable> getDrawable();
     [[nodiscard]] virtual std::reference_wrapper<Moveable> getMoveable();
     [[nodiscard]] virtual std::reference_wrapper<ShapeVariant> getShape();
@@ -86,6 +86,6 @@ protected:
     SDL_Rect m_rect;
     Drawable m_drawable;
     Moveable m_moveable;
-    Collideable m_collideable;
+    Collideable m_collidable;
     ShapeVariant m_shapeVariant;
 };

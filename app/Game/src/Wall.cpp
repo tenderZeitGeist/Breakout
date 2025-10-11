@@ -6,10 +6,10 @@
 #include <Engine/Entity.h>
 
 Wall::Wall(float x, float y)
-: Entity(Entity::COLLIDEABLE | Entity::DRAWABLE)
+: Entity(Entity::COLLIDABLE | Entity::DRAWABLE)
 , m_normalX(x)
 , m_normalY(y) {
-    Entity::getCollideable().get().setEnabled(true);
+    Entity::getCollidable().get().setEnabled(true);
     Entity::getDrawable().get().setVisible(false);
 }
 

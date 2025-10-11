@@ -2,12 +2,12 @@
 #include "Game/Brick.h"
 
 Brick::Brick()
-    : Entity(COLLIDEABLE | DRAWABLE) {
-    m_collideable.setEnabled(true);
+    : Entity(COLLIDABLE | DRAWABLE) {
+    m_collidable.setEnabled(true);
 }
 
 void Brick::reset() {
-    m_collideable.setEnabled(true);
+    m_collidable.setEnabled(true);
     m_drawable.setVisible(true);
 }
 

@@ -67,7 +67,7 @@ namespace {
 }
 
 Ball::Ball(std::reference_wrapper<Paddle> paddle, std::shared_ptr<events::EventManager> eventManager)
-    : Entity(COLLIDEABLE | DRAWABLE | MOVEABLE) //, Drawable::Shape::CIRCLE)
+    : Entity(COLLIDABLE | DRAWABLE | MOVEABLE) //, Drawable::Shape::CIRCLE)
     , m_paddle(paddle)
     , m_eventManager(std::move(eventManager)) {
     assert(m_eventManager);
@@ -135,7 +135,7 @@ bool Ball::collidedWithWall() {
     // TODO: Refactor logic to use ranges.
     for (auto wallRef: m_walls) {
         const auto& wall = wallRef.get();
-        if (wall.getCollideable() == m_collideable) {
+        if (wall.getCollidable() == m_collidable) {
             resetToPreviousPosition();
             const auto wallNormals = wall.getNormals();
             const auto isSideWall = wallNormals.x != 0.f;
@@ -152,7 +152,7 @@ bool Ball::collidedWithWall() {
 
 bool Ball::collidedWithPaddle() {
     const auto& paddle = m_paddle.get();
-    if (m_collideable != paddle.getCollideable()) {
+    if (m_collidable != paddle.getCollidable()) {
         return false;
     }
     resetToPreviousPosition();
@@ -172,7 +172,7 @@ bool Ball::collidedWithBrick() {
     // TODO: Refactor logic to use ranges.
     for (auto brickRef: m_bricks) {
         const auto& brick = brickRef.get();
-        if (m_collideable == brick.getCollideable()) {
+        if (m_collidable == brick.getCollidable()) {
             resetToPreviousPosition();
             m_moveable.setDirectionY(-m_moveable.getDirectionY());
             m_eventManager->notify(events::BrickDestroyed{brickRef});

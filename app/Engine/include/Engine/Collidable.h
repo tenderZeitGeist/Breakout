@@ -19,13 +19,13 @@ enum Side : std::uint8_t {
     BOTTOM = 1 << 3,
 };
 
-class Collideable : public Component {
+class Collidable : public Component {
 public:
-    explicit Collideable(std::reference_wrapper<Entity> entity);
+    explicit Collidable(std::reference_wrapper<Entity> entity);
 
-    friend bool operator==(const Collideable& lhs, const Collideable& rhs);
-    friend bool operator!=(const Collideable& lhs, const Collideable& rhs);
-    friend Side collides(const Entity& lhs, const Entity& rhs);
+    friend bool operator==(const Collidable& lhs, const Collidable& rhs);
+    friend bool operator!=(const Collidable& lhs, const Collidable& rhs);
+    friend Side determineSide(const Collidable& lhs, const Collidable& rhs);
 
     [[nodiscard]] bool isEnabled() const;
     void setEnabled(bool enabled);

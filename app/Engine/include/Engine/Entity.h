@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "Collideable.h"
+#include "Collidable.h"
 #include "Drawable.h"
 #include "Moveable.h"
 #include "Shape.h"
@@ -64,11 +64,11 @@ public:
     virtual void setExtentX(int extentX);
     virtual void setExtentY(int extentY);
 
-    [[nodiscard]] virtual std::reference_wrapper<const Collideable> getCollidable() const;
+    [[nodiscard]] virtual std::reference_wrapper<const Collidable> getCollidable() const;
     [[nodiscard]] virtual std::reference_wrapper<const Drawable> getDrawable() const;
     [[nodiscard]] virtual std::reference_wrapper<const Moveable> getMoveable() const;
     [[nodiscard]] virtual std::reference_wrapper<const ShapeVariant> getShape() const;
-    [[nodiscard]] virtual std::reference_wrapper<Collideable> getCollidable();
+    [[nodiscard]] virtual std::reference_wrapper<Collidable> getCollidable();
     [[nodiscard]] virtual std::reference_wrapper<Drawable> getDrawable();
     [[nodiscard]] virtual std::reference_wrapper<Moveable> getMoveable();
     [[nodiscard]] virtual std::reference_wrapper<ShapeVariant> getShape();
@@ -86,6 +86,6 @@ protected:
     SDL_Rect m_rect;
     Drawable m_drawable;
     Moveable m_moveable;
-    Collideable m_collidable;
+    Collidable m_collidable;
     ShapeVariant m_shapeVariant;
 };

@@ -1,11 +1,7 @@
-
-#include <Game/MenuScene.h>
-
 #include <Engine/Configuration.h>
 #include <Engine/Text.h>
 #include <Engine/TextureRenderer.h>
-
-#include <SDL2/SDL_ttf.h>
+#include <Game/MenuScene.h>
 
 MenuScene::MenuScene(std::shared_ptr<events::EventManager> eventManager, const TextureRenderer& textureRenderer)
     : m_eventManager(std::move(eventManager)) {

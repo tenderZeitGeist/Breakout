@@ -1,16 +1,11 @@
-//
-// Created by zeitgeist on 06.10.23.
-//
-
-#include <SDL2/SDL.h>
-
-#include "Game/Game.h"
-#include "Game/GameEvent.h"
-#include "Game/GameScene.h"
-
 #include <Engine/Configuration.h>
 #include <Engine/EventManager.h>
 #include <Engine/TextureRenderer.h>
+#include <Game/Game.h>
+#include <Game/GameEvent.h>
+#include <Game/GameScene.h>
+
+#include <SDL2/SDL.h>
 
 #include <algorithm>
 #include <ranges>

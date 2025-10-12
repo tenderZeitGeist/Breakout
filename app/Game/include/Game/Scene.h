@@ -1,7 +1,3 @@
-//
-// Created by zeitgeist on 06.10.23.
-//
-
 #pragma once
 
 #include <SDL2/SDL_render.h>

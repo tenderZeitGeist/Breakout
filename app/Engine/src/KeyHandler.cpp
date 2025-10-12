@@ -1,9 +1,5 @@
-//
-// Created by zeitgeist on 23.03.24.
-//
-
-#include "Engine/KeyHandler.h"
-#include "Engine/EventManager.h"
+#include <Engine/KeyHandler.h>
+#include <Engine/EventManager.h>
 
 #include <cassert>
 

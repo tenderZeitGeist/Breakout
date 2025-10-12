@@ -1,4 +1,3 @@
-
 #include <Engine/Digit.h>
 
 #include <cassert>

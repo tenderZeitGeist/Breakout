@@ -1,9 +1,5 @@
-//
-// Created by zeitgeist on 13.10.23.
-//
-
-#include "Game/Wall.h"
 #include <Engine/Entity.h>
+#include <Game/Wall.h>
 
 Wall::Wall(float x, float y)
 : Entity(Entity::COLLIDABLE | Entity::DRAWABLE)

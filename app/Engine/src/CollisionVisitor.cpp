@@ -1,4 +1,3 @@
-
 #include <Engine/CollisionVisitor.h>
 #include <Engine/Shape.h>
 

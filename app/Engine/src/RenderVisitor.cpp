@@ -1,7 +1,5 @@
-
+#include <Engine/Entity.h>
 #include <Engine/RenderVisitor.h>
-
-#include "Engine/Entity.h"
 
 RenderVisitor::RenderVisitor(SDL_Renderer& renderer)
     : m_renderer(renderer) {

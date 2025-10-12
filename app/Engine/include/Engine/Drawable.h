@@ -1,7 +1,3 @@
-//
-// Created by zeitgeist on 11.10.23.
-//
-
 #pragma once
 
 #include <Engine/Component.h>

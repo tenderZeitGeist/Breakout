@@ -1,11 +1,7 @@
-//
-// Created by zeitgeist on 13.06.23.
-//
-
-#include "Game/Game.h"
-#include "Game/GameEvent.h"
-#include "Game/GameScene.h"
-#include "Game/MenuScene.h"
+#include <Game/Game.h>
+#include <Game/GameEvent.h>
+#include <Game/GameScene.h>
+#include <Game/MenuScene.h>
 
 #include <Engine/Event.h>
 #include <Engine/EventManager.h>
@@ -15,7 +11,7 @@
 
 namespace {
 
-static constexpr std::array<inputs::KeyBinding, inputs::Keys::NUM_OF_KEYS> kBindings = {{
+constexpr std::array<inputs::KeyBinding, inputs::Keys::NUM_OF_KEYS> kBindings = {{
         {inputs::InputEvent::NONE, inputs::InputEvent::NONE}, // KeyHandler::ENTER
         {inputs::InputEvent::INCREASE_SCORE, inputs::InputEvent::NONE}, // KeyHandler::_1
         {inputs::InputEvent::INCREASE_SCORE, inputs::InputEvent::NONE}, // KeyHandler::_2
@@ -56,7 +52,7 @@ void Game::update(float delta) {
     }
 }
 
-void Game::render(SDL_Renderer& renderer) {
+void Game::render(SDL_Renderer& renderer) const {
     if (!m_activeScene) {
         return;
     }

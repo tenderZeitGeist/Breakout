@@ -1,6 +1,4 @@
-
 #include <Game/Score.h>
-
 
 namespace {
     constexpr int kMaxDisplayScore{999};

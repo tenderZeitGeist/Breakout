@@ -1,19 +1,18 @@
-#include "Engine/Engine.h"
-#include "Engine/Configuration.h"
-#include "Engine/Event.h"
-#include "Engine/EventManager.h"
-#include "Engine/TextureRenderer.h"
+#include <Engine/Engine.h>
+#include <Engine/Configuration.h>
+#include <Engine/Event.h>
+#include <Engine/EventManager.h>
+#include <Engine/TextureRenderer.h>
 
 #include <chrono>
 #include <iostream>
-#include <thread>
 
 #include <Game/Game.h>
 #include <Game/GameScene.h>
 
 namespace {
-void abortProgram(std::string&& reason) {
-    std::cerr << reason + " couldn't be established. Aborting program." << '\n'
+void abortProgram(std::string_view reason) {
+    std::cerr << reason << " couldn't be established. Aborting program." << '\n'
               << "Error reason: " << SDL_GetError() << '\n';
     std::abort();
 }
@@ -103,10 +102,6 @@ void Engine::draw() {
 }
 
 void Engine::shutdown() {
-    if (m_pollThread.joinable()) {
-        m_pollThread.join();
-    }
-
     if (m_renderer) {
         SDL_DestroyRenderer(m_renderer);
     }

@@ -1,19 +1,14 @@
-//
-// Created by zeitgeist on 06.10.23.
-//
-
 #pragma once
 
-#include "Ball.h"
-#include "Brick.h"
-#include "LifePoints.h"
-#include "Scene.h"
-#include "Score.h"
-#include "Paddle.h"
-#include "Wall.h"
-#include "GameOverState.h"
-
 #include <Engine/Text.h>
+#include <Game/Ball.h>
+#include <Game/Brick.h>
+#include <Game/LifePoints.h>
+#include <Game/Scene.h>
+#include <Game/Score.h>
+#include <Game/Paddle.h>
+#include <Game/Wall.h>
+#include <Game/GameOverState.h>
 
 #include <vector>
 

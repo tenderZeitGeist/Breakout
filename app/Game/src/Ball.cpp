@@ -15,6 +15,7 @@
 #include <cassert>
 #include <cmath>
 #include <random>
+#include <ranges>
 
 namespace {
 float magnitude(float x, float y) {
@@ -40,10 +41,8 @@ Vector2D generateRandomDirection() {
             case 1:
                 return {0.f, 1.f};
             case 2:
-                return {0.f, 1.f};
                 return {0.5f, 0.5f};
             case 3:
-                return {0.f, 1.f};
                 return {-0.5f, 0.5f};
             default:
                 break;
@@ -54,25 +53,37 @@ Vector2D generateRandomDirection() {
     return normalize(direction);
 }
 
-Vector2D reflection(Vector2D v1, Vector2D v2) {
-    const auto dotProduct = v1.x * v2.x + v1.y * v2.y;
-    // R = v1 - 2(v1 * v2)v2
-    return {v1.x - 2 * dotProduct * v2.x, v1.y - 2 * dotProduct * v2.y};
-}
+enum Side : std::uint8_t {
+    NONE = 0,
+    LEFT = 1 << 0,
+    RIGHT = 1 << 1,
+    TOP = 1 << 2,
+    BOTTOM = 1 << 3,
+};
 
-Vector2D calculateDirection(Vector2D v1, Vector2D v2) {
-    return normalize(reflection(v1, v2));
-}
+Side determineSide(const Ball& ball, const Brick& brick) {
+    const auto distanceLeft = ball.getCenterX() - brick.getX();
+    const auto distanceRight = brick.getX() + brick.getWidth() - ball.getCenterX();
+    const auto distanceTop = ball.getCenterY() - brick.getY();
+    const auto distanceBottom = brick.getY() + brick.getHeight() - ball.getCenterY();
+    const auto min = std::min({distanceLeft, distanceRight, distanceTop, distanceBottom});
 
-Vector2D calculateClampedDirection(Vector2D v1, Vector2D v2, float maxDirX) {
-    const auto direction = calculateDirection(v1, v2);
-    return {std::clamp(direction.x, -maxDirX, maxDirX), direction.y};
+    if (min == distanceLeft) {
+        return Side::LEFT;
+    }
+    if (min == distanceRight) {
+        return Side::RIGHT;
+    }
+    if (min == distanceTop) {
+        return Side::TOP;
+    }
+    return Side::BOTTOM;
 }
 
 }
 
 Ball::Ball(std::reference_wrapper<Paddle> paddle, std::shared_ptr<events::EventManager> eventManager)
-    : Entity(COLLIDABLE | DRAWABLE | MOVEABLE) //, Drawable::Shape::CIRCLE)
+    : Entity(COLLIDABLE | DRAWABLE | MOVEABLE)
     , m_paddle(paddle)
     , m_eventManager(std::move(eventManager)) {
     assert(m_eventManager);
@@ -132,22 +143,23 @@ bool Ball::outOfBounds() const {
 }
 
 bool Ball::collidedWithWall() {
-    // TODO: Refactor logic to use ranges.
-    for (auto wallRef : m_walls) {
-        const auto& wall = wallRef.get();
-        if (wall.getCollidable() == m_collidable) {
-            resetToPreviousPosition();
-            const auto wallNormals = wall.getNormals();
-            const auto isSideWall = wallNormals.x != 0.f;
-            if (isSideWall) {
-                m_moveable.setDirectionX(-m_moveable.getDirectionX());
-            } else {
-                m_moveable.setDirectionY(-m_moveable.getDirectionY());
-            }
-            return true;
-        }
+    const auto iter = std::ranges::find_if(m_walls, [&collidable = m_collidable](const auto wallRef) {
+        return wallRef.get().getCollidable() == collidable;
+    });
+
+    if (iter == m_walls.end()) {
+        return false;
     }
-    return false;
+
+    resetToPreviousPosition();
+    const auto wallNormals = iter->get().getNormals();
+    const auto isSideWall = wallNormals.x != 0.f;
+    if (isSideWall) {
+        m_moveable.setDirectionX(-m_moveable.getDirectionX());
+    } else {
+        m_moveable.setDirectionY(-m_moveable.getDirectionY());
+    }
+    return true;
 }
 
 bool Ball::collidedWithPaddle() {
@@ -157,10 +169,10 @@ bool Ball::collidedWithPaddle() {
     }
 
     setX(m_previousX);
-    setY(getY() - getExtentY() - paddle.getExtentY());
+    setY(paddle.getY() - getExtentY() - paddle.getExtentY());
 
     const auto distanceX = static_cast<float>(getCenterX() - paddle.getCenterX());
-    const auto dx = std::clamp(distanceX / static_cast<float>(paddle.getExtentX()), -0.9f, 0.9f);
+    const auto dx = distanceX / static_cast<float>(paddle.getExtentX());
     const auto dy = -m_moveable.getDirectionY();
     const auto newDirection = normalize(Vector2D{dx, dy});
     m_moveable.setDirection(newDirection);
@@ -170,24 +182,21 @@ bool Ball::collidedWithPaddle() {
 
 
 bool Ball::collidedWithBrick() {
-    // TODO: Refactor logic to use ranges.
-    for (auto brickRef : m_bricks) {
-        const auto& brick = brickRef.get();
-        if (m_collidable == brick.getCollidable()) {
-            const auto side = determineSide(m_collidable, brick.getCollidable());
-            if (side == LEFT || side == RIGHT) {
-                m_moveable.setDirectionX(-m_moveable.getDirectionX());
-            } else if (side == TOP || side == BOTTOM) {
-                m_moveable.setDirectionY(-m_moveable.getDirectionY());
-            } else {
-                assert(false && "Impossible state.");
-            }
-            resetToPreviousPosition();
-            m_eventManager->notify(events::BrickDestroyed{brickRef});
-            return true;
-        }
+    const auto iter = std::ranges::find_if(m_bricks, [&collidable = m_collidable](const auto brickRef) {
+        return collidable == brickRef.get().getCollidable();
+    });
+
+    if (iter == m_bricks.end()) {
+        return false;
     }
-    return false;
+
+    resetToPreviousPosition();
+    const auto brickRef = *iter;
+    const auto side = determineSide(*this, brickRef);
+    m_moveable.setDirectionX(m_moveable.getDirectionX() * static_cast<float>(1 - 2 * (side == LEFT || side == RIGHT)));
+    m_moveable.setDirectionY(m_moveable.getDirectionY() * static_cast<float>(1 - 2 * (side == TOP || side == BOTTOM)));
+    m_eventManager->notify(events::BrickDestroyed{brickRef});
+    return true;
 }
 
 void Ball::resetToPreviousPosition() {

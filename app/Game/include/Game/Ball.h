@@ -1,6 +1,3 @@
-//
-// Created by zeitgeist on 27.03.24.
-//
 #pragma once
 
 #include <Engine/Entity.h>

@@ -1,10 +1,5 @@
-//
-// Created by zeitgeist on 12.10.23.
-//
-
-#include "Game/Paddle.h"
 #include <Engine/Collidable.h>
-#include <Engine/Configuration.h>
+#include <Game/Paddle.h>
 
 Paddle::Paddle()
     : Entity(DRAWABLE | MOVEABLE | COLLIDABLE)

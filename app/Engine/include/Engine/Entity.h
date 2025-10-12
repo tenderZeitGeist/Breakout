@@ -1,12 +1,9 @@
-//
-// Created by zeitgeist on 10.10.23.
-//
 #pragma once
 
-#include "Collidable.h"
-#include "Drawable.h"
-#include "Moveable.h"
-#include "Shape.h"
+#include <Engine/Collidable.h>
+#include <Engine/Drawable.h>
+#include <Engine/Moveable.h>
+#include <Engine/Shape.h>
 
 #include <SDL2/SDL.h>
 

@@ -1,4 +1,3 @@
-
 #include <Game/LifePoints.h>
 
 LifePoints::LifePoints(int defaultLifePoints)

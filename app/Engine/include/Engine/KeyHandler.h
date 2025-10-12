@@ -1,7 +1,3 @@
-//
-// Created by zeitgeist on 23.03.24.
-//
-
 #pragma once
 
 #include <SDL2/SDL_keycode.h>

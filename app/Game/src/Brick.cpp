@@ -1,5 +1,4 @@
-
-#include "Game/Brick.h"
+#include <Game/Brick.h>
 
 Brick::Brick()
     : Entity(COLLIDABLE | DRAWABLE) {

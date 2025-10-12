@@ -1,9 +1,5 @@
-//
-// Created by zeitgeist on 11.10.23.
-//
-
-#include "Engine/Entity.h"
-#include "Engine/Moveable.h"
+#include <Engine/Entity.h>
+#include <Engine/Moveable.h>
 
 #include <cmath>
 

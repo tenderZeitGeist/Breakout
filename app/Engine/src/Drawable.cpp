@@ -1,16 +1,11 @@
-//
-// Created by zeitgeist on 12.10.23.
-//
-
-#include "Engine/Drawable.h"
-#include "Engine/Entity.h"
-#include "Engine/RenderVisitor.h"
+#include <Engine/Configuration.h>
+#include <Engine/Drawable.h>
+#include <Engine/Entity.h>
+#include <Engine/RenderVisitor.h>
 
 #include <SDL2/SDL_render.h>
 
 #include <variant>
-
-#include "Engine/Configuration.h"
 
 Drawable::Drawable(std::reference_wrapper<Entity> entity)
 : m_entity(entity) {
@@ -20,7 +15,6 @@ void Drawable::render(SDL_Renderer& renderer) const {
     const auto color = getColor();
     SDL_SetRenderDrawColor(&renderer, color.r, color.g, color.b, color.a);
     std::visit(RenderVisitor{renderer}, m_entity.get().getShape().get());
-    // drawRect(renderer);
 
     if(!m_debug) {
         return;
@@ -31,8 +25,6 @@ void Drawable::render(SDL_Renderer& renderer) const {
     constexpr auto debugColor = config::kDebugColor;
     const auto centerX = entity.getX() + entity.getWidth() / 2;
     const auto centerY = entity.getY() + entity.getHeight() / 2;
-    // const auto centerX = entity.getX() + entity.getWidth() / 2;
-    // const auto centerY = entity.getY() + entity.getHeight() / 2;
     const auto directionX = centerX + static_cast<int>(static_cast<float>(entity.getWidth()) * std::cos(direction) * 2);
     const auto directionY = centerY + static_cast<int>(static_cast<float>(entity.getHeight()) * std::sin(direction) * 2);
     SDL_SetRenderDrawColor(&renderer, debugColor.r, debugColor.g, debugColor.b, debugColor.a);

@@ -33,7 +33,7 @@ public:
     explicit Game(std::shared_ptr<events::EventManager> eventManager, std::reference_wrapper<const inputs::KeyHandler> keyHandler);
 
     void update(float delta);
-    void render(SDL_Renderer& renderer);
+    void render(SDL_Renderer& renderer) const;
     void initializeGame(const TextureRenderer& textureRenderer);
 
 private:

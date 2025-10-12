@@ -1,9 +1,8 @@
-
 #pragma once
 
+#include <Game/Scene.h>
 #include <Engine/KeyHandler.h>
 #include <Engine/Text.h>
-#include <Game/Scene.h>
 
 #include <memory>
 #include <vector>

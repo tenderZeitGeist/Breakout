@@ -1,8 +1,6 @@
-
-#include <Game/GameOverState.h>
-
 #include <Engine/Configuration.h>
 #include <Engine/TextureRenderer.h>
+#include <Game/GameOverState.h>
 
 namespace {
 

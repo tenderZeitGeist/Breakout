@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <SDL2/SDL.h>
@@ -7,7 +6,6 @@
 #include <string_view>
 
 
-struct SDL_Renderer;
 struct TTF_Font;
 struct Text;
 

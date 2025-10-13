@@ -7,14 +7,12 @@
 #include <vector>
 
 
-class Paddle
-    : public Entity {
+class Paddle : public Entity {
 public:
     Paddle();
     void update(float dt) override;
     void init(Entity::Values v) override;
-    void shrink();
-    void reset();
+    void reset() override;
 
     void setWalls(std::initializer_list<std::reference_wrapper<Wall>> walls);
 

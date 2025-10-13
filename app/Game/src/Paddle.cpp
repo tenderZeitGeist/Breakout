@@ -2,9 +2,7 @@
 #include <Game/Paddle.h>
 
 Paddle::Paddle()
-    : Entity(DRAWABLE | MOVEABLE | COLLIDABLE)
-    , m_originalWidth(0)
-    , m_currentWidth(0) {
+    : Entity(DRAWABLE | MOVEABLE | COLLIDABLE) {
 }
 
 void Paddle::update(float dt) {
@@ -23,17 +21,6 @@ void Paddle::init(Entity::Values v) {
     Entity::init(v);
     setDefaultPosition(v.x, v.y);
     m_originalWidth = getWidth();
-}
-
-void Paddle::shrink() {
-    const auto width = getWidth();
-    if (m_originalWidth != width) {
-        return;
-    }
-
-    const auto halfWidth = width / 2;
-    setWidth(halfWidth);
-    setX(getX() + halfWidth / 2);
 }
 
 void Paddle::reset() {

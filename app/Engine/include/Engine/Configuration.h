@@ -34,10 +34,10 @@ namespace config {
     static constexpr SDL_Color kDebugColor = {0xff, 0x00, 0x00, 0xff };
     static constexpr SDL_Color kPaddleColor = {0x00, 0xff, 0xff, 0xff };
     static constexpr std::array kBricksFillStyles{
-        kBricksFillStyle1,
-        kBricksFillStyle2,
-        kBricksFillStyle3,
         kBricksFillStyle4,
+        kBricksFillStyle3,
+        kBricksFillStyle2,
+        kBricksFillStyle1,
     };
 
     static constexpr int defaultLifePoints = 3;

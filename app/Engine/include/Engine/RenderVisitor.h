@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Shape.h"
-#include "SDL2/SDL_render.h"
+#include <Engine/Shape.h>
+#include <SDL2/SDL_render.h>
 
 struct RenderVisitor {
     explicit RenderVisitor(SDL_Renderer& renderer);

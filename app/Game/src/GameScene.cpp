@@ -124,9 +124,9 @@ void GameScene::initializeBricks() {
     constexpr auto amountX = 14;
     constexpr auto amountY = 8;
     m_bricks.reserve(amountX * amountY);
-    for (int y = 0; y < amountY; ++y) {
-        const auto colorIndex = static_cast<std::size_t>(y / 2);
-        for (int x = 0; x < amountX; ++x) {
+    for (int x = 0; x < amountX; ++x) {
+        for (int y = 0; y < amountY; ++y) {
+            const auto colorIndex = static_cast<std::size_t>(y / 2);
             m_bricks.emplace_back();
             auto& brickRef = m_bricks.back();
             brickRef.init(
@@ -135,6 +135,7 @@ void GameScene::initializeBricks() {
                      .width = config::slotWidth,
                      .height = config::slotHeight,
                      .color = config::kBricksFillStyles[colorIndex]});
+            brickRef.setValue(7 - static_cast<int>(colorIndex * 2));
             m_entities.emplace_back(brickRef);
         }
     }

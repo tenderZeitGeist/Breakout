@@ -13,3 +13,7 @@ void Brick::reset() {
 int Brick::getValue() const {
     return m_value;
 }
+
+void Brick::setValue(int value) {
+    m_value = value;
+}

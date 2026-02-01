@@ -172,7 +172,7 @@ bool Ball::collidedWithPaddle() {
     setY(paddle.getY() - getExtentY() - paddle.getExtentY());
 
     const auto distanceX = static_cast<float>(getCenterX() - paddle.getCenterX());
-    const auto dx = distanceX / static_cast<float>(paddle.getExtentX());
+    const auto dx = distanceX / static_cast<float>(paddle.getExtentX()) * 0.9f; // clamp to ~81 degree rotation angle
     const auto dy = -m_moveable.getDirectionY();
     const auto newDirection = normalize(Vector2D{dx, dy});
     m_moveable.setDirection(newDirection);
